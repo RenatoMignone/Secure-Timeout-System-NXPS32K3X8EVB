@@ -1,9 +1,9 @@
 config S32K3X8EVB
     bool
+    default y
     depends on TCG && ARM
     select ARM_V7M
 
-source s32k3x8evb/Kconfig
 
 config ARM_VIRT
     bool

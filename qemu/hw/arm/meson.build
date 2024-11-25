@@ -15,12 +15,21 @@ arm_ss.add(when: 'CONFIG_NPCM7XX', if_true: files('npcm7xx.c', 'npcm7xx_boards.c
 arm_ss.add(when: 'CONFIG_REALVIEW', if_true: files('realview.c'))
 arm_ss.add(when: 'CONFIG_SBSA_REF', if_true: files('sbsa-ref.c'))
 arm_ss.add(when: 'CONFIG_STELLARIS', if_true: files('stellaris.c'))
+
+
+
+
+arm_ss.add(when: 'CONFIG_S32K3X8EVB', if_true: files('s32k3x8evb_board.c'))
+
+
+
+
+
+
 arm_ss.add(when: 'CONFIG_STM32VLDISCOVERY', if_true: files('stm32vldiscovery.c'))
 arm_ss.add(when: 'CONFIG_ZYNQ', if_true: files('xilinx_zynq.c'))
 arm_ss.add(when: 'CONFIG_SABRELITE', if_true: files('sabrelite.c'))
 
-subdir('s32k3x8evb')
-#arm_ss.add(when: 'CONFIG_S32K3X8EVB', if_true: files('s32k3x8evb/s32k3x8evb_mcu.c', 's32k3x8evb/s32k3x8evb_board.c','s32k3x8evb/s32k3x8evb_boot.c'))
 
 
 arm_ss.add(when: 'CONFIG_ARM_V7M', if_true: files('armv7m.c'))
@@ -65,7 +74,6 @@ arm_ss.add(when: 'CONFIG_XEN', if_true: files(
   'xen-pvh.c',
 ))
 
-system_ss.add(when: 'CONFIG_S32K3X8EVB', if_true: files('s32k3x8evb/s32k3x8evb_mcu.c', 's32k3x8evb/s32k3x8evb_board.c','s32k3x8evb/s32k3x8evb_boot.c'))
 system_ss.add(when: 'CONFIG_ARM_SMMUV3', if_true: files('smmu-common.c'))
 system_ss.add(when: 'CONFIG_COLLIE', if_true: files('collie.c'))
 system_ss.add(when: 'CONFIG_EXYNOS4', if_true: files('exynos4_boards.c'))
