@@ -29,7 +29,7 @@ OBJECT_DECLARE_SIMPLE_TYPE(ssys_state, S32K3X8EVB_SYS)
 typedef struct S32K3X8ExampleBoardMachineClass S32K3X8ExampleBoardMachineClass;
 
 
-    // Define the missing ssys_state type
+// Define the missing ssys_state type
 struct ssys_state {
     SysBusDevice parent_obj;
     MemoryRegion iomem;
@@ -51,8 +51,6 @@ struct S32K3X8ExampleBoardMachineState {
 };
 
 typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
-
-
 
 #define TYPE_S32K3X8_EXAMPLE_BOARD_BASE_MACHINE MACHINE_TYPE_NAME("s32k3x8")
 #define TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE MACHINE_TYPE_NAME("s32k3x8-example-board")
@@ -145,9 +143,16 @@ static const TypeInfo s32k3x8_example_board_machine_types = {
     .class_init     = s32k3x8_example_board_class_init,
 };
 
+static const TypeInfo s32k3x8evb_sys_info = {
+        .name          = TYPE_S32K3X8EVB_SYS,
+        .parent        = TYPE_SYS_BUS_DEVICE,
+        .instance_size = sizeof(ssys_state),
+};
+
 static void s32k3x8evb_machine_init(void)
 {
     type_register_static(&s32k3x8_example_board_machine_types);
+    type_register_static(&s32k3x8evb_sys_info);
 }
 
 type_init(s32k3x8evb_machine_init);
