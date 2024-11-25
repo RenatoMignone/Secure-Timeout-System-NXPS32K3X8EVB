@@ -164,4 +164,8 @@ By using this project, you agree to the terms of the [CC BY-NC 4.0 license](http
 
 ## Acknowledgments
 
-<!-- TODO: write -->
+- **Stefano Di Carlo** ([stefano.dicarlo@polito.it](mailto:stefano.dicarlo@polito.it)): the professor who assigned us the project and is teaching the course **CAOS**.
+
+<div align="right">
+<a href="#top">Back to top</a>
+</div>
