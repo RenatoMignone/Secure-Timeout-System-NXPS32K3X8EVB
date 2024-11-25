@@ -1,7 +1,0 @@
-[options]
-docs = disabled
-plugins = true
-
-[properties]
-native_file = ['/home/ren/CyberSecurity/CAOS_Project_venv/CAOS_mio/qemu/build/config-meson.cross']
-
