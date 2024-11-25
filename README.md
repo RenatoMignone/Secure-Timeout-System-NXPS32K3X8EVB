@@ -114,7 +114,83 @@ For detailed instructions, refer to the [GUIDE-GIT.md](resources/GUIDE-GIT.md).
 
 ## Contributing
 
-<!-- TODO: write -->
+<!-- TODO: create a dedicated file ? -->
+
+We welcome contributions to this project! Whether you are a member of the organization or an external contributor, follow the guidelines below to ensure a smooth collaboration process.
+
+#### **For Organization Members**
+If you're a member of the project team, follow these steps:
+
+1. **Branch Naming**: 
+
+   - Use descriptive branch names for your work (e.g., `feature/new-qemu-driver` or `fix/freertos-config`).
+   
+2. **Commit Messages**:
+
+   - Follow a clear and concise commit message format:
+   
+     ```
+     [Type] Short description (e.g., [Fix] Resolve timing bug in QEMU)
+     ```
+     
+   - Types: `[Add]`, `[Fix]`, `[Update]`, `[Refactor]`, etc.
+   
+3. **Git Scripts**:
+
+   - Use the provided [Git scripts](#team-collaboration) (`sync_pull.sh` and `sync_push.sh`) to ensure seamless synchronization with the team repository.
+   
+4. **Testing**:
+
+   - Thoroughly test your changes locally using the provided test cases before pushing.
+   
+5. **Review Process**:
+
+   - Open a merge request (MR) for your branch and tag a team member for review.
+   - Include detailed information about the changes and any testing performed.
+
+#### **For External Contributors**
+
+We appreciate external contributions! Please follow these guidelines to contribute:
+
+1. **Fork the Repository**:
+
+   - Start by forking this repository and cloning it to your local machine.
+   
+   ```bash
+   git clone <your-fork-link>
+   ```
+
+2. **Create a New Branch**:
+
+   - Create a branch for your changes:
+   
+   ```bash
+   git checkout -b feature/<short-description>
+   ```
+
+3. **Follow Coding Standards**:
+
+   - Adhere to the project's coding standards. Check any existing guidelines in the repository.
+   
+4. **Testing**:
+
+   - Test your changes thoroughly using the provided test cases or scripts.
+
+5. **Submit a Pull Request (PR)**:
+
+   - Push your changes to your fork and open a pull request to the main repository.
+   - Clearly describe:
+     - What changes you made.
+     - Why they are necessary.
+     - Any issues resolved or enhancements added.
+
+6. **Engage in the Review**:
+
+   - Be prepared to discuss and make updates based on feedback from the maintainers.
+   
+#### **Code of Conduct**
+
+All contributors are expected to adhere to the project's [Code of Conduct](link-to-code-of-conduct-file). Be respectful and constructive when collaborating.
 
 ## Authors
 
