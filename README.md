@@ -1,6 +1,6 @@
-# group2
+# Project name (group2)
 
-
+![polito](resources/logo_polito.jpg)
 
 ## Getting started
 
