@@ -22,6 +22,7 @@
 &nbsp;• [Usage](#usage) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [How to Run Applications](#how-to-run-applications) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Available Configuration Options](#available-configuration-options) <br>
+&nbsp;• [Team Collaboration](#team-collaboration) <br>
 &nbsp;• [Contributing](#contributing) <br>
 &nbsp;• [Authors](#authors) <br>
 &nbsp;• [License](#license) <br>
@@ -85,9 +86,35 @@
 
 
 
+## Team Collaboration
+
+To ensure smooth collaboration and efficient Git workflow within the team, a dedicated [Git Guide](resources/GUIDE-GIT.md) has been created. This guide provides:
+
+- Repository Setup: Step-by-step instructions to configure remote repositories.
+- Synchronization: Scripts for pulling and pushing changes seamlessly.
+- Usage Instructions: Best practices for avoiding conflicts and ensuring updates are integrated properly.
+- Error Handling: Guidance on resolving conflicts and other synchronization issues.
+- Submodules: Recommendations for managing dependencies like QEMU and FreeRTOS.
+
+### Scripts for Git Operations
+
+The project includes custom synchronization scripts (`sync_pull.sh` and `sync_push.sh`) to streamline the process:
+
+- `sync_pull.sh`: Pulls the latest updates from the repository.
+- `sync_push.sh`: Pushes your changes to both the primary and backup repositories.
+
+Make sure the scripts are executable:
+
+```bash
+chmod +x sync_pull.sh
+chmod +x sync_push.sh
+```
+
+For detailed instructions, refer to the [GUIDE-GIT.md](resources/GUIDE-GIT.md).
+
 ## Contributing
 
-
+<!-- TODO: write -->
 
 ## Authors
 
@@ -102,4 +129,22 @@
 
 ## License
 
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/) license.
+
+#### What This Means:
+
+- **Attribution**: You are free to share (copy, redistribute) and adapt (remix, transform, build upon) the material as long as proper credit is given to the original author(s). 
+- **Non-Commercial**: You may not use the material for commercial purposes.
+
+#### Marking Your Work:
+
+All documents and files within this repository are explicitly marked with the CC BY-NC 4.0 license, as outlined in the [Creative Commons marking guidelines](https://wiki.creativecommons.org/wiki/Marking_your_work_with_a_CC_license#Example:_Presentation).
+
+For more details and templates, refer to:
+- [GitHub License Templates](https://github.com/Gibberlings3/GitHub-Templates/tree/master/License-Templates)
+
+By using this project, you agree to the terms of the [CC BY-NC 4.0 license](https://creativecommons.org/licenses/by-nc/4.0/).
+
 ## Acknowledgments
+
+<!-- TODO: write -->
