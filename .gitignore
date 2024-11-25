@@ -1,3 +1,138 @@
+# ============================
+# IDE-Specific Ignore Patterns
+# ============================
+
+# IntelliJ IDEA/JetBrains
+.idea/
+*.iml
+out/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# NeoVim
+.netrwhist
+session.vim
+swapfile.*
+*.un~
+*.swp
+
+# Eclipse
+.settings/
+*.launch
+.project
+.cproject
+
+# Other IDEs
+*.sublime-project
+*.sublime-workspace
+
+# ==================
+# System Files
+# ==================
+
+# macOS Finder
 .DS_Store
-**/.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows System
+Thumbs.db
+Desktop.ini
+
+# Unix System
+.fseventsd
+.trash
+.nfs*
+
+# ===========================
+# QEMU-Specific Ignore Patterns
+# ===========================
+
+# Build Directory
 qemu/build/
+
+# Generated Files
+*.o
+*.d
+*.a
+*.so
+*.bin
+*.elf
+*.vhd
+*.qcow2
+*.vmdk
+*.vdi
+*.img
+
+# Logs and Other Files
+qemu.log
+trace-*
+
+# =============================
+# FreeRTOS-Specific Ignore Patterns
+# =============================
+
+# Build Directory
+freertos/build/
+
+# FreeRTOS Kernel Binaries
+*.o
+*.elf
+*.map
+
+# Generated Files
+*.bin
+*.hex
+
+# =====================
+# General Build Outputs
+# =====================
+
+/build/
+/dist/
+/obj/
+/bin/
+/lib/
+*.class
+*.pyc
+*.pyo
+__pycache__/
+
+# =================
+# Logs and Backups
+# =================
+
+# Log Files
+*.log
+
+# Backup Files
+*.bak
+*.tmp
+*.old
+*.swp
+*.swo
+
+# ==============
+# Other Patterns
+# ==============
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Coverage
+*.gcno
+*.gcda
+*.gcov
+
+# Tests
+/tests/output/
+
+# Temporary Files
+*.tmp
+*.temp
