@@ -1,8 +1,9 @@
 
-# GUIDE-GIT.md
+# GUIDE-GIT
 
 ## Overview
-This guide provides essential instructions for setting up the Git repositories, configuring access, synchronizing changes, and collaborating with other members. Follow each section carefully to ensure consistency across the project and avoid conflicts.
+
+This guide provides clear instructions for setting up Git repositories, configuring remote access, synchronizing changes, and collaborating effectively. Follow each section carefully to ensure a smooth workflow and minimize conflicts.
 
 ## Sections
 - [Repository Setup](#repository-setup)
@@ -16,21 +17,24 @@ This guide provides essential instructions for setting up the Git repositories, 
 ## Repository Setup
 
 ### Step 1: Clone the Repository
-To start working on the repository, clone it from the **GitLab** source repository to your local machine.
+
+Clone the primary **GitLab** repository to your local machine to start working on the project.
 
 ```bash
-git clone <gitlab_repository_link>
+git clone https://baltig.polito.it/caos2024/group2.git
 ```
 
 ### Step 2: Set Up Remote Repository
-After cloning from GitLab, add the remote GitHub repository link if it is not automatically added. This step allows you to push changes to GitHub, which serves as a backup repository, ensuring that your work is saved in multiple locations.
+
+To enable backups and multi-location redundancy, add the **GitHub** repository as a remote:
 
 ```bash
-git remote add github <github_repository_link>
+git remote add github https://github.com/neo-CAOS/group2.git
 ```
 
 ### Step 3: Verify the Remote Link
-Ensure that the remote repository link has been set up correctly. Use the following command to check:
+
+Verify that both **GitLab** and **GitHub** repositories are configured correctly:
 
 ```bash
 git remote -v
@@ -39,62 +43,135 @@ git remote -v
 You should see output similar to this:
 
 ```
-origin  <gitlab_repository_link> (fetch)
-origin  <gitlab_repository_link> (push)
-github  <github_repository_link> (fetch)
-github  <github_repository_link> (push)
+github	https://github.com/neo-CAOS/group2.git (fetch)
+github	https://github.com/neo-CAOS/group2.git (push)
+origin	https://baltig.polito.it/caos2024/group2.git (fetch)
+origin	https://baltig.polito.it/caos2024/group2.git (push)
 ```
 
 ## Synchronization
 
-### Making Scripts Executable
-To use the provided synchronization scripts, which handle both pull and push operations, set the necessary permissions. These scripts are compatible with both Bash and Zsh shells.
+### Synchronization Script
+
+The project includes a single script, sync.sh, to handle both pull and push operations. This ensures consistency and minimizes errors.
+
+#### Script setup
+
+Before using the script, make it executable:
 
 ```bash
-chmod +x sync_pull.sh
-chmod +x sync_push.sh
+chmod +x sync.sh
 ```
 
-**Note:** Although these scripts don’t automatically handle synchronization errors, they will notify you if any errors occur. It is then the responsibility of team members to manually resolve conflicts as needed.
+#### Script Usage
+
+- **Pull Updates:**
+
+  Run the script with `pull` to fetch and integrate the latest changes:
+  
+  ```bash
+  ./sync.sh pull
+  ```
+
+- **Push Changes:**
+
+  Run the script with push to synchronize your local changes with both **GitLab** and **GitHub**:
+
+  ```bash
+  ./sync.sh push
+  ```
+
+> **Note**: The script checks for branch consistency, ensures local and remote synchronization, and prompts for a commit message during pushes.
 
 ## Usage Instructions
 
-1. **Avoid Editing the Same Files Concurrently:** Coordinate with other members to prevent editing the same file simultaneously. This is to avoid merge conflicts, which may require manual resolution. If each member is working on different files, pulling changes will automatically integrate them.
-   
-2. **Pull Updates Before Working:** Always run the `sync_pull.sh` script at the start of a work session to pull the latest updates from the repository.
+1. **Start by Pulling Updates:** Always pull the latest changes before making modifications:
 
-    ```bash
-    ./sync_pull.sh
-    ```
-    
-3. **Pull After Modifications:** Once you've completed your modifications, run `sync_pull.sh` again to check if any other commits were added by teammates during your work session. This helps avoid conflicts during the push.
+   ```bash
+   ./sync.sh pull
+   ```
 
-4. **Push Changes Using Sync Script:** When you’re ready to push your changes, use the `sync_push.sh` script. This will automatically push your changes to the primary GitHub repository and any configured backup repositories.
+2. **Work on Modifications:** Make your changes locally, ensuring they are well-documented and isolated.
 
-    ```bash
-    ./sync_push.sh
-    ```
+3. **Pull Again After Changes:** Before pushing, pull again to incorporate any updates made by collaborators:
 
-**Note:** These scripts ensure that all changes are synchronized, reducing manual overhead.
+   ```bash
+   ./sync.sh pull
+   ```
+
+4. **Push Changes:** Once your modifications are complete and conflicts (if any) are resolved, push the changes:
+
+   ```bash
+   ./sync.sh push
+   ```
+
+5. **Coordinate with Team Members:** Avoid working on the same files simultaneously to minimize conflicts.
 
 ## Error Handling
 
-- **Sync Script Errors:** In case of synchronization errors, the scripts will output an error message. Currently, they do not perform error resolution automatically. You must manually resolve conflicts or issues before rerunning the scripts.
-  
-- **Conflict Resolution:** If a merge conflict occurs, use Git commands to resolve conflicts. Once resolved, re-run `sync_pull.sh` and then proceed with `sync_push.sh` to update the main repository.
+#### Common Errors
+
+<!-- TODO: REVIEW -->
+
+- **Branch Mismatch:** If you are not on the `main` branch, the script will prompt you to switch:
+
+  ```bash
+  git checkout main
+  ```
+
+- **Synchronization Issues:** If local and remote branches are not synchronized, the script will notify you to pull updates before pushing.
+
+#### Conflict Resolution
+
+<!-- TODO: REVIEW -->
+
+In case of conflicts:
+
+1. Manually resolve conflicts in affected files.
+
+2. Stage the resolved changes:
+   
+   ```bash
+   git add <file>
+   ```
+
+3. Complete the merge process:
+
+   ```bash
+   git commit
+   ```
+
+4. Run the synchronization script again:
+
+   ```bash
+   ./sync.sh push
+   ```
 
 ## Working with Submodules [TO BE DECIDED]
 
-If you don’t need to modify the internal files of certain dependencies (e.g., QEMU and FreeRTOS), it’s best to either:
+### Submodule Usage
 
-1. Include them as **submodules** within this repository, or
-2. Add their directories to `.gitignore` and let each member manage the cloning of these repositories independently.
+For dependencies (e.g., QEMU or FreeRTOS), you can use submodules for better modularity.
 
-However, if you need to directly modify files within these repositories, include them as fully versioned local repositories and manage them as regular files within this repository.
+#### Adding Submodules
 
-### Adding Submodules
-To add a repository as a submodule, use the following command:
+To add a submodule:
 
 ```bash
 git submodule add <repository_link> <path>
 ```
+
+#### Updating Submodules
+
+To initialize and update submodules in a cloned repository:
+
+```bash
+git submodule update --init --recursive
+```
+
+### Recommendations
+
+- If you don’t need to modify the dependency files, use submodules to keep the repository lightweight.
+- If modifications are required, include the dependency as part of the main repository and manage it directly.
+
+For additional details, consult the official Git documentation on submodules.

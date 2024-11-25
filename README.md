@@ -100,23 +100,29 @@ To ensure smooth collaboration and efficient Git workflow within the team, a ded
 
 ### Scripts for Git Operations
 
-The project includes custom synchronization scripts (`sync_pull.sh` and `sync_push.sh`) to streamline the process:
+The project includes a synchronization script, `sync.sh`, to streamline repository management. This script accepts a single argument to specify the action:
 
-- `sync_pull.sh`: Pulls the latest updates from the repository.
-- `sync_push.sh`: Pushes your changes to both the primary and backup repositories.
+- pull: Fetches and integrates the latest updates from the repository.
+- push: Pushes your changes to both the primary and backup repositories, ensuring synchronization.
 
-Make sure the scripts are executable:
+#### Usage 
+
+Run the script with the desired action:
 
 ```bash
-chmod +x sync_pull.sh
-chmod +x sync_push.sh
+./sync.sh pull  # To pull updates  
+./sync.sh push  # To push changes
+```
+
+Before using the script, ensure it is executable:
+
+```bash
+chmod +x sync.sh
 ```
 
 For detailed instructions, refer to the [GUIDE-GIT.md](resources/GUIDE-GIT.md).
 
 ## Contributing
-
-<!-- TODO: create a dedicated file ? -->
 
 We welcome contributions to this project! Whether you are a member of the organization or an external contributor, follow the guidelines below to ensure a smooth collaboration process.
 
