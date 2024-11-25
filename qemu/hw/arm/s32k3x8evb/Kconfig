@@ -1,0 +1,7 @@
+#file Kconfig
+config S32K3X8EVB_MCU
+    bool
+
+config S32K3X8EVB_BOARD
+    bool
+    select S32K3X8EVB_MCU
