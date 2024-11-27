@@ -23,12 +23,16 @@
 #include "qapi/qmp/qlist.h"
 #include "ui/input.h"
 
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
 #define TYPE_S32K3X8EVB_SYS "s32k3x8evb-sys"
 OBJECT_DECLARE_SIMPLE_TYPE(ssys_state, S32K3X8EVB_SYS)
 
 typedef struct S32K3X8ExampleBoardMachineClass S32K3X8ExampleBoardMachineClass;
 
-
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 // Define the missing ssys_state type
 struct ssys_state {
     SysBusDevice parent_obj;
@@ -39,6 +43,9 @@ struct ssys_state {
     Clock *sysclk;
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 // Add missing function prototypes
 int load_image_targphys(const char *filename, hwaddr addr, hwaddr size);
 void error_report(const char *fmt, ...);
@@ -50,6 +57,10 @@ struct S32K3X8ExampleBoardMachineState {
     ARMv7MState nvic;
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Add missing function prototypes
 typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
 
 #define TYPE_S32K3X8_EXAMPLE_BOARD_BASE_MACHINE MACHINE_TYPE_NAME("s32k3x8")
@@ -57,6 +68,9 @@ typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
 
 DECLARE_INSTANCE_CHECKER(S32K3X8ExampleBoardMachineState, S32K3X8_EXAMPLE_BOARD_MACHINE, TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE)
 
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+//// Function to load firmware into the specified memory region
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename) {
     int ret;
     hwaddr flash_size = memory_region_size(flash);
@@ -76,6 +90,10 @@ void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, c
     cpu_reset(CPU(cpu));
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Function to initialize the board
 static void s32k3x8_example_board_init(MachineState *machine)
 {
     S32K3X8ExampleBoardMachineState *m_state = S32K3X8_EXAMPLE_BOARD_MACHINE(machine);
@@ -93,9 +111,13 @@ static void s32k3x8_example_board_init(MachineState *machine)
     object_initialize_child(OBJECT(machine), "nvic", &m_state->nvic, TYPE_ARMV7M);
     qdev_prop_set_uint32(DEVICE(&m_state->nvic), "num-irq", 64);
     qdev_prop_set_uint8(DEVICE(&m_state->nvic), "num-prio-bits", 3);
-    qdev_prop_set_string(DEVICE(&m_state->nvic), "cpu-type", machine->cpu_type);
+    qdev_prop_set_string(DEVICE(&m_state->nvic), "cpu-type", "cortex-m7");
     qdev_prop_set_bit(DEVICE(&m_state->nvic), "enable-bitband", true);
-    qdev_connect_clock_in(DEVICE(&m_state->nvic), "cpuclk", qdev_get_clock_out(DEVICE(&m_state->sys), "SYSCLK"));
+
+    m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk");
+    clock_set_ns(m_state->sys.sysclk, 40.69);
+    qdev_connect_clock_in(DEVICE(&m_state->nvic), "cpuclk", m_state->sys.sysclk);
+
     object_property_set_link(OBJECT(&m_state->nvic), "memory", OBJECT(system_memory), &error_abort);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->nvic), &error_abort);
 
@@ -115,6 +137,11 @@ static void s32k3x8_example_board_init(MachineState *machine)
     }
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Function to initialize the board class
 static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data)
 {
     MachineClass *mc = MACHINE_CLASS(oc);
@@ -130,10 +157,19 @@ static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data)
     mc->no_parallel = 1;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Define the board machine class
 struct S32K3X8ExampleBoardMachineClass {
     MachineClass parent_class;
 };
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Define the board machine type
 static const TypeInfo s32k3x8_example_board_machine_types = {
     .name           = TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE,
     .parent         = TYPE_MACHINE,
@@ -143,12 +179,20 @@ static const TypeInfo s32k3x8_example_board_machine_types = {
     .class_init     = s32k3x8_example_board_class_init,
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Define the board machine type
 static const TypeInfo s32k3x8evb_sys_info = {
         .name          = TYPE_S32K3X8EVB_SYS,
         .parent        = TYPE_SYS_BUS_DEVICE,
         .instance_size = sizeof(ssys_state),
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+// Function to initialize the board machine
 static void s32k3x8evb_machine_init(void)
 {
     type_register_static(&s32k3x8_example_board_machine_types);
