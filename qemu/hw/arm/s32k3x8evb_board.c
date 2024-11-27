@@ -6,6 +6,7 @@
 #include "hw/ssi/ssi.h"
 #include "hw/arm/boot.h"
 #include "qemu/timer.h"
+#include "exec/memory.h"
 #include "hw/i2c/i2c.h"
 #include "net/net.h"
 #include "hw/boards.h"
@@ -23,17 +24,24 @@
 #include "qapi/qmp/qlist.h"
 #include "ui/input.h"
 
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
+// Define constants for memory regions
+#define FLASH_BASE_ADDR  0x00000000  // Adjust based on datasheet specifics
+#define FLASH_SIZE       0x01000000  // Example: 16 MB for maximum flash size
+
+#define DFLASH_BASE_ADDR 0x10000000
+#define DFLASH_SIZE      0x00040000  // Example: 256 KB
+
+#define SRAM_BASE_ADDR   0x20000000
+#define SRAM_SIZE        0x00240000  // Example: 2.25 MB
 
 #define TYPE_S32K3X8EVB_SYS "s32k3x8evb-sys"
 OBJECT_DECLARE_SIMPLE_TYPE(ssys_state, S32K3X8EVB_SYS)
 
 typedef struct S32K3X8ExampleBoardMachineClass S32K3X8ExampleBoardMachineClass;
 
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Define the missing ssys_state type
+void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
+
+
 struct ssys_state {
     SysBusDevice parent_obj;
     MemoryRegion iomem;
@@ -43,10 +51,6 @@ struct ssys_state {
     Clock *sysclk;
 };
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Add missing function prototypes
 int load_image_targphys(const char *filename, hwaddr addr, hwaddr size);
 void error_report(const char *fmt, ...);
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename);
@@ -57,10 +61,6 @@ struct S32K3X8ExampleBoardMachineState {
     ARMv7MState nvic;
 };
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Add missing function prototypes
 typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
 
 #define TYPE_S32K3X8_EXAMPLE_BOARD_BASE_MACHINE MACHINE_TYPE_NAME("s32k3x8")
@@ -68,9 +68,6 @@ typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
 
 DECLARE_INSTANCE_CHECKER(S32K3X8ExampleBoardMachineState, S32K3X8_EXAMPLE_BOARD_MACHINE, TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE)
 
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-//// Function to load firmware into the specified memory region
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename) {
     int ret;
     hwaddr flash_size = memory_region_size(flash);
@@ -80,34 +77,39 @@ void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, c
         exit(1);
     }
 
-    ret = load_image_targphys(firmware_filename, 0, flash_size);
+    ret = load_image_targphys(firmware_filename, FLASH_BASE_ADDR, flash_size);
     if (ret < 0) {
         error_report("Failed to load firmware image '%s'", firmware_filename);
         exit(1);
     }
 
-    // Ensure the CPU resets correctly on system reset
     cpu_reset(CPU(cpu));
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Function to initialize the board
-static void s32k3x8_example_board_init(MachineState *machine)
-{
-    S32K3X8ExampleBoardMachineState *m_state = S32K3X8_EXAMPLE_BOARD_MACHINE(machine);
-    MemoryRegion *sram = g_new(MemoryRegion, 1);
+void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     MemoryRegion *flash = g_new(MemoryRegion, 1);
-    MemoryRegion *system_memory = get_system_memory();
-    int sram_size = 64 * 1024; // Example size, adjust as needed
-    int flash_size = 256 * 1024; // Example size, adjust as needed
+    MemoryRegion *dflash = g_new(MemoryRegion, 1);
+    MemoryRegion *sram = g_new(MemoryRegion, 1);
 
-    // Initialize system controller
+    memory_region_init_rom(flash, NULL, "s32k3x8.flash", FLASH_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BASE_ADDR, flash);
+
+    memory_region_init_ram(dflash, NULL, "s32k3x8.dflash", DFLASH_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, DFLASH_BASE_ADDR, dflash);
+
+    memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, SRAM_BASE_ADDR, sram);
+}
+
+static void s32k3x8_example_board_init(MachineState *machine) {
+    S32K3X8ExampleBoardMachineState *m_state = S32K3X8_EXAMPLE_BOARD_MACHINE(machine);
+    MemoryRegion *system_memory = get_system_memory();
+
+    s32k3x8_initialize_memory_regions(system_memory);
+
     object_initialize_child(OBJECT(machine), "sys", &m_state->sys, TYPE_S32K3X8EVB_SYS);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->sys), &error_abort);
 
-    // Initialize NVIC
     object_initialize_child(OBJECT(machine), "nvic", &m_state->nvic, TYPE_ARMV7M);
     qdev_prop_set_uint32(DEVICE(&m_state->nvic), "num-irq", 64);
     qdev_prop_set_uint8(DEVICE(&m_state->nvic), "num-prio-bits", 3);
@@ -121,29 +123,11 @@ static void s32k3x8_example_board_init(MachineState *machine)
     object_property_set_link(OBJECT(&m_state->nvic), "memory", OBJECT(system_memory), &error_abort);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->nvic), &error_abort);
 
-    // Map system controller and NVIC
     sysbus_mmio_map(SYS_BUS_DEVICE(&m_state->sys), 0, 0x400fe000);
     sysbus_connect_irq(SYS_BUS_DEVICE(&m_state->sys), 0, qdev_get_gpio_in(DEVICE(&m_state->nvic), 28));
-
-    // Initialize memory regions
-    memory_region_init_rom(flash, NULL, "s32k3x8.flash", flash_size, &error_fatal);
-    memory_region_add_subregion(system_memory, 0, flash);
-    memory_region_init_ram(sram, NULL, "s32k3x8.sram", sram_size, &error_fatal);
-    memory_region_add_subregion(system_memory, 0x20000000, sram);
-
-    // Load firmware if specified
-    if (machine->firmware) {
-        s32k3x8_load_firmware(m_state->nvic.cpu, machine, flash, machine->firmware);
-    }
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Function to initialize the board class
-static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data)
-{
+static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
     MachineClass *mc = MACHINE_CLASS(oc);
     mc->name = g_strdup("S32K3X8EVB");
     mc->desc = "S32K3X8EVB Example Board";
@@ -157,19 +141,10 @@ static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data)
     mc->no_parallel = 1;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Define the board machine class
 struct S32K3X8ExampleBoardMachineClass {
     MachineClass parent_class;
 };
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Define the board machine type
 static const TypeInfo s32k3x8_example_board_machine_types = {
     .name           = TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE,
     .parent         = TYPE_MACHINE,
@@ -179,22 +154,13 @@ static const TypeInfo s32k3x8_example_board_machine_types = {
     .class_init     = s32k3x8_example_board_class_init,
 };
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Define the board machine type
 static const TypeInfo s32k3x8evb_sys_info = {
-        .name          = TYPE_S32K3X8EVB_SYS,
-        .parent        = TYPE_SYS_BUS_DEVICE,
-        .instance_size = sizeof(ssys_state),
+    .name          = TYPE_S32K3X8EVB_SYS,
+    .parent        = TYPE_SYS_BUS_DEVICE,
+    .instance_size = sizeof(ssys_state),
 };
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// Function to initialize the board machine
-static void s32k3x8evb_machine_init(void)
-{
+static void s32k3x8evb_machine_init(void) {
     type_register_static(&s32k3x8_example_board_machine_types);
     type_register_static(&s32k3x8evb_sys_info);
 }
