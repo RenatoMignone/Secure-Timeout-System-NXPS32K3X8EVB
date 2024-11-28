@@ -23,16 +23,17 @@
 #include "qom/object.h"
 #include "qapi/qmp/qlist.h"
 #include "ui/input.h"
+#include "qemu/typedefs.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Define of some functions useful in the code.
+// Define some functions useful in the code.
 int load_image_targphys(const char *filename, hwaddr addr, hwaddr size);
-//function for the error reporting
+// Function for error reporting
 void error_report(const char *fmt, ...);
-//function to load the firmware
+// Function to load the firmware
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename);
-//function to initialize the memory regions
+// Function to initialize the memory regions
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,10 +42,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define FLASH_BASE_ADDR  0x00000000  // Adjust based on datasheet specifics
 #define FLASH_SIZE       0x01000000  // Example: 16 MB for maximum flash size
 
-#define DFLASH_BASE_ADDR 0x10000000
-#define DFLASH_SIZE      0x00040000  // Example: 256 KB
-
-#define SRAM_BASE_ADDR   0x20000000
+#define SRAM_BASE_ADDR   0x10000000
 #define SRAM_SIZE        0x00240000  // Example: 2.25 MB
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +54,7 @@ typedef struct S32K3X8ExampleBoardMachineClass S32K3X8ExampleBoardMachineClass;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Creation of the syss_state struct that represents the state of the system
+// Creation of the syss_state struct that represents the state of the system
 struct ssys_state {
     SysBusDevice parent_obj;
     MemoryRegion iomem;
@@ -68,7 +66,7 @@ struct ssys_state {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Creation of the S32K3X8ExampleBoardMachineState struct that represents the state of the machine
+// Creation of the S32K3X8ExampleBoardMachineState struct that represents the state of the machine
 struct S32K3X8ExampleBoardMachineState {
     MachineState parent_obj;
     ssys_state sys;
@@ -78,16 +76,17 @@ typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Creation of the names of the board seen by qemu.
+// Creation of the names of the board seen by QEMU.
 #define TYPE_S32K3X8_EXAMPLE_BOARD_BASE_MACHINE MACHINE_TYPE_NAME("s32k3x8")
 #define TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE MACHINE_TYPE_NAME("s32k3x8-example-board")
 
 DECLARE_INSTANCE_CHECKER(S32K3X8ExampleBoardMachineState, S32K3X8_EXAMPLE_BOARD_MACHINE, TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE)
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//implementation of the function to load the firmware
+// Implementation of the function to load the firmware
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename) {
     int ret;
     hwaddr flash_size = memory_region_size(flash);
@@ -95,60 +94,65 @@ void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, c
         error_report("No firmware specified");
         exit(1);
     }
-    ret = load_image_targphys(firmware_filename, FLASH_BASE_ADDR, flash_size);
+    if (flash_size < FLASH_SIZE) {
+        error_report("Flash memory size mismatch: expected %u, got %lu", FLASH_SIZE, flash_size);
+        exit(1);
+    }
+    ret = load_image_targphys(firmware_filename, FLASH_BASE_ADDR, FLASH_SIZE);
     if (ret < 0) {
         error_report("Failed to load firmware image '%s'", firmware_filename);
         exit(1);
     }
-
     cpu_reset(CPU(cpu));
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//implementation of the function to initialize the memory regions
+// Implementation of the function to initialize the memory regions
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     MemoryRegion *flash = g_new(MemoryRegion, 1);
-    MemoryRegion *dflash = g_new(MemoryRegion, 1);
     MemoryRegion *sram = g_new(MemoryRegion, 1);
 
-    //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "Initializing memory regions...\n");
+    // Validate system memory
+    if (!system_memory) {
+        error_report("System memory region is NULL");
+        exit(1);
+    }
 
-    //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "Initialization of the flash memory...\n");
-    memory_region_init_rom(flash, NULL, "s32k3x8.flash", FLASH_SIZE, &error_fatal);
-    memory_region_add_subregion(system_memory, FLASH_BASE_ADDR, flash);
+    fprintf(stdout,"Initializing memory regions...\n\n");
 
-    //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "Initialization of the dflash memory...\n");
-    memory_region_init_ram(dflash, NULL, "s32k3x8.dflash", DFLASH_SIZE, &error_fatal);
-    memory_region_add_subregion(system_memory, DFLASH_BASE_ADDR, dflash);
+	// Flash memory initialization (Read-Only)
+	fprintf(stdout, "Initializing flash memory...\n\n");
+	memory_region_init_rom(flash, NULL, "s32k3x8.flash", FLASH_SIZE, &error_fatal);
+	memory_region_add_subregion(system_memory, FLASH_BASE_ADDR, flash);
 
-    //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "Initialization of the RAM memory...\n");
-    memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
-    memory_region_add_subregion(system_memory, SRAM_BASE_ADDR, sram);
+	// SRAM memory initialization (RAM - Read-Write)
+	fprintf(stdout, "Initializing SRAM memory...\n\n");
+	memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
+	memory_region_add_subregion_overlap(system_memory, SRAM_BASE_ADDR, sram, 0);
 
-    //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "Memory regions initialized.\n");
+	fprintf(stdout, "Memory regions initialized successfully.\n\n");
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //implementation of the function to initialize the board
 static void s32k3x8_example_board_init(MachineState *machine) {
+
     S32K3X8ExampleBoardMachineState *m_state = S32K3X8_EXAMPLE_BOARD_MACHINE(machine);
     MemoryRegion *system_memory = get_system_memory();
 
+    // Pass the system memory region to initialize subregions
     s32k3x8_initialize_memory_regions(system_memory);
+
 
     object_initialize_child(OBJECT(machine), "sys", &m_state->sys, TYPE_S32K3X8EVB_SYS);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->sys), &error_abort);
 
     //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "System controller realized.\n");
+    fprintf(stdout, "System controller realized.\n\n");
 
     object_initialize_child(OBJECT(machine), "nvic", &m_state->nvic, TYPE_ARMV7M);
     qdev_prop_set_uint32(DEVICE(&m_state->nvic), "num-irq", 64);
@@ -161,14 +165,14 @@ static void s32k3x8_example_board_init(MachineState *machine) {
     clock_set_ns(m_state->sys.sysclk, 40.69);
     qdev_connect_clock_in(DEVICE(&m_state->nvic), "cpuclk", m_state->sys.sysclk);
     //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "Clock initialized.\n");
+    fprintf(stdout, "Clock initialized.\n\n");
 
 
     object_property_set_link(OBJECT(&m_state->nvic), "memory", OBJECT(system_memory), &error_abort);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->nvic), &error_abort);
 
     //Process logging
-    qemu_log_mask(LOG_GUEST_ERROR, "NVIC realized.\n");
+    fprintf(stdout, "NVIC realized.\n\n");
     sysbus_mmio_map(SYS_BUS_DEVICE(&m_state->sys), 0, 0x400fe000);
     sysbus_connect_irq(SYS_BUS_DEVICE(&m_state->sys), 0, qdev_get_gpio_in(DEVICE(&m_state->nvic), 28));
 }
@@ -205,8 +209,6 @@ struct S32K3X8ExampleBoardMachineClass {
 static const TypeInfo s32k3x8_example_board_machine_types = {
     .name           = TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE,
     .parent         = TYPE_MACHINE,
-    .instance_size  = sizeof(S32K3X8ExampleBoardMachineState),
-    .instance_init  = (void (*)(Object *))s32k3x8_example_board_init,
     .class_size     = sizeof(S32K3X8ExampleBoardMachineClass),
     .class_init     = s32k3x8_example_board_class_init,
 };
