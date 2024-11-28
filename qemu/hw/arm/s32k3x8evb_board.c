@@ -68,7 +68,7 @@ struct ssys_state {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Creation of the S32K3X8ExampleBoardMachineState struct that represents the state of the machine
 struct S32K3X8ExampleBoardMachineState {
-    MachineState parent_obj;
+    MachineState *parent_obj;
     ssys_state sys;
     ARMv7MState nvic;
 };
@@ -139,40 +139,63 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //implementation of the function to initialize the board
-static void s32k3x8_example_board_init(MachineState *machine) {
+static void s32k3x8_example_board_init(MachineState *ms) {
+
+    DeviceState *nvic;
+    Object *soc_container;
+
     S32K3X8ExampleBoardMachineState *m_state = g_new0(S32K3X8ExampleBoardMachineState, 1);
+    m_state->parent_obj = ms;
     MemoryRegion *system_memory = get_system_memory();
 
     // Pass the system memory region to initialize subregions
     s32k3x8_initialize_memory_regions(system_memory);
 
-    object_initialize_child(OBJECT(machine), "sys", &m_state->sys, TYPE_S32K3X8EVB_SYS);
+    soc_container = object_new("container");
+    object_property_add_child(OBJECT(ms), "soc", soc_container);
+
+
+
+
+    object_initialize_child(OBJECT(ms), "sys", &m_state->sys, TYPE_S32K3X8EVB_SYS);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->sys), &error_abort);
+
+
+    DeviceState *syss_dev;
+    syss_dev = qdev_new(TYPE_S32K3X8EVB_SYS);
+    object_property_add_child(soc_container, "sys", OBJECT(syss_dev));
+    sysbus_realize_and_unref(SYS_BUS_DEVICE(syss_dev), &error_fatal);
+
+
+
 
     // Process logging
     fprintf(stdout, "System controller realized.\n\n");
 
-    object_initialize_child(OBJECT(machine), "nvic", &m_state->nvic, TYPE_ARMV7M);
-    qdev_prop_set_uint32(DEVICE(&m_state->nvic), "num-irq", 64);
-    qdev_prop_set_uint8(DEVICE(&m_state->nvic), "num-prio-bits", 3);
-    qdev_prop_set_string(DEVICE(&m_state->nvic), "cpu-type", "cortex-m7");
-    qdev_prop_set_bit(DEVICE(&m_state->nvic), "enable-bitband", true);
+    nvic = qdev_new(TYPE_ARMV7M);
+    object_property_add_child(soc_container, "v7m", OBJECT(nvic));
+    qdev_prop_set_uint32(nvic, "num-irq", 64);
+    qdev_prop_set_uint8(nvic, "num-prio-bits", 3);
+    qdev_prop_set_string(nvic, "cpu-type", m_state->parent_obj->cpu_type);
+    qdev_prop_set_bit(nvic, "enable-bitband", true);
 
     // CLOCK INITIALIZATION
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk");
     clock_set_ns(m_state->sys.sysclk, 40.69);
-    qdev_connect_clock_in(DEVICE(&m_state->nvic), "cpuclk", m_state->sys.sysclk);
+    qdev_connect_clock_in(nvic, "cpuclk", m_state->sys.sysclk);
 
     // Process logging
     fprintf(stdout, "Clock initialized.\n\n");
 
-    object_property_set_link(OBJECT(&m_state->nvic), "memory", OBJECT(system_memory), &error_abort);
-    sysbus_realize(SYS_BUS_DEVICE(&m_state->nvic), &error_abort);
+    object_property_set_link(OBJECT(nvic), "memory", OBJECT(get_system_memory()), &error_abort);
+    sysbus_realize_and_unref(SYS_BUS_DEVICE(nvic), &error_fatal);
 
     // Process logging
     fprintf(stdout, "NVIC realized.\n\n");
-    sysbus_mmio_map(SYS_BUS_DEVICE(&m_state->sys), 0, 0x400fe000);
-    sysbus_connect_irq(SYS_BUS_DEVICE(&m_state->sys), 0, qdev_get_gpio_in(DEVICE(&m_state->nvic), 28));
+    sysbus_mmio_map(SYS_BUS_DEVICE(syss_dev), 0, 0x400fe000);
+    sysbus_connect_irq(SYS_BUS_DEVICE(syss_dev), 0, qdev_get_gpio_in(nvic, 28));
+
+    fprintf(stdout,"System initialized.");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +207,7 @@ static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
     mc->desc = "S32K3X8EVB Example Board";
     mc->alias = "s32k3x8-example-board";
     mc->init = s32k3x8_example_board_init;
+    mc->default_cpu_type = ARM_CPU_TYPE_NAME("cortex-m7");
     mc->default_cpus = 1;
     mc->min_cpus = mc->default_cpus;
     mc->max_cpus = mc->default_cpus;
