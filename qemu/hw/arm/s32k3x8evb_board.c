@@ -140,18 +140,16 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //implementation of the function to initialize the board
 static void s32k3x8_example_board_init(MachineState *machine) {
-
-    S32K3X8ExampleBoardMachineState *m_state = S32K3X8_EXAMPLE_BOARD_MACHINE(machine);
+    S32K3X8ExampleBoardMachineState *m_state = g_new0(S32K3X8ExampleBoardMachineState, 1);
     MemoryRegion *system_memory = get_system_memory();
 
     // Pass the system memory region to initialize subregions
     s32k3x8_initialize_memory_regions(system_memory);
 
-
     object_initialize_child(OBJECT(machine), "sys", &m_state->sys, TYPE_S32K3X8EVB_SYS);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->sys), &error_abort);
 
-    //Process logging
+    // Process logging
     fprintf(stdout, "System controller realized.\n\n");
 
     object_initialize_child(OBJECT(machine), "nvic", &m_state->nvic, TYPE_ARMV7M);
@@ -160,18 +158,18 @@ static void s32k3x8_example_board_init(MachineState *machine) {
     qdev_prop_set_string(DEVICE(&m_state->nvic), "cpu-type", "cortex-m7");
     qdev_prop_set_bit(DEVICE(&m_state->nvic), "enable-bitband", true);
 
-    //CLOCK INITIALIZATION
+    // CLOCK INITIALIZATION
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk");
     clock_set_ns(m_state->sys.sysclk, 40.69);
     qdev_connect_clock_in(DEVICE(&m_state->nvic), "cpuclk", m_state->sys.sysclk);
-    //Process logging
-    fprintf(stdout, "Clock initialized.\n\n");
 
+    // Process logging
+    fprintf(stdout, "Clock initialized.\n\n");
 
     object_property_set_link(OBJECT(&m_state->nvic), "memory", OBJECT(system_memory), &error_abort);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->nvic), &error_abort);
 
-    //Process logging
+    // Process logging
     fprintf(stdout, "NVIC realized.\n\n");
     sysbus_mmio_map(SYS_BUS_DEVICE(&m_state->sys), 0, 0x400fe000);
     sysbus_connect_irq(SYS_BUS_DEVICE(&m_state->sys), 0, qdev_get_gpio_in(DEVICE(&m_state->nvic), 28));
