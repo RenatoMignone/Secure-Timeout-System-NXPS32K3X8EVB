@@ -39,11 +39,12 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Define constants for memory regions
-#define FLASH_BASE_ADDR  0x00000000  // Adjust based on datasheet specifics
-#define FLASH_SIZE       0x01000000  // Example: 16 MB for maximum flash size
+#define FLASH_BASE_ADDR  0x00000000  // Flash memory base address
+#define FLASH_SIZE       0x00C00000  // 12 MB program flash
 
-#define SRAM_BASE_ADDR   0x10000000
-#define SRAM_SIZE        0x00240000  // Example: 2.25 MB
+#define SRAM_BASE_ADDR   0x20400000  // SRAM base address
+#define SRAM_SIZE        0x00240000  // 2.25 MB SRAM
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,28 +87,6 @@ DECLARE_INSTANCE_CHECKER(S32K3X8ExampleBoardMachineState, S32K3X8_EXAMPLE_BOARD_
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementation of the function to load the firmware
-void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename) {
-    int ret;
-    hwaddr flash_size = memory_region_size(flash);
-    if (!firmware_filename) {
-        error_report("No firmware specified");
-        exit(1);
-    }
-    if (flash_size < FLASH_SIZE) {
-        error_report("Flash memory size mismatch: expected %u, got %lu", FLASH_SIZE, flash_size);
-        exit(1);
-    }
-    ret = load_image_targphys(firmware_filename, FLASH_BASE_ADDR, FLASH_SIZE);
-    if (ret < 0) {
-        error_report("Failed to load firmware image '%s'", firmware_filename);
-        exit(1);
-    }
-    cpu_reset(CPU(cpu));
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation of the function to initialize the memory regions
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     MemoryRegion *flash = g_new(MemoryRegion, 1);
@@ -118,8 +97,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
         error_report("System memory region is NULL");
         exit(1);
     }
-
-    fprintf(stdout,"Initializing memory regions...\n\n");
 
 	// Flash memory initialization (Read-Only)
 	fprintf(stdout, "Initializing flash memory...\n\n");
@@ -141,62 +118,87 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 //implementation of the function to initialize the board
 static void s32k3x8_example_board_init(MachineState *ms) {
 
-    DeviceState *nvic;
+    DeviceState *nvic, *uart_dev, *pit_timer;
     Object *soc_container;
+    DeviceState *syss_dev;
+    SysBusDevice *uart;
 
+    // Process logging
+    fprintf(stdout, "Instantiating the Machine\n\n");
+
+    // Machine state initialization
     S32K3X8ExampleBoardMachineState *m_state = g_new0(S32K3X8ExampleBoardMachineState, 1);
     m_state->parent_obj = ms;
     MemoryRegion *system_memory = get_system_memory();
 
-    // Pass the system memory region to initialize subregions
+    // Initialize memory regions (flash, SRAM, etc.)
+    fprintf(stdout, "Initializing memory regions...\n\n");
     s32k3x8_initialize_memory_regions(system_memory);
 
+    // Create container for the SoC
     soc_container = object_new("container");
     object_property_add_child(OBJECT(ms), "soc", soc_container);
 
-
-
-
+    // Initialize and add the system controller (sys state)
     object_initialize_child(OBJECT(ms), "sys", &m_state->sys, TYPE_S32K3X8EVB_SYS);
     sysbus_realize(SYS_BUS_DEVICE(&m_state->sys), &error_abort);
-
-
-    DeviceState *syss_dev;
     syss_dev = qdev_new(TYPE_S32K3X8EVB_SYS);
     object_property_add_child(soc_container, "sys", OBJECT(syss_dev));
     sysbus_realize_and_unref(SYS_BUS_DEVICE(syss_dev), &error_fatal);
-
-
-
-
-    // Process logging
     fprintf(stdout, "System controller realized.\n\n");
 
-    nvic = qdev_new(TYPE_ARMV7M);
-    object_property_add_child(soc_container, "v7m", OBJECT(nvic));
-    qdev_prop_set_uint32(nvic, "num-irq", 64);
-    qdev_prop_set_uint8(nvic, "num-prio-bits", 3);
-    qdev_prop_set_string(nvic, "cpu-type", m_state->parent_obj->cpu_type);
-    qdev_prop_set_bit(nvic, "enable-bitband", true);
 
     // CLOCK INITIALIZATION
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk");
-    clock_set_ns(m_state->sys.sysclk, 40.69);
-    qdev_connect_clock_in(nvic, "cpuclk", m_state->sys.sysclk);
-
-    // Process logging
+    clock_set_ns(m_state->sys.sysclk, 40.69); // Example: 40.69ns (24.5MHz)
     fprintf(stdout, "Clock initialized.\n\n");
 
+
+    // Initialize NVIC
+    nvic = qdev_new(TYPE_ARMV7M);
+    object_property_add_child(soc_container, "v7m", OBJECT(nvic));
+    qdev_prop_set_uint32(nvic, "num-irq", 128); // Adjusted for S32K3X8
+    qdev_prop_set_uint8(nvic, "num-prio-bits", 4); // Adjusted priority bits
+    qdev_connect_clock_in(nvic, "cpuclk", m_state->sys.sysclk);
+    qdev_prop_set_string(nvic, "cpu-type", m_state->parent_obj->cpu_type);
+    qdev_prop_set_bit(nvic, "enable-bitband", true);
+
+    // Connect the NVIC to the system memory
     object_property_set_link(OBJECT(nvic), "memory", OBJECT(get_system_memory()), &error_abort);
     sysbus_realize_and_unref(SYS_BUS_DEVICE(nvic), &error_fatal);
-
-    // Process logging
     fprintf(stdout, "NVIC realized.\n\n");
-    sysbus_mmio_map(SYS_BUS_DEVICE(syss_dev), 0, 0x400fe000);
-    sysbus_connect_irq(SYS_BUS_DEVICE(syss_dev), 0, qdev_get_gpio_in(nvic, 28));
 
-    fprintf(stdout,"System initialized.");
+
+
+    // Initialize UART
+    uart_dev = qdev_new("pl011"); // Using Arm PL011 UART model
+    uart = SYS_BUS_DEVICE(uart_dev);
+    object_property_add_child(soc_container, "uart[*]", OBJECT(uart_dev));
+    qdev_prop_set_chr(uart_dev, "chardev", serial_hd(0));
+    sysbus_realize_and_unref(uart, &error_fatal);
+    sysbus_mmio_map(uart, 0, 0x4006A000); // Base address for UART
+    sysbus_connect_irq(uart, 0, qdev_get_gpio_in(nvic, 32)); // Connect to NVIC IRQ 32
+    fprintf(stdout, "UART initialized and connected to NVIC.\n\n");
+
+    // Initialize PIT Timer
+    pit_timer = qdev_new("sp804"); // Using Dual-Timer model as an example
+    sysbus_mmio_map(SYS_BUS_DEVICE(pit_timer), 0, 0x40037000); // Base address for PIT timer
+    sysbus_realize_and_unref(SYS_BUS_DEVICE(pit_timer), &error_fatal);
+    sysbus_connect_irq(SYS_BUS_DEVICE(pit_timer), 0, qdev_get_gpio_in(nvic, 48)); // Connect to NVIC IRQ 48
+    fprintf(stdout, "PIT timer initialized and connected to NVIC.\n\n");
+
+
+
+    // Load firmware into flash memory
+    armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, 0, FLASH_SIZE);
+    fprintf(stdout, "Firmware loaded into flash memory.\n\n");
+
+    // Final initialization logging
+    fprintf(stdout, "System initialized.\n");
 }
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,8 +206,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
     MachineClass *mc = MACHINE_CLASS(oc);
     mc->name = g_strdup("S32K3X8EVB");
-    mc->desc = "S32K3X8EVB Example Board";
-    mc->alias = "s32k3x8-example-board";
+    mc->desc = "NXP S32K3X8 EVB Board";
     mc->init = s32k3x8_example_board_init;
     mc->default_cpu_type = ARM_CPU_TYPE_NAME("cortex-m7");
     mc->default_cpus = 1;
@@ -220,9 +221,9 @@ static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //implementation of the machine class
-struct S32K3X8ExampleBoardMachineClass {
-    MachineClass parent_class;
-};
+//struct S32K3X8ExampleBoardMachineClass {
+//    MachineClass parent_class;
+//};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +232,7 @@ struct S32K3X8ExampleBoardMachineClass {
 static const TypeInfo s32k3x8_example_board_machine_types = {
     .name           = TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE,
     .parent         = TYPE_MACHINE,
-    .class_size     = sizeof(S32K3X8ExampleBoardMachineClass),
+//    .class_size     = sizeof(S32K3X8ExampleBoardMachineClass),
     .class_init     = s32k3x8_example_board_class_init,
 };
 
