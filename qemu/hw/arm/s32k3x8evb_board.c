@@ -205,8 +205,8 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 //implementation of the class init function
 static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
     MachineClass *mc = MACHINE_CLASS(oc);
-    mc->name = g_strdup("S32K3X8EVB");
-    mc->desc = "NXP S32K3X8 EVB Board";
+    mc->name = g_strdup("s32k3x8evb");
+    mc->desc = "NXP S32K3X8 EVB (Cortex-M7)";
     mc->init = s32k3x8_example_board_init;
     mc->default_cpu_type = ARM_CPU_TYPE_NAME("cortex-m7");
     mc->default_cpus = 1;

@@ -49,13 +49,46 @@ QEMU is multi-platform software intended to be buildable on all modern
 Linux platforms, OS-X, Win32 (via the Mingw64 toolchain) and a variety
 of other UNIX targets. The simple steps to build QEMU are:
 
+## 1.Install Dependencies
+
+Before you start, make sure the required build dependencies are installed.
 
 .. code-block:: shell
 
-  mkdir build
-  cd build
-  ../configure
-  make
+        sudo apt update
+        sudo apt install -y build-essential pkg-config libglib2.0-dev \
+        libfdt-dev libpixman-1-dev ninja-build
+
+## 2.Configure QEMU for your desired target
+
+Run the following command to configure QEMU for ARM
+
+.. code-block:: shell
+
+        ../configure --target-list=arm-softmmu
+   
+## 3.Build QEMU using ninja
+
+Now, use the following command to build QEMU with ninja. This command will speed up the process by using ninja instead of make:
+
+.. code-block:: shell
+
+        ninja -C build qemu-system-arm -j$(nproc)
+
+## 4.Verify the available machines after the build process is complete:
+
+Run the folowing command to list the available machines:
+
+.. code-block:: shell
+
+   ./qemu-system-arm -machine help
+
+If everything is set up correctly, you should see the following entry in the list of supported machines:
+
+.. code-block:: shell
+
+   s32k3x8evb           NXP S32K3X8 EVB (Cortex-M7)
+
 
 Additional information can also be found online via the QEMU website:
 
