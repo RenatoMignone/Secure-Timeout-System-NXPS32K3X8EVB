@@ -121,7 +121,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 //implementation of the function to initialize the board
 static void s32k3x8_example_board_init(MachineState *ms) {
 
-    DeviceState *nvic, *uart_dev, *pit_timer;
+    DeviceState *nvic, *uart_dev; //*pit_timer;
     Object *soc_container;
     DeviceState *syss_dev;
     SysBusDevice *uart;
