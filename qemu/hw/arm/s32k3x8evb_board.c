@@ -184,12 +184,12 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     fprintf(stdout, "UART initialized and connected to NVIC.\n\n");
 
     // Initialize PIT Timer
-    pit_timer = qdev_new("sp804"); // Using Dual-Timer model as an example
+   /* pit_timer = qdev_new("sp804"); // Using Dual-Timer model as an example
     sysbus_mmio_map(SYS_BUS_DEVICE(pit_timer), 0, 0x40037000); // Base address for PIT timer
     sysbus_realize_and_unref(SYS_BUS_DEVICE(pit_timer), &error_fatal);
     sysbus_connect_irq(SYS_BUS_DEVICE(pit_timer), 0, qdev_get_gpio_in(nvic, 48)); // Connect to NVIC IRQ 48
     fprintf(stdout, "PIT timer initialized and connected to NVIC.\n\n");
-
+*/
 
 
     // Load firmware into flash memory
