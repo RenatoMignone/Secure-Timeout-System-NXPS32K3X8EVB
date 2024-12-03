@@ -248,6 +248,10 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     // Configure the UART to use the first QEMU serial backend
     qdev_prop_set_chr(uart_dev, "chardev", serial_hd(0));
 
+    Clock *uart_clk = qdev_get_clock_in(uart_dev, "clk"); // Get the clock input by name
+    clock_set_hz(uart_clk, 24000000); // Set the clock frequency to 24 MHz (typical for PL011)
+    qdev_connect_clock_in(uart_dev, "clk", uart_clk); // Connect the clock to the UART device
+
     // Realize and activate the UART device
     sysbus_realize_and_unref(uart, &error_fatal);
 
