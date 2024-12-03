@@ -66,6 +66,7 @@ struct ssys_state {
     uint32_t rcc2;
     qemu_irq irq;
     Clock *sysclk;
+    Clock *refclk;
 };
 
 
@@ -188,9 +189,11 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*--------------------------------------------------------------------------------------*/
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
-
     // Set the clock period to 40.69ns (equivalent to 24.5MHz frequency)
     clock_set_ns(m_state->sys.sysclk, 40.69);
+
+    m_state->sys.refclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "refclk");
+    clock_set_hz(m_state->sys.refclk, 1000000);
 
     // Log the successful clock initialization
     fprintf(stdout, "Clock initialized.\n\n");
@@ -214,6 +217,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 
     // Connect the NVIC to the system clock
     qdev_connect_clock_in(nvic, "cpuclk", m_state->sys.sysclk);
+    qdev_connect_clock_in(nvic, "refclk", m_state->sys.refclk);
 
     // Set the CPU type for the NVIC (retrieved from the machine state)
     //In particular we are setting the cortex-m7 cpu type
