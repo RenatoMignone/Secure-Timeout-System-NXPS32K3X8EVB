@@ -1,11 +1,11 @@
 # The directory that contains FreeRTOS source code
-FREERTOS_ROOT := ../../../../../CAOS/FreeRTOS/FreeRTOS/
+FREERTOS_ROOT := ../../../FreeRTOS/FreeRTOS/
 
 # Demo code
 DEMO_PROJECT := .
 
 # FreeRTOS kernel
-KERNEL_DIR := $(FREERTOS_ROOT)Source
+KERNEL_DIR := $(FREERTOS_ROOT)/Source
 KERNEL_PORT_DIR := $(KERNEL_DIR)/portable/GCC/ARM_CM7/r0p1
 
 # Where to store all the generated files (objects, elf and map)
@@ -135,13 +135,11 @@ cleanobj:
 clean:
 	rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
 
-qemu_start:
-	qemu-system-arm -machine $(MACHINE) -cpu $(CPU) -kernel \
-	$(ELF) -monitor none -nographic -serial stdio
-
 qemu_debug:
-	qemu-system-arm -machine $(MACHINE) -cpu $(CPU) -kernel \
-	$(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
+	../qemu/build/qemu-system-arm -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
+
 gdb_start:
 	gdb-multiarch $(ELF)
 
+qemu_start:
+	../qemu/build/qemu-system-arm -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio
