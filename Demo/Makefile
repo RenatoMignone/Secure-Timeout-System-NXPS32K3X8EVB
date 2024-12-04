@@ -1,5 +1,5 @@
 # The directory that contains FreeRTOS source code
-FREERTOS_ROOT := ../../../FreeRTOS/FreeRTOS/
+FREERTOS_ROOT := ../FreeRTOS/FreeRTOS/
 
 # Demo code
 DEMO_PROJECT := .
@@ -19,6 +19,9 @@ MAP := $(OUTPUT_DIR)/$(DEMO_NAME).map
 CC := arm-none-eabi-gcc
 LD := arm-none-eabi-gcc
 SIZE := arm-none-eabi-size
+
+#Emulator used for ARM systems
+QEMU := ../qemu/build/qemu-system-arm
 
 # Target embedded board and CPU
 MACHINE := s32k3x8evb 
@@ -89,7 +92,7 @@ LDFLAGS += -Xlinker -Map=$(MAP)
 # optimized memory. Pass option to the linker (-Xlinker)
 LDFLAGS += -Xlinker --gc-sections
 
-# Link specifically for Cortex-M7 and thumb instruction set
+# Link specifically for Cortex-M7 and thumb instruction set and floating point
 LDFLAGS += -mcpu=$(CPU)
 LDFLAGS += -mthumb
 LDFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
@@ -135,11 +138,13 @@ cleanobj:
 clean:
 	rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
 
-qemu_debug:
-	../qemu/build/qemu-system-arm -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
+qemu_start:
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel \
+	$(ELF) -monitor none -nographic -serial stdio
 
+qemu_debug:
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel \
+	$(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
 gdb_start:
 	gdb-multiarch $(ELF)
 
-qemu_start:
-	../qemu/build/qemu-system-arm -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio

@@ -74,8 +74,8 @@ trace-*
 # FreeRTOS-Specific Ignore Patterns
 # =============================
 
-# Build Directory
-freertos/build/
+# FreeRTOS Directory
+freertos/
 
 # FreeRTOS Kernel Binaries
 *.o
