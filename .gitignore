@@ -118,12 +118,6 @@ __pycache__/
 # Other Patterns
 # ==============
 
-# CMake
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-*.cmake
 
 # Coverage
 *.gcno
