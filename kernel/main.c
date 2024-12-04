@@ -1,4 +1,6 @@
 #include "FreeRTOS.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 #include <task.h>
 #include <uart.h>
@@ -7,7 +9,6 @@
 
 
 void task1(void *pvParameters);
-
 
 int main(int argc, char **argv){
 
@@ -38,7 +39,8 @@ void task1(void *pvParameters){
 
   for(;;){
 	
-    UART_printf("ciao");	
+    UART_printf("Hello, UART is working!\n");
+    vTaskDelay(pdMS_TO_TICKS(1000));  // Ritardo di 1 secondo
 	
     }
   }
