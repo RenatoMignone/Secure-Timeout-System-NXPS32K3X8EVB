@@ -16,7 +16,7 @@
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * IN AN ACTION OF CONTRACT, TORT or OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * https://www.FreeRTOS.org
@@ -39,6 +39,11 @@
 * See http://www.freertos.org/a00110.html
 *----------------------------------------------------------*/
 
+/* Ensure __NVIC_PRIO_BITS is defined (needed for interrupt priority calculations) */
+#ifndef __NVIC_PRIO_BITS
+#define __NVIC_PRIO_BITS 4  /* Cortex-M7 uses 4 priority bits */
+#endif
+
 #define configUSE_TRACE_FACILITY                 0
 #define configGENERATE_RUN_TIME_STATS            0
 
@@ -47,7 +52,7 @@
 #define configUSE_TICK_HOOK                      0
 #define configCPU_CLOCK_HZ                       ( ( unsigned long ) 25000000 )
 #define configTICK_RATE_HZ                       ( ( TickType_t ) 1000 )
-#define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 80 )
+#define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 128 )
 #define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 60 * 1024 ) )
 #define configMAX_TASK_NAME_LEN                  ( 12 )
 #define configUSE_TRACE_FACILITY                 0
@@ -101,19 +106,15 @@
  * FreeRTOS/Source/tasks.c for limitations. */
 #define configUSE_STATS_FORMATTING_FUNCTIONS      0
 
-#define configKERNEL_INTERRUPT_PRIORITY           ( 255 )        /* All eight bits as QEMU doesn't model the priority bits. */
+#define configKERNEL_INTERRUPT_PRIORITY           ( 255 )        /* Highest priority for the kernel interrupt */
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY      ( 5 << (8 - __NVIC_PRIO_BITS) )  /* Adjust based on priority bits in NVIC */
 
 #ifndef __IASMARM__ /* Prevent C code being included in IAR asm files. */
 	#define configASSERT( x ) if( ( x ) == 0 ) while(1);
 #endif
 
-
 /* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
  * See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY             ( 4 )
-
-/* Use the Cortex-M3 optimised task selection rather than the generic C code
- * version. */
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION          1
 
 /* The Win32 target is capable of running all the tests tasks at the same
@@ -132,3 +133,4 @@
 #define configENABLE_BACKWARD_COMPATIBILITY 0
 
 #endif /* FREERTOS_CONFIG_H */
+

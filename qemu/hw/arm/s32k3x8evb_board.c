@@ -128,7 +128,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*------------Declaration of pointers for various QEMU device models--------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    DeviceState *nvic, *uart_dev, *pit_timer; // Device models for NVIC, UART, PIT timer
+    DeviceState *nvic; //, *uart_dev, *pit_timer; // Device models for NVIC, UART, PIT timer
     Object *soc_container; // Container object for the System-on-Chip (SoC)
     DeviceState *syss_dev; // Device state for the system controller
     SysBusDevice *uart; // UART device as a system bus device
@@ -243,31 +243,8 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*--------------------------Initialize the UART device----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    uart_dev = qdev_new("pl011"); // Create a new UART device using the PL011 model
+    pl011_create(UART_BASE_ADDR, qdev_get_gpio_in(nvic, 48), serial_hd(0));
 
-    // Cast the UART device as a system bus device
-    uart = SYS_BUS_DEVICE(uart_dev);
-
-    // Add the UART device as a child of the SoC container
-    object_property_add_child(soc_container, "uart[*]", OBJECT(uart_dev));
-
-    // Configure the UART to use the first QEMU serial backend
-    qdev_prop_set_chr(uart_dev, "chardev", serial_hd(0));
-
-    Clock *uart_clk = qdev_get_clock_in(uart_dev, "clk"); // Get the clock input by name
-    clock_set_hz(uart_clk, 24000000); // Set the clock frequency to 24 MHz (typical for PL011)
-    qdev_connect_clock_in(uart_dev, "clk", uart_clk); // Connect the clock to the UART device
-
-    // Realize and activate the UART device
-    sysbus_realize_and_unref(uart, &error_fatal);
-
-    memory_region_add_subregion(get_system_memory(), UART_BASE_ADDR,sysbus_mmio_get_region(uart, 0));
-
-//    // Map the UART's memory-mapped I/O to a specific base address
-//    sysbus_mmio_map(uart, 0, 0x4006A000); // Base address: 0x4006A000
-
-    // Connect the UART's interrupt output to NVIC IRQ 32
-    sysbus_connect_irq(uart, 0, qdev_get_gpio_in(nvic, 32));
 
     // Log the successful initialization of the UART
     fprintf(stdout, "UART initialized and connected to NVIC.\n\n");

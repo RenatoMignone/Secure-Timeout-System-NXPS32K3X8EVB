@@ -1,6 +1,4 @@
 #include "FreeRTOS.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <limits.h>
 #include <task.h>
 #include <uart.h>
@@ -40,7 +38,7 @@ void task1(void *pvParameters){
 
   for(;;){
 	
-	UART_printf("Hello world!\n");	
+    UART_printf("ciao");	
 	
     }
   }
