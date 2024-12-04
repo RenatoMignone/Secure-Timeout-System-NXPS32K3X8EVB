@@ -21,7 +21,7 @@ LD := arm-none-eabi-gcc
 SIZE := arm-none-eabi-size
 
 # Target embedded board and CPU
-MACHINE := mps2-an385 
+MACHINE := s32k3x8evb 
 CPU := cortex-m7
 
 # Use -s to connect to gdb port 1234 and -S to wait before executing
