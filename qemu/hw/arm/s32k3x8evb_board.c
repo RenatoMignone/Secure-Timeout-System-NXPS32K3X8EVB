@@ -47,6 +47,8 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM_BASE_ADDR   0x20400000  // SRAM base address
 #define SRAM_SIZE        0x00240000  // 2.25 MB SRAM
 
+#define UART_BASE_ADDR   0x4006A000  // UART base address
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,8 +261,10 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     // Realize and activate the UART device
     sysbus_realize_and_unref(uart, &error_fatal);
 
-    // Map the UART's memory-mapped I/O to a specific base address
-    sysbus_mmio_map(uart, 0, 0x4006A000); // Base address: 0x4006A000
+    memory_region_add_subregion(get_system_memory(), UART_BASE_ADDR,sysbus_mmio_get_region(uart, 0));
+
+//    // Map the UART's memory-mapped I/O to a specific base address
+//    sysbus_mmio_map(uart, 0, 0x4006A000); // Base address: 0x4006A000
 
     // Connect the UART's interrupt output to NVIC IRQ 32
     sysbus_connect_irq(uart, 0, qdev_get_gpio_in(nvic, 32));

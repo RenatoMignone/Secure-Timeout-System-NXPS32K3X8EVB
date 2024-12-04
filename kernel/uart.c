@@ -1,27 +1,26 @@
 #include "uart.h"
 
+// Initialize UART
 void UART_init(void)
 {
-    // Set baud rate (Example: setting for 9600 baud rate with a system clock of 24MHz)
-    // For a baud rate of 9600, you need to calculate the baud divisor.
-    // This depends on your system clock, so adjust this part according to your platform.
+    // Set baud rate (Example: setting for 9600 baud rate with a system clock of 24 MHz)
+    // Formula: Divisor = System Clock / (16 * Baud Rate)
+    // For 24 MHz clock and 9600 baud rate:
+    // Divisor = 24,000,000 / (16 * 9600) = 156.25, so we round to 156
 
-    // Example calculation for 9600 baud rate:
-    // If system clock is 24 MHz:
-    // Divisor = 24000000 / 9600 = 2500 (This is just an example, modify as per your clock).
+    UART0_BAUDDIV = 156;  // Set baud rate divisor (this is the correct divisor for 9600 baud)
 
-    UART0_BAUDDIV = 2500;  // Set baud rate divisor (this needs adjustment as per your clock)
-
-    // Enable UART, TX, and RX
-    UART0_CTRL = 0x301;  // Enable UART, Transmitter and Receiver (Check exact bit values for your platform)
+    // Enable UART, Transmitter, and Receiver (check specific bit values for your platform)
+    UART0_CTRL = 0x301;  // Enable UART, Transmitter, and Receiver for pl011 or similar
 }
 
+// UART printf function for sending characters over UART
 void UART_printf(const char *s)
 {
     while (*s != '\0') {
         // Wait for the UART to be ready to transmit (TX FIFO empty)
-        while (UART0_STATE & (1 << 5)) {  // TXFE (Transmit FIFO Empty) bit is 1 when TX is ready
-            // Busy-wait until TX is empty and ready for new data
+        while (UART0_STATE & (1 << 5)) {  // TXFE (Transmit FIFO Empty) bit
+            // Busy-wait until TX FIFO is empty and ready for new data
         }
 
         // Send the character to UART0_DATA register
@@ -29,4 +28,3 @@ void UART_printf(const char *s)
         s++;  // Move to the next character
     }
 }
-
