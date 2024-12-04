@@ -4,3 +4,7 @@ qemu_debug:
 gdb_start:
 	gdb-multiarch ../kernel/Output/demo.elf
 
+qemu_start:
+	../qemu/build/qemu-system-arm -machine s32k3x8evb -cpu cortex-m7 -kernel ../kernel/Output/demo.elf -monitor none -nographic -serial stdio
+
+
