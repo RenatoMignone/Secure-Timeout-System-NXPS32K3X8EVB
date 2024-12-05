@@ -12,6 +12,7 @@
 #include "hw/boards.h"
 #include "qemu/log.h"
 #include "exec/address-spaces.h"
+#include "hw/timer/cmsdk-apb-timer.h"
 #include "sysemu/sysemu.h"
 #include "hw/arm/armv7m.h"
 #include "hw/char/pl011.h"
@@ -48,6 +49,8 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM_SIZE        0x00240000  // 2.25 MB SRAM
 
 #define UART_BASE_ADDR   0x4006A000  // UART base address
+
+#define PIT_TIMER_BASE_ADDR    0x40037000  // PIT base address
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +131,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*------------Declaration of pointers for various QEMU device models--------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    DeviceState *nvic; //, *uart_dev, *pit_timer; // Device models for NVIC, UART, PIT timer
+    DeviceState *nvic, *pit_timer; // Device models for NVIC and PIT timer
     Object *soc_container; // Container object for the System-on-Chip (SoC)
     DeviceState *syss_dev; // Device state for the system controller
     SysBusDevice *uart; // UART device as a system bus device
@@ -255,13 +258,16 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    /*
-    pit_timer = qdev_new("sp804"); // Create a new PIT timer using the SP804 model
-    sysbus_mmio_map(SYS_BUS_DEVICE(pit_timer), 0, 0x40037000); // Base address: 0x40037000
-    sysbus_realize_and_unref(SYS_BUS_DEVICE(pit_timer), &error_fatal);
-    sysbus_connect_irq(SYS_BUS_DEVICE(pit_timer), 0, qdev_get_gpio_in(nvic, 48)); // Connect to NVIC IRQ 48
-    fprintf(stdout, "PIT timer initialized and connected to NVIC.\n\n");
-    */
+
+//    sysbus_create_simple("sp804", PIT_TIMER_BASE_ADDR, qdev_get_gpio_in(nvic, 10));
+
+    pit_timer = qdev_new(TYPE_CMSDK_APB_TIMER);
+    SysBusDevice *sbd;
+    sbd = SYS_BUS_DEVICE(pit_timer);
+    qdev_connect_clock_in(DEVICE(pit_timer), "pclk", m_state->sys.sysclk);
+    sysbus_realize_and_unref(sbd, &error_fatal);
+    sysbus_mmio_map(sbd, 0, PIT_TIMER_BASE_ADDR);
+    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 10));
 
 
     /*--------------------------------------------------------------------------------------*/
@@ -318,3 +324,4 @@ static void s32k3x8evb_machine_init(void) {
 type_init(s32k3x8evb_machine_init);
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
+

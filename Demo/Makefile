@@ -1,5 +1,5 @@
 # The directory that contains FreeRTOS source code
-FREERTOS_ROOT := ../FreeRTOS/FreeRTOS/
+FREERTOS_ROOT := ../../FreeRTOS/FreeRTOS/
 
 # Demo code
 DEMO_PROJECT := .
@@ -102,6 +102,10 @@ SOURCE_FILES += $(KERNEL_DIR)/list.c
 SOURCE_FILES += $(KERNEL_DIR)/tasks.c
 SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
 SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
+SOURCE_FILES += $(KERNEL_DIR)/queue.c
+SOURCE_FILES += $(KERNEL_DIR)/timers.c
+SOURCE_FILES += $(KERNEL_DIR)/event_groups.c
+SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
 
 # Demo files
 SOURCE_FILES += $(DEMO_PROJECT)/main.c

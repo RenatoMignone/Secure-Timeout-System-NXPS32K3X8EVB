@@ -10,6 +10,10 @@ MEMORY
     SRAM  (rwx) : ORIGIN = 0x20400000, LENGTH = 2M /* SRAM */
 }
 
+_Min_Heap_Size = 0x8 ;        /* Not used as building heap_4.c */
+_Min_Stack_Size = 0x400 ;       /* Required amount of stack.  Used by main(), then re-used as the interrupt stack after the kernel starts. */
+_estack = ORIGIN(RAM) + LENGTH(RAM);
+
 /* Define sections */
 SECTIONS
 {
@@ -52,14 +56,17 @@ SECTIONS
     } > SRAM
 
     /* Heap section */
-    ._user_heap :
+    .heap :
     {
         . = ALIGN(8);
-        _sheap = .;               /* Start of heap */
-        . += 0x20000;             /* Heap size (adjust as needed) */
-        _eheap = .;               /* End of heap */
-    } > SRAM
-
+        PROVIDE ( end = . );
+        PROVIDE ( _end = . );
+        _heap_bottom = .;
+        . = . + _Min_Heap_Size;
+        _heap_top = .;
+        . = . + _Min_Stack_Size;
+        . = ALIGN(8);
+     } > SRAM
     /* End of memory layout */
     _end = .;
 }
@@ -69,4 +76,5 @@ ENTRY(Reset_Handler)
 
 /* Provide stack information */
 PROVIDE(_stack = _estack);
+
 

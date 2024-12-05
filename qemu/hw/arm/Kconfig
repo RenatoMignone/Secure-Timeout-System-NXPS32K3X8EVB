@@ -3,6 +3,7 @@ config S32K3X8EVB
     default y
     depends on TCG && ARM
     select ARM_V7M
+    select ARM_TIMER # sp804
     select PL011 if !HAVE_RUST # UART
 
 
