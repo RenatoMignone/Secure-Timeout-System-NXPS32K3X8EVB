@@ -131,10 +131,9 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*------------Declaration of pointers for various QEMU device models--------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    DeviceState *nvic, *pit_timer; // Device models for NVIC and PIT timer
+    DeviceState *nvic; // Device models for NVIC and PIT timer
     Object *soc_container; // Container object for the System-on-Chip (SoC)
     DeviceState *syss_dev; // Device state for the system controller
-    SysBusDevice *uart; // UART device as a system bus device
 
     fprintf(stdout, "Instantiating the Machine\n\n");
 
@@ -259,15 +258,17 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*--------------------------------------------------------------------------------------*/
 
 
-//    sysbus_create_simple("sp804", PIT_TIMER_BASE_ADDR, qdev_get_gpio_in(nvic, 10));
+    sysbus_create_simple("sp804", PIT_TIMER_BASE_ADDR, qdev_get_gpio_in(nvic, 48));
 
+
+    /*  DeviceState *pit_timer;
     pit_timer = qdev_new(TYPE_CMSDK_APB_TIMER);
     SysBusDevice *sbd;
     sbd = SYS_BUS_DEVICE(pit_timer);
     qdev_connect_clock_in(DEVICE(pit_timer), "pclk", m_state->sys.sysclk);
     sysbus_realize_and_unref(sbd, &error_fatal);
     sysbus_mmio_map(sbd, 0, PIT_TIMER_BASE_ADDR);
-    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 10));
+    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 48));*/
 
 
     /*--------------------------------------------------------------------------------------*/

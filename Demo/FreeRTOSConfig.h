@@ -77,7 +77,7 @@
 #define configUSE_TIMERS                         1
 ///////////////////////////////////////// CHANGED THIS ONE
 #define configTIMER_TASK_PRIORITY                ( configMAX_PRIORITIES -4 )
-#define configTIMER_QUEUE_LENGTH                 10
+#define configTIMER_QUEUE_LENGTH                 20
 #define configTIMER_TASK_STACK_DEPTH             ( configMINIMAL_STACK_SIZE * 2 )
 
 #define configUSE_TASK_NOTIFICATIONS             1
