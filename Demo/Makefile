@@ -5,7 +5,7 @@ FREERTOS_ROOT := ../../../../CAOS/FreeRTOS/FreeRTOS/
 DEMO_PROJECT := .
 
 # FreeRTOS kernel
-KERNEL_DIR := $(FREERTOS_ROOT)/Source
+KERNEL_DIR := $(FREERTOS_ROOT)Source
 KERNEL_PORT_DIR := $(KERNEL_DIR)/portable/GCC/ARM_CM7/r0p1
 
 # Where to store all the generated files (objects, elf and map)
@@ -151,4 +151,9 @@ qemu_debug:
 	$(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
 gdb_start:
 	gdb-multiarch $(ELF)
+qemu_monitor:
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio $(QEMU_FLAGS_DBG)
+
+
+
 
