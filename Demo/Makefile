@@ -1,5 +1,5 @@
 # The directory that contains FreeRTOS source code
-FREERTOS_ROOT := ../../../../CAOS/FreeRTOS/FreeRTOS/
+FREERTOS_ROOT := ../../FreeRTOS/FreeRTOS/
 
 # Demo code
 DEMO_PROJECT := .
@@ -110,6 +110,8 @@ SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
 # Demo files
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/uart.c
+SOURCE_FILES += $(DEMO_PROJECT)/IntTimer.c
+SOURCE_FILES += $(DEMO_PROJECT)/sp804_timer.c
 
 # Start-up code
 SOURCE_FILES += ./startup.c

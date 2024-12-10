@@ -3,40 +3,43 @@
 #include "uart.h"
 #include "queue.h"
 #include "timers.h"
+#include "IntTimer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-
-
 
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY +2)
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
+
 void TaskA(void *pvParameters);
 static TimerHandle_t one_shot_timer = NULL;
 static TimerHandle_t auto_reload_timer = NULL;
 
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
 //we need to define a callback function to handle the timers
 //only one handling function to use in both timers
-void myTimerCallback(TimerHandle_t xTimer){
+void myTimerCallback(TimerHandle_t xTimer) {
+
+  UART_printf("Timer callback executed.\n");
 
   //we pass the parameter of the hanTimerHandle_tdler of a given timer
+  /*
   if( (uint32_t) pvTimerGetTimerID(xTimer) == 0){
     UART_printf("Timer 0 Expired\n");
   }
   if( (uint32_t) pvTimerGetTimerID(xTimer) == 1){
     UART_printf("Timer 1 Expired\n");
   }
+  */
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-
-
 
 int main(int argc, char **argv){
 
@@ -44,6 +47,9 @@ int main(int argc, char **argv){
   (void) argv;
 
   UART_init();
+
+  // Initialize the hardware timers
+  vInitialiseTimers();
 
   xTaskCreate(
     TaskA,
@@ -58,12 +64,13 @@ int main(int argc, char **argv){
   vTaskStartScheduler();
 
   for( ; ; );
+
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
+/*
 void TaskA(void *pvParameters){
   
   (void) pvParameters;
@@ -105,4 +112,15 @@ void TaskA(void *pvParameters){
   //we will have the timers running but not the task.
 
 }
+*/
 
+void TaskA(void *pvParameters){
+
+    (void) pvParameters;
+
+    for( ;; ){
+        // TaskA can perform other operations here
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
+    }
+
+}
