@@ -69,6 +69,14 @@ void PIT0_IRQHandler(void)
 }
 */
 
+portBASE_TYPE xTimer0Handler(void)
+{
+    // Handle the timer interrupt
+    // This function should be implemented according to your application needs
+    // For example, you can use it to signal a task or increment a counter
+    return pdTRUE;
+}
+
 void vInitialiseTimers(void)
 {
     // Set the base address of the timer
@@ -81,7 +89,7 @@ void vInitialiseTimers(void)
     startTimer();
 
     // Enable the interrupt in the NVIC
-    NVIC_EnableIRQ(PIT0_IRQn);
+    //NVIC_EnableIRQ(PIT0_IRQn);
 }
 
 void PIT0_IRQHandler(void)
