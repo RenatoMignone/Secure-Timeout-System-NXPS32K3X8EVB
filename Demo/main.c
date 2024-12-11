@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#define mainTASK_PRIORITY (tskIDLE_PRIORITY+2)
+#define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
   xTaskCreate(TaskB, "TaskB", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
 
   // Start the secure timeout system
-  vStartSecureTimeoutSystem();
+  //vStartSecureTimeoutSystem();
 
   UART_printf("Ready to run the scheduler..\n");
   vTaskStartScheduler();
@@ -86,6 +86,6 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
     UART_printf("\n");
     taskDISABLE_INTERRUPTS();
 
-    for(;;);
+    for (;;);
 
 }

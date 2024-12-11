@@ -41,12 +41,12 @@ void Reset_Handler( void ) __attribute__( ( naked ) );
 extern int main( void );
 extern uint32_t _estack;
 
-
 /* Vector table. */
-const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) =
-{
-    //for every interrupt we have got the name of the interrupt. When you power one the microprocessor, you need to know that the table is in a given location in the memory.
+const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
+
+    //For every interrupt we have got the name of the interrupt. When you power one the microprocessor, you need to know that the table is in a given location in the memory.
     //Every element in this table, corresponds to a given interrupt, this is based on the data sheet of the board, in particular all the zeros means that i do not have any routine associated to that given interrupt. You will jump to a null pointer in that case. If you look at the routines, there are a lot of routines that handle the low level stuffs, hardfaults etc.
+    
     ( uint32_t * ) &_estack,
     ( uint32_t * ) &Reset_Handler,     // Reset                -15
     ( uint32_t * ) &Default_Handler,   // NMI_Handler          -14
@@ -71,19 +71,19 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) =
     0,
     0,
     0,
-    //we set 2 handlers for the 2 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined.
+    // we set 2 handlers for the 2 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined.
     ( uint32_t * ) TIMER0_IRQHandler,     // Timer 0
-    0,
+    0, // ( uint32_t * ) TIMER1_IRQHandler,     // Timer 1
     0,
     0,
     0,
     0, // Ethernet   13
 };
 
-void Reset_Handler( void )
-{    
-
+void Reset_Handler( void ) {    
+    
     main();
+
 }
 
 /* Variables used to store the value of registers at the time a hardfault
@@ -94,15 +94,15 @@ volatile uint32_t r1;
 volatile uint32_t r2;
 volatile uint32_t r3;
 volatile uint32_t r12;
-volatile uint32_t lr; /* Link register. */
-volatile uint32_t pc; /* Program counter. */
-volatile uint32_t psr;/* Program status register. */
+volatile uint32_t lr;   /* Link register. */
+volatile uint32_t pc;   /* Program counter. */
+volatile uint32_t psr;  /* Program status register. */
 
 /* Called from the hardfault handler to provide information on the processor
  * state at the time of the fault.
  */
-__attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress )
-{
+__attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress ) {
+
     r0 = pulFaultStackAddress[ 0 ];
     r1 = pulFaultStackAddress[ 1 ];
     r2 = pulFaultStackAddress[ 2 ];
@@ -113,12 +113,7 @@ __attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStack
     pc = pulFaultStackAddress[ 6 ];
     psr = pulFaultStackAddress[ 7 ];
 
-
-
-
-
-
-
+    ////////////////////////////////////////////////////////////////////////////
 
     char buffer[100];
 
@@ -140,14 +135,16 @@ __attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStack
     sprintf(buffer,"PSR  = 0x%08X\n", psr);
     UART_printf(buffer);
 
+    ////////////////////////////////////////////////////////////////////////////
 
     /* Infinite loop to halt the system */
-    for( ;; );
+    for (;;);
+
 }
 
 
-void Default_Handler( void )
-{
+void Default_Handler( void ) {
+
     __asm volatile
     (
         ".align 8                                \n"
@@ -158,10 +155,11 @@ void Default_Handler( void )
         " b  Infinite_Loop                       \n"
         " .ltorg                                 \n"
     );
+
 }
 
-void HardFault_Handler( void )
-{
+void HardFault_Handler( void ) {
+
     __asm volatile
     (
         ".align 8                                                   \n"
@@ -174,4 +172,5 @@ void HardFault_Handler( void )
         " bx r2                                                     \n"
         " .ltorg                                                    \n"
     );
+
 }
