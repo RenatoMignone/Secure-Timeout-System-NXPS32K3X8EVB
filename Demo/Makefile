@@ -31,12 +31,14 @@ CPU := cortex-m7
 QEMU_FLAGS_DBG = -s -S 
 
 INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
-INCLUDE_DIRS += -I$(DEMO_PROJECT)
+# INCLUDE_DIRS += -I$(DEMO_PROJECT)
+INCLUDE_DIRS += -I$(DEMO_PROJECT) -I$(DEMO_PROJECT)/CMSIS
 
 VPATH += $(KERNEL_DIR)
 VPATH += $(KERNEL_PORT_DIR)
 VPATH += $(KERNEL_DIR)/portable/MemMang
 VPATH += $(DEMO_PROJECT)
+VPATH += $(DEMO_PROJECT)/CMSIS
 
 # Include paths. See INCLUDE_DIRS
 CFLAGS = $(INCLUDE_DIRS)
@@ -72,6 +74,9 @@ CFLAGS += -ffunction-sections
 
 # Place each variable in a dedicated section (see -gc-sections in LDFLAGS)
 CFLAGS += -fdata-sections
+
+# Define the device macro
+CFLAGS += -DCMSDK_CM7
 
 # Specify the linker script
 LDFLAGS = -T ./linker.ld
@@ -111,7 +116,7 @@ SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/IntTimer.c
-SOURCE_FILES += $(DEMO_PROJECT)/sp804_timer.c
+SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
 
 # Start-up code
 SOURCE_FILES += ./startup.c

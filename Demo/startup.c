@@ -25,6 +25,7 @@
  */
 
 #include "uart.h"
+#include "IntTimer.h"
 
 /* FreeRTOS interrupt handlers. */
 extern void vPortSVCHandler( void );
@@ -35,7 +36,6 @@ extern void xPortSysTickHandler( void );
 static void HardFault_Handler( void ) __attribute__( ( naked ) );
 static void Default_Handler( void ) __attribute__( ( naked ) );
 void Reset_Handler( void ) __attribute__( ( naked ) );
-void PIT0_IRQHandler(void);  // Declare the PIT0 interrupt handler
 
 extern int main( void );
 extern uint32_t _estack;
@@ -67,7 +67,7 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) =
     0,
     0,
     0,
-    ( uint32_t * ) &PIT0_IRQHandler, // Timer 0
+    ( uint32_t * ) TIMER0_IRQHandler,   // Timer 0
     0, // Timer 1
     0,
     0,
