@@ -44,15 +44,15 @@
 #define configUSE_TICK_HOOK                      0
 #define configCPU_CLOCK_HZ                       ( ( unsigned long ) 24000000 )
 #define configTICK_RATE_HZ                       ( ( TickType_t ) 1000 )
-#define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 2048 )
-#define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 200 * 1024 ) )
+#define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 4048 )
+#define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 300 * 1024 ) )
 #define configMAX_TASK_NAME_LEN                  ( 12 )
 #define configUSE_16_BIT_TICKS                   0
 #define configIDLE_SHOULD_YIELD                  0
 #define configUSE_CO_ROUTINES                    0
 #define configUSE_MUTEXES                        1
 #define configUSE_RECURSIVE_MUTEXES              1
-#define configCHECK_FOR_STACK_OVERFLOW           0
+#define configCHECK_FOR_STACK_OVERFLOW           2
 #define configUSE_MALLOC_FAILED_HOOK             0
 #define configUSE_QUEUE_SETS                     1
 #define configUSE_COUNTING_SEMAPHORES            1
@@ -63,8 +63,8 @@
 #define configSUPPORT_STATIC_ALLOCATION          0
 
 /* Timer-related defines: Balanced priorities for stable operation. */
-#define configUSE_TIMERS                         1
-#define configTIMER_TASK_PRIORITY                (2)
+#define configUSE_TIMERS                         0
+#define configTIMER_TASK_PRIORITY                (configMAX_PRIORITIES - 4 )
 #define configTIMER_QUEUE_LENGTH                 20
 #define configTIMER_TASK_STACK_DEPTH             (configMINIMAL_STACK_SIZE * 2)
 
@@ -103,9 +103,9 @@
 #define configSTREAM_BUFFER_TRIGGER_LEVEL_TEST_MARGIN    4
 
 /* Updated task priorities for queues and timers. */
-#define intqHIGHER_PRIORITY      ( configMAX_PRIORITIES - 4 ) /* High priority for important inter-task queues */
-#define bktPRIMARY_PRIORITY      ( configMAX_PRIORITIES - 2 ) /* Primary background tasks */
-#define bktSECONDARY_PRIORITY    ( configMAX_PRIORITIES - 3 ) /* Secondary background tasks */
+#define intqHIGHER_PRIORITY      ( configMAX_PRIORITIES - 5 ) /* High priority for important inter-task queues */
+#define bktPRIMARY_PRIORITY      ( configMAX_PRIORITIES - 3 ) /* Primary background tasks */
+#define bktSECONDARY_PRIORITY    ( configMAX_PRIORITIES - 4 ) /* Secondary background tasks */
 
 #define configENABLE_BACKWARD_COMPATIBILITY 0
 

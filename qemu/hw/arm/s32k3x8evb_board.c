@@ -268,7 +268,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     qdev_connect_clock_in(DEVICE(pit_timer), "pclk", m_state->sys.sysclk);
     sysbus_realize_and_unref(sbd, &error_fatal);
     sysbus_mmio_map(sbd, 0, PIT_TIMER_BASE_ADDR);
-    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 48));
+    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 56));
 
 
     /*--------------------------------------------------------------------------------------*/

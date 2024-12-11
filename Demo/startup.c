@@ -26,6 +26,7 @@
 
 #include "uart.h"
 #include "IntTimer.h"
+#include <stdio.h>
 
 /* FreeRTOS interrupt handlers. */
 extern void vPortSVCHandler( void );
@@ -40,9 +41,12 @@ void Reset_Handler( void ) __attribute__( ( naked ) );
 extern int main( void );
 extern uint32_t _estack;
 
+
 /* Vector table. */
 const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) =
 {
+    //for every interrupt we have got the name of the interrupt. When you power one the microprocessor, you need to know that the table is in a given location in the memory.
+    //Every element in this table, corresponds to a given interrupt, this is based on the data sheet of the board, in particular all the zeros means that i do not have any routine associated to that given interrupt. You will jump to a null pointer in that case. If you look at the routines, there are a lot of routines that handle the low level stuffs, hardfaults etc.
     ( uint32_t * ) &_estack,
     ( uint32_t * ) &Reset_Handler,     // Reset                -15
     ( uint32_t * ) &Default_Handler,   // NMI_Handler          -14
@@ -67,8 +71,9 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) =
     0,
     0,
     0,
-    ( uint32_t * ) TIMER0_IRQHandler,   // Timer 0
-    0, // Timer 1
+    //we set 2 handlers for the 2 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined.
+    ( uint32_t * ) TIMER0_IRQHandler,     // Timer 0
+    0,
     0,
     0,
     0,
@@ -76,7 +81,8 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) =
 };
 
 void Reset_Handler( void )
-{
+{    
+
     main();
 }
 
@@ -107,10 +113,35 @@ __attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStack
     pc = pulFaultStackAddress[ 6 ];
     psr = pulFaultStackAddress[ 7 ];
 
-    UART_printf( "Calling prvGetRegistersFromStack() from fault handler" );
-    //fflush( stdout );
 
-    /* When the following line is hit, the variables contain the register values. */
+
+
+
+
+
+
+    char buffer[100];
+
+    UART_printf("\nHard Fault Handler:\n");
+    sprintf(buffer,"R0   = 0x%08X\n", r0);
+    UART_printf(buffer);
+    sprintf(buffer,"R1   = 0x%08X\n", r1);
+    UART_printf(buffer);
+    sprintf(buffer,"R2   = 0x%08X\n", r2);
+    UART_printf(buffer);
+    sprintf(buffer,"R3   = 0x%08X\n", r3);
+    UART_printf(buffer);
+    sprintf(buffer,"R12  = 0x%08X\n", r12);
+    UART_printf(buffer);
+    sprintf(buffer,"LR   = 0x%08X\n", lr);
+    UART_printf(buffer);
+    sprintf(buffer,"PC   = 0x%08X\n", pc);
+    UART_printf(buffer);
+    sprintf(buffer,"PSR  = 0x%08X\n", psr);
+    UART_printf(buffer);
+
+
+    /* Infinite loop to halt the system */
     for( ;; );
 }
 

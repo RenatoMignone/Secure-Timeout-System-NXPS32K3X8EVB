@@ -102,7 +102,7 @@ typedef enum IRQn {
 /* --------  Configuration of the CM7 Processor and Core Peripherals  --------- */
 #define __CM7_REV                 0x0101      /* Core revision r1p1                              */
 #define __MPU_PRESENT             1           /* MPU present or not                              */
-#define __NVIC_PRIO_BITS          3           /* Number of Bits used for Priority Levels         */
+#define __NVIC_PRIO_BITS          4           /* Number of Bits used for Priority Levels         */
 #define __Vendor_SysTickConfig    0           /* Set to 1 if different SysTick Config is used    */
 #define __FPU_PRESENT             1           /* no FPU present                                  */
 #define __FPU_DP                  1           /* unused                                          */
@@ -665,10 +665,10 @@ typedef struct {
 
 /* Peripheral and SRAM base address */
 #define CMSDK_FLASH_BASE        (0x00000000UL)
-#define CMSDK_SRAM_BASE         (0x20000000UL)
+#define CMSDK_SRAM_BASE         (0x20400000UL)
 #define CMSDK_PERIPH_BASE       (0x40000000UL)
 
-#define CMSDK_RAM_BASE          (0x20000000UL)
+#define CMSDK_RAM_BASE          (0x20400000UL)
 #define CMSDK_APB_BASE          (0x40000000UL)
 #define CMSDK_AHB_BASE          (0x40010000UL)
 

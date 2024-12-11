@@ -1,13 +1,13 @@
 /*
  * Linker script for S32K3X8EVB with FreeRTOS
- * This linker script is configured to use the flash and SRAM regions defined in the board code.
+ * This linker script is configured to use the flash and RAM regions defined in the board code.
  */
 
 /* Define memory regions */
 MEMORY
 {
     FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 12M  /* Program flash memory */
-    SRAM  (rwx) : ORIGIN = 0x20400000, LENGTH = 2M /* SRAM */
+    RAM  (rwx) : ORIGIN = 0x20400000, LENGTH = 2M /* RAM */
 }
 
 _Min_Heap_Size = 0x4B000;        /* Not used as building heap_4.c */
@@ -36,7 +36,7 @@ SECTIONS
         _sdata = .;               /* Start address of data section */
         *(.data*)                 /* Data */
         _edata = .;               /* End address of data section */
-    } > SRAM AT > FLASH
+    } > RAM AT > FLASH
 
     /* Zero-initialized data */
     .bss :
@@ -45,7 +45,7 @@ SECTIONS
         *(.bss*)                  /* BSS */
         *(COMMON)                 /* Common variables */
         _ebss = .;                /* End address of BSS */
-    } > SRAM
+    } > RAM
 
     /* Stack section */
     ._user_stack :
@@ -53,7 +53,7 @@ SECTIONS
         . = ALIGN(8);
         _estack = .;              /* End of stack (initial stack pointer) */
         . += 0x4000;              /* Stack size (adjust as needed) */
-    } > SRAM
+    } > RAM
 
     /* Heap section */
     .heap :
@@ -66,7 +66,7 @@ SECTIONS
         _heap_top = .;
         . = . + _Min_Stack_Size;
         . = ALIGN(8);
-     } > SRAM
+     } > RAM
     /* End of memory layout */
     _end = .;
 }
