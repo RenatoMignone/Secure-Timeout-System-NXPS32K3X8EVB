@@ -58,7 +58,7 @@ void TIMER1_IRQHandler(void) {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     /* Clear the interrupt */
-    S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;
+    //S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;
 
     UART_printf("Timer 1 Interrupt\n");
 

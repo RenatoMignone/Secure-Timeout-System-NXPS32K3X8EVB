@@ -7,9 +7,6 @@
 #define MONITOR_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 #define ALERT_TASK_PRIORITY   (tskIDLE_PRIORITY + 3)
 
-static TimerHandle_t activity_timer = NULL;
-static TimerHandle_t suspicious_timer = NULL;
-
 static void vMonitorTask(void *pvParameters);
 static void vAlertTask(void *pvParameters);
 
