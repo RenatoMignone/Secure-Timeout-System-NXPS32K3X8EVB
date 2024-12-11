@@ -26,44 +26,50 @@
 #include "ui/input.h"
 #include "qemu/typedefs.h"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Define some functions useful in the code.
 int load_image_targphys(const char *filename, hwaddr addr, hwaddr size);
+
 // Function for error reporting
 void error_report(const char *fmt, ...);
+
 // Function to load the firmware
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename);
+
 // Function to initialize the memory regions
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Define constants for memory regions
-#define FLASH_BASE_ADDR  0x00000000  // Flash memory base address
-#define FLASH_SIZE       0x00C00000  // 12 MB program flash
 
-#define SRAM_BASE_ADDR   0x20400000  // SRAM base address
-#define SRAM_SIZE        0x00240000  // 2.25 MB SRAM
+#define FLASH_BASE_ADDR  0x00000000        // Flash memory base address
+#define FLASH_SIZE       0x00C00000        // 12 MB program flash
 
-#define UART_BASE_ADDR   0x4006A000  // UART base address
+#define SRAM_BASE_ADDR   0x20400000        // SRAM base address
+#define SRAM_SIZE        0x00240000        // 2.25 MB SRAM
+
+#define UART_BASE_ADDR   0x4006A000        // UART base address
 
 #define PIT_TIMER_BASE_ADDR    0x40037000  // PIT base address
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Define the machine state
+
 #define TYPE_S32K3X8EVB_SYS "s32k3x8evb-sys"
 OBJECT_DECLARE_SIMPLE_TYPE(ssys_state, S32K3X8EVB_SYS)
 typedef struct S32K3X8ExampleBoardMachineClass S32K3X8ExampleBoardMachineClass;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Creation of the syss_state struct that represents the state of the system
+
 struct ssys_state {
     SysBusDevice parent_obj;
     MemoryRegion iomem;
@@ -74,10 +80,11 @@ struct ssys_state {
     Clock *refclk;
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Creation of the S32K3X8ExampleBoardMachineState struct that represents the state of the machine
+
 struct S32K3X8ExampleBoardMachineState {
     MachineState *parent_obj;
     ssys_state sys;
@@ -85,20 +92,23 @@ struct S32K3X8ExampleBoardMachineState {
 };
 typedef struct S32K3X8ExampleBoardMachineState S32K3X8ExampleBoardMachineState;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Creation of the names of the board seen by QEMU.
+
 #define TYPE_S32K3X8_EXAMPLE_BOARD_BASE_MACHINE MACHINE_TYPE_NAME("s32k3x8")
 #define TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE MACHINE_TYPE_NAME("s32k3x8-example-board")
 
 DECLARE_INSTANCE_CHECKER(S32K3X8ExampleBoardMachineState, S32K3X8_EXAMPLE_BOARD_MACHINE, TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE)
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // Implementation of the function to initialize the memory regions
+
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
+
     MemoryRegion *flash = g_new(MemoryRegion, 1);
     MemoryRegion *sram = g_new(MemoryRegion, 1);
 
@@ -124,7 +134,9 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Function to initialize the S32K3X8 example board for QEMU
+
 static void s32k3x8_example_board_init(MachineState *ms) {
 
     /*--------------------------------------------------------------------------------------*/
@@ -137,8 +149,6 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 
     fprintf(stdout, "Instantiating the Machine\n\n");
 
-
-
     /*--------------------------------------------------------------------------------------*/
     /*------------Allocate memory and initialize the machine state structure----------------*/
     /*--------------------------------------------------------------------------------------*/
@@ -147,8 +157,6 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 
     //The machine state in qemu represents the state of the machine at runtime
     m_state->parent_obj = ms; // Link the machine state to the parent machine state object
-
-
 
     /*--------------------------------------------------------------------------------------*/
     /*---------------Obtain a reference to the global system memory region------------------*/
@@ -160,8 +168,6 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 
     // Initialize memory regions for flash, SRAM, etc.
     s32k3x8_initialize_memory_regions(system_memory);
-
-
 
     /*--------------------------------------------------------------------------------------*/
     /*------------------------Create a container object for the SoC-------------------------*/
@@ -187,7 +193,6 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     // Log the successful realization of the system controller
     fprintf(stdout, "System controller realized.\n\n");
 
-
     /*--------------------------------------------------------------------------------------*/
     /*------------------------ Initialize a clock for the system----------------------------*/
     /*--------------------------------------------------------------------------------------*/
@@ -201,8 +206,6 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 
     // Log the successful clock initialization
     fprintf(stdout, "Clock initialized.\n\n");
-
-
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------Initialize the Nested Vectored Interrupt Controller (NVIC)---------------*/
@@ -239,27 +242,20 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     // Log the successful realization of the NVIC
     fprintf(stdout, "NVIC realized.\n\n");
 
-
-
     /*--------------------------------------------------------------------------------------*/
     /*--------------------------Initialize the UART device----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
     pl011_create(UART_BASE_ADDR, qdev_get_gpio_in(nvic, 48), serial_hd(0));
 
-
     // Log the successful initialization of the UART
     fprintf(stdout, "UART initialized and connected to NVIC.\n\n");
-
-
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-
     //sysbus_create_simple("sp804", PIT_TIMER_BASE_ADDR, qdev_get_gpio_in(nvic, 48));
-
 
     DeviceState *pit_timer;
     pit_timer = qdev_new(TYPE_CMSDK_APB_TIMER);
@@ -268,8 +264,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     qdev_connect_clock_in(DEVICE(pit_timer), "pclk", m_state->sys.sysclk);
     sysbus_realize_and_unref(sbd, &error_fatal);
     sysbus_mmio_map(sbd, 0, PIT_TIMER_BASE_ADDR);
-    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 56));
-
+    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 48));
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------Load firmware into the emulated flash memory----------------------*/
@@ -284,10 +279,11 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     fprintf(stdout, "System initialized.\n");
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//implementation of the class init function
+// Implementation of the class init function
+
 static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
     MachineClass *mc = MACHINE_CLASS(oc);
     mc->name = g_strdup("s32k3x8evb");
@@ -304,7 +300,9 @@ static void s32k3x8_example_board_class_init(ObjectClass *oc, void *data) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-//Section of code to define the infos of the board, wehere we do specify the functions to run for the init and class init
+
+// Section of code to define the infos of the board, wehere we do specify the functions to run for the init and class init
+
 static const TypeInfo s32k3x8_example_board_machine_types = {
     .name           = TYPE_S32K3X8_EXAMPLE_BOARD_MACHINE,
     .parent         = TYPE_MACHINE,
@@ -323,6 +321,7 @@ static void s32k3x8evb_machine_init(void) {
 }
 
 type_init(s32k3x8evb_machine_init);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -116,6 +116,7 @@ SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/IntTimer.c
+SOURCE_FILES += $(DEMO_PROJECT)/secure_timeout_system.c
 SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
 
 # Start-up code
