@@ -6,7 +6,9 @@ void UART_init( void )
     UART0_CTRL = 1;
     UART_printf("UART initialized!\n");
 }
-void UART_printf(const char *s) {
+
+void UART_printf(const char *s) 
+{
     while(*s != '\0') {
         UART0_DATA = (unsigned int)(*s);
         s++;

@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
   UART_init();
 
   // Initialize the hardware timers
+  // To be commented (?) if vStartSecureTimeoutSystem() is activated
   vInitialiseTimers();
 
   xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
@@ -47,14 +48,18 @@ int main(int argc, char **argv) {
 
 void TaskA(void *pvParameters) {
 
-    (void) pvParameters;
+  (void) pvParameters;
 
-    for (;;) {
+  int counter = 0;
 
-        UART_printf("\npalle\n");
-        // vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
+  for (;;) {
 
-    }
+    counter++;
+    //UART_printf("Task A counter: %d\n", counter); // TODO: implement printf
+    UART_printf("Task A is running\n");
+    vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
+
+  }
 
 }
 
@@ -62,10 +67,14 @@ void TaskB(void *pvParameters) {
 
   (void ) pvParameters;
 
+  int counter = 0;
+
   for (;;) {
 
-      UART_printf("\nprova\n");
-      // vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
+    counter++;
+    //UART_printf("Task B counter: %d\n", counter); // TODO: implement printf
+    UART_printf("Task B is running\n");
+    vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
 
   }
 
