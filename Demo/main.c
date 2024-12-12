@@ -64,7 +64,7 @@ void TaskB(void *pvParameters) {
 
   for (;;) {
 
-      UART_printf("\nculo\n");
+      UART_printf("\nprova\n");
       // vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
 
   }
