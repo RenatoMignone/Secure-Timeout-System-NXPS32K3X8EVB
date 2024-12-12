@@ -31,62 +31,117 @@
 &nbsp;• [Acknowledgments](#acknowledgments) <br>
 
 <div align="right">
-<i>Last updated: November 2024</i>
+<i>Last updated: December 2024</i>
 </div>
 
 </details>
 
 ## Project Overview
 
-
+This project is a demonstration of integrating FreeRTOS with a custom board based on the S32K3X8EVB. It includes tasks for monitoring user activity, handling suspicious events, and simulating various activities. The project also demonstrates the use of QEMU for emulating the board.
 
 ## Features
 
-
+- Integration with FreeRTOS
+- UART communication
+- Hardware timer initialization and handling
+- Secure timeout system with multiple tasks
+- QEMU emulation support
 
 ## Getting Started
 
-
-
 ### Prerequisites
 
-
+- ARM GCC Toolchain (`arm-none-eabi-gcc`)
+- QEMU for ARM
+- FreeRTOS source code (added as a submodule)
+- Make
 
 ### Installation
 
+1. Clone the repository:
+    ```sh
+    git clone https://your-repo-url.git
+    cd your-repo
+    ```
 
+2. Initialize and update submodules:
+    ```sh
+    git submodule update --init --recursive
+    ```
+
+3. Build the project:
+    ```sh
+    make
+    ```
 
 ### Running the Emulator
 
+To run the emulator with the built project:
+```sh
+make qemu_start
+```
 
+To run the emulator in debug mode:
+```sh
+make qemu_debug
+```
 
 ## Project structure
 
-
+- `Demo/`: Contains the main project files and source code.
+    - `CMSIS/`: CMSIS headers and startup files.
+    - `Output/`: Directory for generated output files.
+    - `qemu/`: QEMU configuration and build files.
+    - `secure_timeout_system.c`: Implementation of the secure timeout system.
+    - `uart.c`: UART initialization and communication functions.
+    - `IntTimer.c`: Timer initialization and interrupt handling.
+    - `main.c`: Main application code.
+    - `Makefile`: Build configuration.
+    - `linker.ld`: Linker script for memory layout.
+- `README.md`: Project documentation.
+- `LICENSE-CC-BY-NC-4.0.md`: License file.
+- `.gitignore`: Git ignore file.
+- `.gitmodules`: Git submodules configuration.
 
 ## Board and FreeRTOS Integration
 
-
-
 ### Board Specifications
 
-
+- **Flash Memory**: 12MB
+- **SRAM**: 2.25 MB
+- **UART Base Address**: 0x4006A000
+- **PIT Timer Base Address**: 0x40037000
 
 ### FreeRTOS Application
 
-
+The FreeRTOS application includes tasks for monitoring user activity, handling alerts, and simulating events. The tasks are created and managed by FreeRTOS, and the system uses hardware timers for periodic operations.
 
 ## Usage
 
-
-
 ### How to Run Applications
 
+1. Build the project:
+    ```sh
+    make
+    ```
 
+2. Run the emulator:
+    ```sh
+    make qemu_start
+    ```
+
+3. To debug the application, use:
+    ```sh
+    make qemu_debug
+    ```
 
 ### Available Configuration Options
 
-
+- `mainTASK_PRIORITY`: Priority for the main tasks.
+- `MONITOR_TASK_PRIORITY`: Priority for the monitor task.
+- `ALERT_TASK_PRIORITY`: Priority for the alert task.
+- `EVENT_TASK_PRIORITY`: Priority for the event task.
 
 ## Team Collaboration
 
