@@ -1,4 +1,12 @@
 # ============================
+# Project
+# ============================
+
+# Project Directory
+Demo/Output/
+qemu/build/
+
+# ============================
 # IDE-Specific Ignore Patterns
 # ============================
 
