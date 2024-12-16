@@ -63,13 +63,11 @@ static void vMonitorTask(void *pvParameters) {
 
     for (;;) {
         if (userActivityDetection) {
-            // printf("User activity detected!\n");
-            UART_printf("User activity detected!\n");
+            printf("User activity detected!\n");
             userActivityDetection = 0;
             // Extra implementation
         } else {
-            // printf("No user activity detected.\n");
-            UART_printf("No user activity detected.\n");
+            printf("No user activity detected.\n");
         }
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -84,13 +82,11 @@ static void vAlertTask(void *pvParameters) {
 
     for (;;) {
         if (suspiciousActivityDetection) {
-            // printf("Suspicious activity detected!\n");
-            UART_printf("Suspicious activity detected!\n");
+            printf("Suspicious activity detected!\n");
             suspiciousActivityDetection = 0;
             // Extra implementation
         } else {
-            // printf("No suspicious activity detected.\n");
-            UART_printf("No suspicious activity detected.\n");
+            printf("No suspicious activity detected.\n");
         }
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -102,8 +98,7 @@ static void vEventTask(void *pvParameters) {
     (void) pvParameters;
 
     for (;;) {
-        // printf("\nSimulating events...\n");
-        UART_printf("\nSimulating events...\n");
+        printf("\nSimulating events...\n");
 
         /* Reset Activities */
         userActivity = 0;
@@ -112,13 +107,11 @@ static void vEventTask(void *pvParameters) {
         if (simpleRandom() % 2 == 1) {
             userActivity = 1;
             userADCount++;
-            // printf("Simulated user activity.\n");
-            UART_printf("Simulated user activity.\n");
+            printf("Simulated user activity.\n");
         } else {
             suspiciousActivity = 1;
             suspiciousADCount++;
-            // printf("Simulated suspicious activity.\n");
-            UART_printf("Simulated suspicious activity.\n");
+            printf("Simulated suspicious activity.\n");
         }
 
         vTaskDelay(pdMS_TO_TICKS(3000));
