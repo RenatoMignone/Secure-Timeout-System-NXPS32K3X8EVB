@@ -56,8 +56,11 @@ void TaskA(void *pvParameters) {
 
     counter++;
     //UART_printf("Task A counter: %d\n", counter); // TODO: implement printf
-    UART_printf("Task A is running\n");
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
+    char buffer[100];
+    sprintf(buffer,"Task A %d\n",counter);
+    UART_printf(buffer);
+    // UART_printf("Task A is running\n");
+    vTaskDelay(pdMS_TO_TICKS(3000)); // Delay for 1 second
 
   }
 

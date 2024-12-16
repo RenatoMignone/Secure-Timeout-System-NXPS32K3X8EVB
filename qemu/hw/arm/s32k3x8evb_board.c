@@ -217,7 +217,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     object_property_add_child(soc_container, "v7m", OBJECT(nvic));
 
     // Configure the NVIC with the number of IRQs (128 for S32K3X8)
-    qdev_prop_set_uint32(nvic, "num-irq", 128);
+    qdev_prop_set_uint32(nvic, "num-irq", 32);
 
     // Configure the number of priority bits for the NVIC
     qdev_prop_set_uint8(nvic, "num-prio-bits", 4);
@@ -246,7 +246,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     /*--------------------------Initialize the UART device----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    pl011_create(UART_BASE_ADDR, qdev_get_gpio_in(nvic, 48), serial_hd(0));
+    pl011_create(UART_BASE_ADDR, qdev_get_gpio_in(nvic, 0), serial_hd(0));
 
     // Log the successful initialization of the UART
     fprintf(stdout, "UART initialized and connected to NVIC.\n\n");
@@ -264,7 +264,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     qdev_connect_clock_in(DEVICE(pit_timer), "pclk", m_state->sys.sysclk);
     sysbus_realize_and_unref(sbd, &error_fatal);
     sysbus_mmio_map(sbd, 0, PIT_TIMER_BASE_ADDR);
-    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 48));
+    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 8));
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------Load firmware into the emulated flash memory----------------------*/

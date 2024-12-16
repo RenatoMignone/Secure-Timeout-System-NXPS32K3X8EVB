@@ -81,7 +81,6 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
 };
 
 void Reset_Handler( void ) {    
-    
     main();
 
 }
