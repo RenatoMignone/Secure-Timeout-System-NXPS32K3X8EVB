@@ -11,7 +11,7 @@ KERNEL_PORT_DIR := $(KERNEL_DIR)/portable/GCC/ARM_CM7/r0p1
 # Where to store all the generated files (objects, elf and map)
 OUTPUT_DIR := ./Output
 
-DEMO_NAME := demo
+DEMO_NAME := secure_timeout_system
 ELF := $(OUTPUT_DIR)/$(DEMO_NAME).elf
 MAP := $(OUTPUT_DIR)/$(DEMO_NAME).map
 
@@ -35,7 +35,7 @@ INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
 INCLUDE_DIRS += -I$(DEMO_PROJECT) 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/CMSIS 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/Peripherals 
-INCLUDE_DIRS += -I$(DEMO_PROJECT)/Application
+INCLUDE_DIRS += -I$(DEMO_PROJECT)/Secure_Timeout_System
 
 VPATH += $(KERNEL_DIR)
 VPATH += $(KERNEL_PORT_DIR)
@@ -43,7 +43,7 @@ VPATH += $(KERNEL_DIR)/portable/MemMang
 VPATH += $(DEMO_PROJECT)
 VPATH += $(DEMO_PROJECT)/CMSIS
 VPATH += $(DEMO_PROJECT)/Peripherals
-VPATH += $(DEMO_PROJECT)/Application
+VPATH += $(DEMO_PROJECT)/Secure_Timeout_System
 
 # Include paths. See INCLUDE_DIRS
 CFLAGS = $(INCLUDE_DIRS)
@@ -121,7 +121,7 @@ SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/IntTimer.c
-SOURCE_FILES += $(DEMO_PROJECT)/Application/secure_timeout_system.c
+SOURCE_FILES += $(DEMO_PROJECT)/Secure_Timeout_System/secure_timeout_system.c
 
 # Start-up code
 SOURCE_FILES += ./startup.c
