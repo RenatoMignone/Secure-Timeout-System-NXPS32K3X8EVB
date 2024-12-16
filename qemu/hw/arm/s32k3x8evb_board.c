@@ -276,7 +276,7 @@ static void s32k3x8_example_board_init(MachineState *ms) {
     fprintf(stdout, "Firmware loaded into flash memory.\n\n");
 
     // Log the completion of the board initialization
-    fprintf(stdout, "System initialized.\n");
+    fprintf(stdout, "System initialized.\n\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
