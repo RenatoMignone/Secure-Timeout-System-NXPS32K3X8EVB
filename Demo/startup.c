@@ -24,9 +24,9 @@
  *
  */
 
+/* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
-#include <stdio.h>
 
 /* FreeRTOS interrupt handlers. */
 extern void vPortSVCHandler( void );

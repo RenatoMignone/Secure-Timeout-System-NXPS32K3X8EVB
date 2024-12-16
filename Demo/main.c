@@ -2,7 +2,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
-#include "uart.h"
 #include "queue.h"
 
 /* Standard includes */
@@ -11,8 +10,11 @@
 #include <limits.h>
 
 /* Application includes */
-#include "IntTimer.h"
 #include "secure_timeout_system.h"
+
+/* Peripheral includes */
+#include "uart.h"
+#include "IntTimer.h"
 
 /* Task priorities */
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)

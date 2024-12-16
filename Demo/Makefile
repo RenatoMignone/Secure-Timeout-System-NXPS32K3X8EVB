@@ -32,13 +32,18 @@ QEMU_FLAGS_DBG = -s -S
 
 INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
 # INCLUDE_DIRS += -I$(DEMO_PROJECT)
-INCLUDE_DIRS += -I$(DEMO_PROJECT) -I$(DEMO_PROJECT)/CMSIS
+INCLUDE_DIRS += -I$(DEMO_PROJECT) 
+INCLUDE_DIRS += -I$(DEMO_PROJECT)/CMSIS 
+INCLUDE_DIRS += -I$(DEMO_PROJECT)/Peripherals 
+INCLUDE_DIRS += -I$(DEMO_PROJECT)/Application
 
 VPATH += $(KERNEL_DIR)
 VPATH += $(KERNEL_PORT_DIR)
 VPATH += $(KERNEL_DIR)/portable/MemMang
 VPATH += $(DEMO_PROJECT)
 VPATH += $(DEMO_PROJECT)/CMSIS
+VPATH += $(DEMO_PROJECT)/Peripherals
+VPATH += $(DEMO_PROJECT)/Application
 
 # Include paths. See INCLUDE_DIRS
 CFLAGS = $(INCLUDE_DIRS)
@@ -105,19 +110,18 @@ LDFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
 # Kernel files
 SOURCE_FILES += $(KERNEL_DIR)/list.c
 SOURCE_FILES += $(KERNEL_DIR)/tasks.c
-SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
-SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
 SOURCE_FILES += $(KERNEL_DIR)/queue.c
-# SOURCE_FILES += $(KERNEL_DIR)/timers.c
 SOURCE_FILES += $(KERNEL_DIR)/event_groups.c
 SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
+SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
+SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
 
 # Demo files
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
-SOURCE_FILES += $(DEMO_PROJECT)/uart.c
-SOURCE_FILES += $(DEMO_PROJECT)/IntTimer.c
-SOURCE_FILES += $(DEMO_PROJECT)/secure_timeout_system.c
 SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
+SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
+SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/IntTimer.c
+SOURCE_FILES += $(DEMO_PROJECT)/Application/secure_timeout_system.c
 
 # Start-up code
 SOURCE_FILES += ./startup.c

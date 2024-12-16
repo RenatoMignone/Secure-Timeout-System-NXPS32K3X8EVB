@@ -1,16 +1,14 @@
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "uart.h"
 
 /*Application includes */
-#include "IntTimer.h"
 #include "secure_timeout_system.h"
 #include "globals.h"
 
-/* Standard includes */ // TODO: check if this is necessary
-// #include <stdio.h>
-// #include <stdlib.h>
+/* Peripheral includes */
+#include "uart.h"
+#include "IntTimer.h"
 
 /* Task priorities */
 #define MONITOR_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -27,22 +25,21 @@ int userActivity = 0;
 int userActivityDetection = 0;
 int suspiciousActivity = 0;
 int suspiciousActivityDetection = 0;
+static int userADCount = 0;
+static int suspiciousADCount = 0;
 
 /* Do these variables have to be implemented as sempahores ? */
 
 /* Seed used to generate pseudo random numbers */
 static uint32_t seed = 14536;
 
-static int userADCount = 0;
-static int suspiciousADCount = 0;
-
 /* Custom function to generate a pseudo-random number */
-uint32_t simpleRandom() {
+uint32_t simpleRandom() 
+{
     // Linear Congruential Generator (LCG) parameters
     seed = (seed * 1664525 + 1013904223); // Modulus is implicitly 2^32
     return seed;
 }
-
 
 void vStartSecureTimeoutSystem(void) 
 {

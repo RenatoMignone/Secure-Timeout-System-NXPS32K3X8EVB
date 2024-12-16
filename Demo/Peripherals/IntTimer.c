@@ -1,17 +1,16 @@
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include "uart.h"
-
-/* Standard includes */ // TODO: check if this is necessary
-// #include <stdio.h>
 
 /* Application includes */
-#include "IntTimer.h"
 #include "globals.h"
 
+/* Peripheral includes */
+#include "uart.h"
+#include "IntTimer.h"
+
 /* Library includes. */
-#include "CMSIS/S32K3X8EVB.h"
+#include "S32K3X8EVB.h"
 
 /* External variables and functions */
 extern int userActivity;
