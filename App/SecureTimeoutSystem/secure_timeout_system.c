@@ -9,6 +9,7 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
+// #include "printf-stdarg.h"
 
 /* Task priorities */
 #define MONITOR_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -50,6 +51,7 @@ void vStartSecureTimeoutSystem(void)
     xTaskCreate(vMonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIORITY, NULL);
     xTaskCreate(vAlertTask,   "AlertTask",   configMINIMAL_STACK_SIZE, NULL, ALERT_TASK_PRIORITY,   NULL);
     xTaskCreate(vEventTask,   "EventTask",   configMINIMAL_STACK_SIZE, NULL, EVENT_TASK_PRIORITY,   NULL);
+    
 
 }
 

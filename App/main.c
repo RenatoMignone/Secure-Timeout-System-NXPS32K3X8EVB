@@ -15,6 +15,7 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
+// #include "printf-stdarg.h"   potrebbe non servire includerla
 
 /* Task priorities */
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -28,13 +29,12 @@ extern void vStartSecureTimeoutSystem(void);
 
 int main(int argc, char **argv) {
 
-    UART_printf("\n=========================== Starting the Main ============================\n\n");
+    printf("\n=========================== Starting the Main ============================\n\n");
 
     (void) argc;
     (void) argv;
 
     /* Hardware initialisation. */
-    // prvUARTInit();
     UART_init();
 
     // xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
@@ -43,8 +43,7 @@ int main(int argc, char **argv) {
     // Start the secure timeout system
     vStartSecureTimeoutSystem();
 
-    // printf("Ready to run the scheduler..\n");
-    UART_printf("Ready to run the scheduler..\n");
+    printf("Ready to run the scheduler...\n");
     vTaskStartScheduler();
 
     for (;;);
@@ -52,7 +51,7 @@ int main(int argc, char **argv) {
 }
 
 /*--------------------------------------------------------------------------------*/
-
+/*
 void TaskA(void *pvParameters) {
 
     (void) pvParameters;
@@ -63,7 +62,7 @@ void TaskA(void *pvParameters) {
 
         counter++;
         // printf("Task A counter: %d\n", counter);
-        UART_printf("Task A running... \n");
+        printf("Task A running... \n");
         vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
 
   }
@@ -80,13 +79,13 @@ void TaskB(void *pvParameters) {
 
         counter++;
         // printf("Task B counter: %d\n", counter);
-        UART_printf("Task B running... \n");
+        printf("Task B running... \n");
         vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
 
     }
 
 }
-
+*/
 /*--------------------------------------------------------------------------------*/
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
@@ -96,9 +95,9 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
     (void)xTask;
     (void)pcTaskName;
 
-    UART_printf("Stack overflow in task: ");
-    UART_printf(pcTaskName);
-    UART_printf("\n");
+    printf("Stack overflow in task: ");
+    printf(pcTaskName);
+    printf("\n");
     taskDISABLE_INTERRUPTS();
 
     for (;;);

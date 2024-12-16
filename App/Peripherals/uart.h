@@ -11,5 +11,6 @@
 
 void UART_init(void);
 void UART_printf(const char *s);
+void UART_putChar(char c);
 
 #endif

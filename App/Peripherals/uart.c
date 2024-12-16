@@ -15,4 +15,8 @@ void UART_printf(const char *s)
     }
 }
 
+void UART_putChar(char c) 
+{
+    UART0_DATA = (unsigned int)c;
+}
 
