@@ -1,4 +1,4 @@
-# Secure-Timeout-System-NXPS32
+# Secure-Timeout-System-NXPS32K3X8EVB
 
 ![polito](resources/logo_polito.jpg)
 
@@ -58,6 +58,7 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 - QEMU for ARM
 - FreeRTOS source code (added as a submodule)
 - Make
+- Ninja
 
 ### Installation
 
