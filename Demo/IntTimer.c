@@ -1,69 +1,105 @@
-/* Scheduler includes. */
+/* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "semphr.h"
-
-/* Demo includes. */
-#include "IntTimer.h"
-/* Library includes. */
-#include "CMSIS/S32K3X8EVB.h"
 #include "uart.h"
 
-#define tmrTIMER_0_FREQUENCY	( 2UL )
-//#define tmrTIMER_1_FREQUENCY    ( 1UL )
+/* Standard includes */ // TODO: check if this is necessary
+// #include <stdio.h>
+
+/* Application includes */
+#include "IntTimer.h"
+#include "globals.h"
+
+/* Library includes. */
+#include "CMSIS/S32K3X8EVB.h"
+
+/* External variables and functions */
+extern int userActivity;
+extern int userActivityDetection;
+extern int suspiciousActivity;
+extern int suspiciousActivityDetection;
+
+// #define tmrTIMER_0_FREQUENCY	( 2UL )   // TODO: update (?)
+// #define tmrTIMER_1_FREQUENCY	( 2UL )   // TODO: update (?)
+
 #define TIMER0_IRQ_num 8
 #define TIMER1_IRQ_num 9
 
-void vInitialiseTimers( void ) {
+void vInitialiseTimers( void )
+{
+    // printf("\n");
+    UART_printf("\n");
+    // printf("================================================================\n");
+    UART_printf("================================================================\n");
 
-    // Initialize TIMER0
+    /* Initialise Timer 0 */
 
-    S32K3X8_TIMER0->INTCLR = TIMER_INTCLR_Msk;           // Clear any pending interrupts
-    /*S32K3X8_TIMER0->RELOAD = ( 25000000 / 
-                               tmrTIMER_0_FREQUENCY );   // Set reload value*/
-    S32K3X8_TIMER0->RELOAD = (12500000);
-    S32K3X8_TIMER0->CTRL   = ((1ul << 3) | (1ul << 0));  // Enable Timer
+    // printf("Initialising Timer 0\n");
+    UART_printf("Initialising Timer 0\n");
 
+    S32K3X8_TIMER0->INTCLR = TIMER_INTCLR_Msk;     /* Clear any pending interrupts */
+    S32K3X8_TIMER0->RELOAD = (12500000);           /* Set reload value */
+    //S32K3X8_TIMER0->RELOAD   = ( configCPU_CLOCK_HZ / tmrTIMER_0_FREQUENCY );
+    S32K3X8_TIMER0->CTRL     = ( ( 1ul <<  3 ) |   /* Enable Timer interrupt. */
+                                 ( 1ul <<  0 ) );  /* Enable Timer. */
+    
     NVIC_SetPriority( TIMER0_IRQ_num, configMAX_SYSCALL_INTERRUPT_PRIORITY );
     NVIC_EnableIRQ( TIMER0_IRQ_num );
 
-    // Initialize TIMER1
+    // printf("Timer 0 initialised\n");
+    UART_printf("Timer 0 initialised\n");
 
-    
-    S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;           // Clear any pending interrupts
-    S32K3X8_TIMER1->RELOAD = (12500000);   // Set reload value
-    S32K3X8_TIMER1->CTRL   = ((1ul << 3) | (1ul << 0));  // Enable Timer
+    /* Initialise Timer 1 */
 
+    // printf("Initialising Timer 1\n");
+    UART_printf("Initialising Timer 1\n");
+
+    S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;     /* Clear any pending interrupts */
+    S32K3X8_TIMER1->RELOAD = (12500000);           /* Set reload value */
+    // S32K3X8_TIMER1->RELOAD   = ( configCPU_CLOCK_HZ / tmrTIMER_1_FREQUENCY );
+    S32K3X8_TIMER1->CTRL     = ( ( 1ul <<  3 ) |   /* Enable Timer interrupt. */
+                                 ( 1ul <<  0 ) );  /* Enable Timer. */
 
     NVIC_SetPriority( TIMER1_IRQ_num, configMAX_SYSCALL_INTERRUPT_PRIORITY );
     NVIC_EnableIRQ( TIMER1_IRQ_num );
-    
 
+    // printf("Timer 1 initialised\n");
+    UART_printf("Timer 1 initialised\n");
+
+    // printf("================================================================\n");
+    UART_printf("================================================================\n");
+    // printf("\n");
+    UART_printf("\n");
 }
 
-void TIMER0_IRQHandler(void) {
-
+void TIMER0_IRQHandler(void)
+{
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     /* Clear the interrupt */
     S32K3X8_TIMER0->INTCLR = TIMER_INTCLR_Msk;
 
-    UART_printf("Timer 0 Interrupt\n");
+    /* Main functionality */
+    // printf("Timer 0 Interrupt: looking for user activities...\n");
+    UART_printf("Timer 0 Interrupt: looking for user activities...\n");
+    userActivityDetection = (userActivity == 1) ? 1 : 0;
 
     /* Perform a context switch if necessary */
-    //portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
+    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void TIMER1_IRQHandler(void) {
-
+void TIMER1_IRQHandler(void)
+{
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     /* Clear the interrupt */
     S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;
 
-    UART_printf("Timer 1 Interrupt\n");
+    /* Main functionality */
+    // printf("Timer 1 Interrupt: looking for suspicious activities...\n");
+    UART_printf("Timer 1 Interrupt: looking for suspicious activities...\n");
+    suspiciousActivityDetection = (suspiciousActivity == 1) ? 1 : 0;
 
     /* Perform a context switch if necessary */
-    //portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
+    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }

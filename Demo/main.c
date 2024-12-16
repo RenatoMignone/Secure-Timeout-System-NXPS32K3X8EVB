@@ -1,45 +1,50 @@
+/* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 #include "uart.h"
 #include "queue.h"
-#include "IntTimer.h"
-#include "secure_timeout_system.h"
+
+/* Standard includes */
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 #include <limits.h>
 
+/* Application includes */
+#include "IntTimer.h"
+#include "secure_timeout_system.h"
+
+/* Task priorities */
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
 
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
+/* Task functions */
 void TaskA(void *pvParameters);
 void TaskB(void *pvParameters);
+extern void vStartSecureTimeoutSystem(void);
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char **argv) {
 
-  (void) argc;
-  (void) argv;
+    (void) argc;
+    (void) argv;
 
-  UART_init();
+    /* Hardware initialisation. */
+    // prvUARTInit();
+    UART_init();
 
-  // Initialize the hardware timers
-  // To be commented (?) if vStartSecureTimeoutSystem() is activated
-  vInitialiseTimers();
+    // xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
+    // xTaskCreate(TaskB, "TaskB", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
 
-  // xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
-  // xTaskCreate(TaskB, "TaskB", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
+    // Start the secure timeout system
+    vStartSecureTimeoutSystem();
 
-  // Start the secure timeout system
-  //vStartSecureTimeoutSystem();
+    // printf("Ready to run the scheduler..\n");
+    UART_printf("Ready to run the scheduler..\n");
+    vTaskStartScheduler();
 
-  UART_printf("Ready to run the scheduler..\n");
-  vTaskStartScheduler();
-
-  for (;;);
+    for (;;);
 
 }
 
