@@ -26,10 +26,8 @@ extern int suspiciousActivityDetection;
 
 void vInitialiseTimers( void )
 {
-    // printf("\n");
-    UART_printf("\n");
-    // printf("================================================================\n");
-    UART_printf("================================================================\n");
+    // printf("------------------- Initialization of Hardware Timers --------------------\n\n");
+    UART_printf("------------------- Initialization of Hardware Timers --------------------\n\n");
 
     /* Initialise Timer 0 */
 
@@ -65,8 +63,8 @@ void vInitialiseTimers( void )
     // printf("Timer 1 initialised\n");
     UART_printf("Timer 1 initialised\n");
 
-    // printf("================================================================\n");
-    UART_printf("================================================================\n");
+    // printf("\n--------------------------------------------------------------------------\n");
+    UART_printf("\n--------------------------------------------------------------------------\n");
     // printf("\n");
     UART_printf("\n");
 }
@@ -84,7 +82,7 @@ void TIMER0_IRQHandler(void)
     userActivityDetection = (userActivity == 1) ? 1 : 0;
 
     /* Perform a context switch if necessary */
-    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void TIMER1_IRQHandler(void)
@@ -100,5 +98,5 @@ void TIMER1_IRQHandler(void)
     suspiciousActivityDetection = (suspiciousActivity == 1) ? 1 : 0;
 
     /* Perform a context switch if necessary */
-    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }

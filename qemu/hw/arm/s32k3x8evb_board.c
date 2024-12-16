@@ -1,66 +1,102 @@
-//System Includes
+/*
+ * S32K3X8EVB Board Initialization and Configuration
+ * 
+ * This file contains the initialization and configuration functions for the 
+ * NXP S32K3X8EVB board. It includes functions to load firmware, initialize 
+ * memory regions, and handle various hardware components.
+ * 
+ * Authors:
+ * - Renato Mignone
+ * - Simone Romano
+ * - Elia Innocenti
+ * - Andrea Botticella
+ * - Fabrizio Emanuel
+ * 
+ * All authors are students from the Politecnico di Torino, Italy.
+ */
+
+
+/* System Includes */
+
+/* QEMU Core Includes */
 #include "qemu/osdep.h"
+#include "qemu/timer.h"
+#include "qemu/log.h"
+#include "qemu/typedefs.h"
+
+/* Execution and Memory Management */
+#include "exec/memory.h"
+#include "exec/address-spaces.h"
+
+/* Hardware Core Includes */
 #include "hw/core/split-irq.h"
 #include "hw/sysbus.h"
+#include "hw/boards.h"
+#include "hw/irq.h"
+#include "hw/qdev-clock.h"
+
+/* Specific Hardware Components */
 #include "hw/sd/sd.h"
 #include "hw/ssi/ssi.h"
 #include "hw/arm/boot.h"
-#include "qemu/timer.h"
-#include "exec/memory.h"
 #include "hw/i2c/i2c.h"
-#include "hw/boards.h"
-#include "qemu/log.h"
-#include "exec/address-spaces.h"
 #include "hw/timer/cmsdk-apb-timer.h"
-#include "sysemu/sysemu.h"
 #include "hw/arm/armv7m.h"
 #include "hw/char/pl011.h"
-#include "hw/irq.h"
-#include "migration/vmstate.h"
 #include "hw/misc/unimp.h"
-#include "hw/qdev-clock.h"
+
+/* System Emulation */
+#include "sysemu/sysemu.h"
+#include "migration/vmstate.h"
+
+/* QEMU Object Model */
 #include "qom/object.h"
+
+/* QEMU API */
 #include "qapi/qmp/qlist.h"
+
+/* User Interface */
 #include "ui/input.h"
-#include "qemu/typedefs.h"
 
 /*------------------------------------------------------------------------------*/
-// Define some functions useful in the code.
+
+// Function to load an image into the target physical memory
 int load_image_targphys(const char *filename, hwaddr addr, hwaddr size);
+
 // Function to load the firmware
 void s32k3x8_load_firmware(ARMCPU *cpu, MachineState *ms, MemoryRegion *flash, const char *firmware_filename);
+
 // Function to initialize the memory regions
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
-
-
 /*------------------------------------------------------------------------------*/
+
 // Define constants for memory regions
-#define FLASH_BASE_ADDR  0x00000000        // Flash memory base address
-#define FLASH_SIZE       0x00C00000        // 12 MB program flash
 
-#define SRAM_BASE_ADDR   0x20400000        // SRAM base address
-#define SRAM_SIZE        0x00240000        // 2.25 MB SRAM
+#define FLASH_BASE_ADDR         0x00000000    // Flash memory base address
+#define FLASH_SIZE              0x00C00000    // 12 MB program flash
 
-#define UART_BASE_ADDR   0x4006A000        // UART base address
+#define SRAM_BASE_ADDR          0x20400000    // SRAM base address
+#define SRAM_SIZE               0x00240000    // 2.25 MB SRAM
 
-#define PIT_TIMER1_BASE_ADDR    0x40037000  // PIT base address
+#define UART_BASE_ADDR          0x4006A000    // UART base address
 
-#define PIT_TIMER2_BASE_ADDR    0x40038000  // PIT base address
+#define PIT_TIMER1_BASE_ADDR    0x40037000    // PIT base address
 
-
+#define PIT_TIMER2_BASE_ADDR    0x40038000    // PIT base address
 
 /*------------------------------------------------------------------------------*/
+
 // Define the machine state
 
 #define TYPE_S32K3X8EVB_SYS "s32k3x8evb-sys"
 OBJECT_DECLARE_SIMPLE_TYPE(ssys_state, S32K3X8EVB_SYS)
 typedef struct S32K3X8MachineClass S32K3X8MachineClass;
 
-
-
 /*------------------------------------------------------------------------------*/
+
 // Creation of the syss_state struct that represents the state of the system
+
 struct ssys_state {
     SysBusDevice parent_obj;
     MemoryRegion iomem;
@@ -69,13 +105,12 @@ struct ssys_state {
     qemu_irq irq;
     Clock *sysclk;
     Clock *refclk;
-// Define the machine state
 };
 
-
-
 /*------------------------------------------------------------------------------*/
+
 // Creation of the S32K3X8MachineState struct that represents the state of the machine
+
 struct S32K3X8MachineState {
     MachineState *parent_obj;
     ssys_state sys;
@@ -83,23 +118,22 @@ struct S32K3X8MachineState {
 };
 typedef struct S32K3X8MachineState S32K3X8MachineState;
 
-
-
 /*------------------------------------------------------------------------------*/
+
 // Creation of the names of the board seen by QEMU.
+
 #define TYPE_S32K3X8_BASE_MACHINE MACHINE_TYPE_NAME("s32k3x8")
 #define TYPE_S32K3X8_MACHINE MACHINE_TYPE_NAME("s32k3x8-board")
 
 DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACHINE)
 
-
-
 /*------------------------------------------------------------------------------*/
+
 // Implementation of the function to initialize the memory regions
 
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
-	fprintf(stdout, "\n\n--------------- Initialization of the memory regions ---------------\n");
+	fprintf(stdout, "\n\n------------------ Initialization of the memory regions ------------------\n");
     MemoryRegion *flash = g_new(MemoryRegion, 1);
     MemoryRegion *sram = g_new(MemoryRegion, 1);
 
@@ -113,17 +147,16 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 	memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
 	memory_region_add_subregion_overlap(system_memory, SRAM_BASE_ADDR, sram, 0);
 
-	fprintf(stdout, "Memory regions initialized successfully.\n\n");
+	fprintf(stdout, "Memory regions initialized successfully.\n");
 }
 
-
 /*------------------------------------------------------------------------------*/
+
 // Function to initialize the S32K3X8 board for QEMU
+
 static void s32k3x8_init(MachineState *ms) {
 
-
-    fprintf(stdout, "\n\n===================== Initializing the System =====================\n");
-
+    fprintf(stdout, "\n\n======================== Initializing the System =========================\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*------------Declaration of pointers for various QEMU device models--------------------*/
@@ -173,12 +206,11 @@ static void s32k3x8_init(MachineState *ms) {
     // Realize and activate the system controller device model
     sysbus_realize_and_unref(SYS_BUS_DEVICE(syss_dev), &error_fatal);
 
-
     /*--------------------------------------------------------------------------------------*/
     /*------------------------ Initialize a clock for the system----------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf(stdout, "\n------------------ Initialization of the system Clock ------------------\n");
+    fprintf(stdout, "\n------------------- Initialization of the system Clock -------------------\n");
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
     // Set the clock period to 40.69ns (equivalent to 24.5MHz frequency)
@@ -188,14 +220,13 @@ static void s32k3x8_init(MachineState *ms) {
     clock_set_hz(m_state->sys.refclk, 1000000);
 
     // Log the successful clock initialization
-    fprintf(stdout, "\nClock initialized.\n\n");
-
+    fprintf(stdout, "\nClock initialized.\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------Initialize the Nested Vectored Interrupt Controller (NVIC)---------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf(stdout, "\n------------------ Initialization of the system NVIC ------------------\n");
+    fprintf(stdout, "\n------------------- Initialization of the system NVIC --------------------\n");
 
     nvic = qdev_new(TYPE_ARMV7M); // Create a new NVIC device model
 
@@ -228,26 +259,23 @@ static void s32k3x8_init(MachineState *ms) {
     // Log the successful realization of the NVIC
     fprintf(stdout, "\nNVIC realized.\n");
 
-
     /*--------------------------------------------------------------------------------------*/
     /*--------------------------Initialize the UART device----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf(stdout, "\n---------------------- Initialization of the UART ---------------------\n");
-
+    fprintf(stdout, "\n----------------------- Initialization of the UART -----------------------\n");
 
     pl011_create(UART_BASE_ADDR, qdev_get_gpio_in(nvic, 0), serial_hd(0));
 
-    fprintf(stdout, "\nUART initialized and connected to NVIC.\n\n");
-
-
+    fprintf(stdout, "\nUART initialized and connected to NVIC.\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf(stdout, "\n------------------- Initialization of the Two timers ------------------\n");
-    //First Timer
+    fprintf(stdout, "\n-------------------- Initialization of the Two timers --------------------\n");
+
+    // First Timer
     pit_timer1 = qdev_new(TYPE_CMSDK_APB_TIMER);
     SysBusDevice *sbd1;
     sbd1 = SYS_BUS_DEVICE(pit_timer1);
@@ -258,7 +286,7 @@ static void s32k3x8_init(MachineState *ms) {
 
     fprintf(stdout,"\nFirst Timer Initialized Correctly\n\n");
 
-    //Second Timer
+    // Second Timer
     pit_timer2 = qdev_new(TYPE_CMSDK_APB_TIMER);
     SysBusDevice *sbd2;
     sbd2 = SYS_BUS_DEVICE(pit_timer2);
@@ -267,14 +295,14 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_mmio_map(sbd2, 0, PIT_TIMER2_BASE_ADDR);
     sysbus_connect_irq(sbd2, 0, qdev_get_gpio_in(nvic, 9));
 
-    fprintf(stdout,"\nSecond Timer Initialized Correctly\n\n");
-
-
+    fprintf(stdout,"\nSecond Timer Initialized Correctly\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------Load firmware into the emulated flash memory----------------------*/
     /*--------------------------------------------------------------------------------------*/
-    fprintf(stdout, "\n--------------- Loading the Kernel into the flash memory ---------------\n");
+
+    fprintf(stdout, "\n---------------- Loading the Kernel into the flash memory ----------------\n");
+
     // The firmware file is specified in the machine state (ms->kernel_filename)
     armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, 0, FLASH_SIZE);
 
@@ -286,10 +314,8 @@ static void s32k3x8_init(MachineState *ms) {
 
     fprintf(stdout, "Starting to run...\n");
 
-    fprintf(stdout, "\n-----------------------------------------------------------------------\n");
+    fprintf(stdout, "\n==========================================================================\n");
 }
-
-
 
 /*------------------------------------------------------------------------------*/
 
@@ -308,8 +334,6 @@ static void s32k3x8_class_init(ObjectClass *oc, void *data) {
     mc->no_cdrom = 1;
     mc->no_parallel = 1;
 }
-
-
 
 /*------------------------------------------------------------------------------*/
 

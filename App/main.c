@@ -28,7 +28,7 @@ extern void vStartSecureTimeoutSystem(void);
 
 int main(int argc, char **argv) {
 
-    UART_printf("\n==================== Starting the Main =======================\n\n");
+    UART_printf("\n=========================== Starting the Main ============================\n\n");
 
     (void) argc;
     (void) argv;
@@ -55,19 +55,16 @@ int main(int argc, char **argv) {
 
 void TaskA(void *pvParameters) {
 
-  (void) pvParameters;
+    (void) pvParameters;
 
-  int counter = 0;
+    int counter = 0;
 
-  for (;;) {
+    for (;;) {
 
-    counter++;
-    //UART_printf("Task A counter: %d\n", counter); // TODO: implement printf
-    char buffer[100];
-    sprintf(buffer,"Task A %d\n",counter);
-    UART_printf(buffer);
-    // UART_printf("Task A is running\n");
-    vTaskDelay(pdMS_TO_TICKS(3000)); // Delay for 1 second
+        counter++;
+        // printf("Task A counter: %d\n", counter);
+        UART_printf("Task A running... \n");
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
 
   }
 
@@ -75,18 +72,18 @@ void TaskA(void *pvParameters) {
 
 void TaskB(void *pvParameters) {
 
-  (void ) pvParameters;
+    (void ) pvParameters;
 
-  int counter = 0;
+    int counter = 0;
 
-  for (;;) {
+    for (;;) {
 
-    counter++;
-    //UART_printf("Task B counter: %d\n", counter); // TODO: implement printf
-    UART_printf("Task B is running\n");
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
+        counter++;
+        // printf("Task B counter: %d\n", counter);
+        UART_printf("Task B running... \n");
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
 
-  }
+    }
 
 }
 

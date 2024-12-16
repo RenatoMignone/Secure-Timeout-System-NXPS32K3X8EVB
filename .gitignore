@@ -1,6 +1,6 @@
-# ============================
+# =================================
 # Project
-# ============================
+# =================================
 
 # App Directory
 App/Output/
@@ -13,9 +13,12 @@ qemu/scripts/tracetool/backend/__pycache__/
 qemu/scripts/tracetool/format/__pycache__/
 qemu/tests/qemu-iotests/__pycache__/
 
-# ============================
+# FreeRTOS Directory
+# TODO: add elements to ignore (?)
+
+# =================================
 # IDE-Specific Ignore Patterns
-# ============================
+# =================================
 
 # IntelliJ IDEA/JetBrains
 .idea/
@@ -43,9 +46,9 @@ swapfile.*
 *.sublime-project
 *.sublime-workspace
 
-# ==================
+# =================================
 # System Files
-# ==================
+# =================================
 
 # macOS Finder
 .DS_Store
@@ -61,9 +64,9 @@ Desktop.ini
 .trash
 .nfs*
 
-# ===========================
+# =================================
 # QEMU-Specific Ignore Patterns
-# ===========================
+# =================================
 
 # Build Directory
 qemu/build/
@@ -85,9 +88,9 @@ qemu/build/
 qemu.log
 trace-*
 
-# =============================
+# =================================
 # FreeRTOS-Specific Ignore Patterns
-# =============================
+# =================================
 
 # FreeRTOS Directory
 freertos/
@@ -101,9 +104,9 @@ freertos/
 *.bin
 *.hex
 
-# =====================
+# =================================
 # General Build Outputs
-# =====================
+# =================================
 
 /build/
 /dist/
@@ -115,9 +118,9 @@ freertos/
 *.pyo
 __pycache__/
 
-# =================
+# =================================
 # Logs and Backups
-# =================
+# =================================
 
 # Log Files
 *.log
@@ -129,9 +132,9 @@ __pycache__/
 *.swp
 *.swo
 
-# ==============
+# =================================
 # Other Patterns
-# ==============
+# =================================
 
 
 # Coverage

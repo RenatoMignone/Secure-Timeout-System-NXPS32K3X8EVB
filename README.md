@@ -1,4 +1,4 @@
-# Project name (group2)
+# Secure-Timeout-System-NXPS32
 
 ![polito](resources/logo_polito.jpg)
 
@@ -31,14 +31,16 @@
 &nbsp;• [Acknowledgments](#acknowledgments) <br>
 
 <div align="right">
-<i>Last updated: December 2024</i>
+<i>Last updated: January 2025</i>
 </div>
 
 </details>
 
 ## Project Overview
 
-This project is a demonstration of integrating FreeRTOS with a custom board based on the S32K3X8EVB. It includes tasks for monitoring user activity, handling suspicious events, and simulating various activities. The project also demonstrates the use of QEMU for emulating the board.
+This project implements a very simple secure timeout system application on the NXP S32K3X8EVB board using FreeRTOS, emulated with QEMU.
+
+This project has been assigned for the [Computer Architectures and Operating Systems](#acknowledgments) course. The work has been carried out by group 2. For more information about the authors, please refer to the [Authors](#authors) section.
 
 ## Features
 
@@ -61,48 +63,38 @@ This project is a demonstration of integrating FreeRTOS with a custom board base
 
 1. Clone the repository:
     ```sh
-    git clone https://your-repo-url.git
-    cd your-repo
+    git clone --recurse-submodules https://baltig.polito.it/caos2024/group2.git 
+    cd group2
     ```
 
-2. Initialize and update submodules:
-    ```sh
-    git submodule update --init --recursive
-    ```
-
-3. Build the project:
-    ```sh
-    make
-    ```
-
-### Running the Emulator
-
-To run the emulator with the built project:
-```sh
-make qemu_start
-```
-
-To run the emulator in debug mode:
-```sh
-make qemu_debug
-```
+2. Configure QEMU:
+   To configure QEMU, navigate to the `qemu` directory and run the configuration script:
+   ```bash
+   cd qemu
+   ./configure
+   ninja -C build qemu-system-arm
+   ```
 
 ## Project structure
 
-- `Demo/`: Contains the main project files and source code.
+- `App/`: Contains the main project files and source code.
     - `CMSIS/`: CMSIS headers and startup files.
-    - `Output/`: Directory for generated output files.
-    - `qemu/`: QEMU configuration and build files.
-    - `secure_timeout_system.c`: Implementation of the secure timeout system.
-    - `uart.c`: UART initialization and communication functions.
-    - `IntTimer.c`: Timer initialization and interrupt handling.
-    - `main.c`: Main application code.
-    - `Makefile`: Build configuration.
-    - `linker.ld`: Linker script for memory layout.
+    - `Peripherals/`: Contains peripheral driver files.
+        - `IntTimer.c/.h`: Timer interrupt handling.
+        - `uart.c/.h`: UART communication functions.
+    - `SecureTimeoutSystem/`: Contains the secure timeout system implementation.
+        - `globals.h`: Global variables for the secure timeout system.
+        - `secure_timeout_systems.c/.h`: Secure timeout system functions.
+    - `FreeRTOSConfig.h`: FreeRTOS configuration file.
+    - `main.c`: Main application entry point.
+    - `Makefile`: Build configuration and rules.
+    - `s32_linker.ld`: Linker script for the project.
+    - `s32_startup.c`: Startup code for the S32K3X8EVB board.
+- `FreeRTOS`: FreeRTOS kernel and related files.
+- `qemu`: QEMU emulator files.
+- `resources/`: Additional resources such as images and documentation.
 - `README.md`: Project documentation.
 - `LICENSE-CC-BY-NC-4.0.md`: License file.
-- `.gitignore`: Git ignore file.
-- `.gitmodules`: Git submodules configuration.
 
 ## Board and FreeRTOS Integration
 
@@ -117,21 +109,20 @@ make qemu_debug
 
 The FreeRTOS application includes tasks for monitoring user activity, handling alerts, and simulating events. The tasks are created and managed by FreeRTOS, and the system uses hardware timers for periodic operations.
 
-## Usage
-
-### How to Run Applications
+### Running the App
 
 1. Build the project:
     ```sh
-    make
+    cd App
+    make clean all
     ```
 
-2. Run the emulator:
+2. To run the emulator with the built project:
     ```sh
     make qemu_start
     ```
 
-3. To debug the application, use:
+3. To run the emulator in debug mode:
     ```sh
     make qemu_debug
     ```
