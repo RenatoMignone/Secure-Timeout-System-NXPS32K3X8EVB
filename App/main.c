@@ -15,7 +15,6 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
-// #include "printf-stdarg.h"   potrebbe non servire includerla
 
 /* Task priorities */
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)

@@ -9,7 +9,6 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
-// #include "printf-stdarg.h"
 
 /* Task priorities */
 #define MONITOR_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -82,7 +81,7 @@ static void vAlertTask(void *pvParameters) {
 
     for (;;) {
         if (suspiciousActivityDetection) {
-            printf("Suspicious activity detected!\n");
+            printf("!!!!!!!!!!!!!!!!!!! Suspicious activity detected !!!!!!!!!!!!!!!!!!!\n");
             suspiciousActivityDetection = 0;
             // Extra implementation
         } else {
@@ -98,8 +97,8 @@ static void vEventTask(void *pvParameters) {
     (void) pvParameters;
 
     for (;;) {
-        printf("\nSimulating events...\n");
-
+        printf("\n@@@@@@@@@@@@@@@@@@@ Simulating events... @@@@@@@@@@@@@@@@@@@\n\n");
+                  
         /* Reset Activities */
         userActivity = 0;
         suspiciousActivity = 0;
@@ -114,7 +113,7 @@ static void vEventTask(void *pvParameters) {
             printf("Simulated suspicious activity.\n");
         }
 
-        vTaskDelay(pdMS_TO_TICKS(3000));
+        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 
 }

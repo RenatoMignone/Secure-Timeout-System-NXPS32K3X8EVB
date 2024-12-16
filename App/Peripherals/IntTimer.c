@@ -9,7 +9,6 @@
 #include "uart.h"
 #include "IntTimer.h"
 
-
 /* Library includes. */
 #include "S32K3X8EVB.h"
 

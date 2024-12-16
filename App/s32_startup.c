@@ -28,7 +28,6 @@
 #include "uart.h"
 #include "IntTimer.h"
 #include <stdio.h>
-// #include "printf-stdarg.h"
 
 /* FreeRTOS interrupt handlers. */
 extern void vPortSVCHandler( void );
