@@ -84,7 +84,7 @@ CFLAGS += -fdata-sections
 CFLAGS += -DCMSDK_CM7
 
 # Specify the linker script
-LDFLAGS = -T ./linker.ld
+LDFLAGS = -T ./s32_linker.ld
 
 # Don't use the standard start-up files
 LDFLAGS += -nostartfiles
@@ -124,7 +124,7 @@ SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/IntTimer.c
 SOURCE_FILES += $(DEMO_PROJECT)/SecureTimeoutSystem/secure_timeout_system.c
 
 # Start-up code
-SOURCE_FILES += ./startup.c
+SOURCE_FILES += ./s32_startup.c
 
 # Create list of object files with the same names of the sources
 OBJS = $(SOURCE_FILES:%.c=%.o)
@@ -137,7 +137,7 @@ OBJS_OUTPUT = $(patsubst %.o, $(OUTPUT_DIR)/%.o, $(OBJS_NOPATH))
 
 all: $(ELF)
 
-$(ELF): $(OBJS_OUTPUT) ./linker.ld Makefile
+$(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
 	echo "\n\n--- Final linking ---\n"
 	$(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
 	$(SIZE) $(ELF)
