@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
   // To be commented (?) if vStartSecureTimeoutSystem() is activated
   vInitialiseTimers();
 
-  xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
-  xTaskCreate(TaskB, "TaskB", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
+  // xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
+  // xTaskCreate(TaskB, "TaskB", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
 
   // Start the secure timeout system
   //vStartSecureTimeoutSystem();

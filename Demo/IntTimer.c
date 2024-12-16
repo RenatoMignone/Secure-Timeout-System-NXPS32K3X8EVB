@@ -11,6 +11,7 @@
 #define tmrTIMER_0_FREQUENCY	( 2UL )
 //#define tmrTIMER_1_FREQUENCY    ( 1UL )
 #define TIMER0_IRQ_num 8
+#define TIMER1_IRQ_num 9
 
 void vInitialiseTimers( void ) {
 
@@ -27,16 +28,15 @@ void vInitialiseTimers( void ) {
 
     // Initialize TIMER1
 
-    /*
+    
     S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;           // Clear any pending interrupts
-    S32K3X8_TIMER1->RELOAD = ( configCPU_CLOCK_HZ / 
-                               tmrTIMER_1_FREQUENCY );   // Set reload value
-    S32K3X8_TIMER1->CTRL   = ( TIMER_CTRL_INTEN_Msk |    // Enable Timer interrupt
-                               TIMER_CTRL_ENABLE_Msk );  // Enable Timer
+    S32K3X8_TIMER1->RELOAD = (12500000);   // Set reload value
+    S32K3X8_TIMER1->CTRL   = ((1ul << 3) | (1ul << 0));  // Enable Timer
 
-    NVIC_SetPriority( TIMER1_IRQn, configMAX_SYSCALL_INTERRUPT_PRIORITY );
-    NVIC_EnableIRQ( TIMER1_IRQn );
-    */
+
+    NVIC_SetPriority( TIMER1_IRQ_num, configMAX_SYSCALL_INTERRUPT_PRIORITY );
+    NVIC_EnableIRQ( TIMER1_IRQ_num );
+    
 
 }
 
@@ -59,7 +59,7 @@ void TIMER1_IRQHandler(void) {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     /* Clear the interrupt */
-    //S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;
+    S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;
 
     UART_printf("Timer 1 Interrupt\n");
 

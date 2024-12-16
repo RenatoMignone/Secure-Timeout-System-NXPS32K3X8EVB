@@ -54,7 +54,9 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
 #define UART_BASE_ADDR   0x4006A000        // UART base address
 
-#define PIT_TIMER_BASE_ADDR    0x40037000  // PIT base address
+#define PIT_TIMER1_BASE_ADDR    0x40037000  // PIT base address
+
+#define PIT_TIMER2_BASE_ADDR    0x40038000  // PIT base address
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -257,14 +259,23 @@ static void s32k3x8_example_board_init(MachineState *ms) {
 
     //sysbus_create_simple("sp804", PIT_TIMER_BASE_ADDR, qdev_get_gpio_in(nvic, 48));
 
-    DeviceState *pit_timer;
-    pit_timer = qdev_new(TYPE_CMSDK_APB_TIMER);
-    SysBusDevice *sbd;
-    sbd = SYS_BUS_DEVICE(pit_timer);
-    qdev_connect_clock_in(DEVICE(pit_timer), "pclk", m_state->sys.sysclk);
-    sysbus_realize_and_unref(sbd, &error_fatal);
-    sysbus_mmio_map(sbd, 0, PIT_TIMER_BASE_ADDR);
-    sysbus_connect_irq(sbd, 0, qdev_get_gpio_in(nvic, 8));
+    DeviceState *pit_timer1;
+    pit_timer1 = qdev_new(TYPE_CMSDK_APB_TIMER);
+    SysBusDevice *sbd1;
+    sbd1 = SYS_BUS_DEVICE(pit_timer1);
+    qdev_connect_clock_in(DEVICE(pit_timer1), "pclk", m_state->sys.sysclk);
+    sysbus_realize_and_unref(sbd1, &error_fatal);
+    sysbus_mmio_map(sbd1, 0, PIT_TIMER1_BASE_ADDR);
+    sysbus_connect_irq(sbd1, 0, qdev_get_gpio_in(nvic, 8));
+
+    DeviceState *pit_timer2;
+    pit_timer2 = qdev_new(TYPE_CMSDK_APB_TIMER);
+    SysBusDevice *sbd2;
+    sbd2 = SYS_BUS_DEVICE(pit_timer2);
+    qdev_connect_clock_in(DEVICE(pit_timer2), "pclk", m_state->sys.sysclk);
+    sysbus_realize_and_unref(sbd2, &error_fatal);
+    sysbus_mmio_map(sbd2, 0, PIT_TIMER2_BASE_ADDR);
+    sysbus_connect_irq(sbd2, 0, qdev_get_gpio_in(nvic, 9));
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------Load firmware into the emulated flash memory----------------------*/

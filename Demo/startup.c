@@ -73,7 +73,7 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
     0,
     // we set 2 handlers for the 2 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined.
     ( uint32_t * ) TIMER0_IRQHandler,     // Timer 0
-    0, // ( uint32_t * ) TIMER1_IRQHandler,     // Timer 1
+    ( uint32_t * ) TIMER1_IRQHandler,     // Timer 1
     0,
     0,
     0,
