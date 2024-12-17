@@ -50,42 +50,6 @@ int main(int argc, char **argv) {
 }
 
 /*--------------------------------------------------------------------------------*/
-/*
-void TaskA(void *pvParameters) {
-
-    (void) pvParameters;
-
-    int counter = 0;
-
-    for (;;) {
-
-        counter++;
-        // printf("Task A counter: %d\n", counter);
-        printf("Task A running... \n");
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
-
-  }
-
-}
-
-void TaskB(void *pvParameters) {
-
-    (void ) pvParameters;
-
-    int counter = 0;
-
-    for (;;) {
-
-        counter++;
-        // printf("Task B counter: %d\n", counter);
-        printf("Task B running... \n");
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay for 1 second
-
-    }
-
-}
-*/
-/*--------------------------------------------------------------------------------*/
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
 
