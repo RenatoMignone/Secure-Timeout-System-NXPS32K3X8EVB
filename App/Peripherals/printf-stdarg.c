@@ -28,7 +28,7 @@
 #include <stdarg.h>
 #include "uart.h"
 
-#define putchar(c)      LPUART_TDR = c
+#define putchar(c)      UART_putChar(c)
 
 static int tiny_print( char **out, const char *format, va_list args, unsigned int buflen );
 

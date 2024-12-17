@@ -18,7 +18,6 @@ void UART_printf(const char *s)
 {
     while (*s != '\0') {
         // Wait until the transmit data register is empty
-        //while (!(LPUART_ISR & (1 << 7))); // TXE bit in ISR
 
         // Write the character to the TDR
         LPUART_TDR = (unsigned int)(*s);
