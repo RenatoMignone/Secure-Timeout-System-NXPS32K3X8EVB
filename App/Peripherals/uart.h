@@ -3,11 +3,20 @@
 
 #include "FreeRTOS.h"
 
-#define UART0_ADDRESS                         ( 0x4006A000 )
-#define UART0_DATA                            ( *( ( ( volatile uint32_t * ) ( UART0_ADDRESS + 0UL ) ) ) )
-#define UART0_STATE                           ( *( ( ( volatile uint32_t * ) ( UART0_ADDRESS + 4UL ) ) ) )
-#define UART0_CTRL                            ( *( ( ( volatile uint32_t * ) ( UART0_ADDRESS + 8UL ) ) ) )
-#define UART0_BAUDDIV                         ( *( ( ( volatile uint32_t * ) ( UART0_ADDRESS + 16UL ) ) ) )
+#define LPUART_BASE_ADDR 0x4006A000
+
+#define LPUART_CR1   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x00))
+#define LPUART_CR2   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x04))
+#define LPUART_CR3   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x08))
+#define LPUART_BRR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x0C))
+#define LPUART_GTPR  (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x10))
+#define LPUART_RTOR  (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x14))
+#define LPUART_RQR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x18))
+#define LPUART_ISR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x1C))
+#define LPUART_ICR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x20))
+#define LPUART_RDR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x24))
+#define LPUART_TDR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x28))
+
 
 void UART_init(void);
 void UART_printf(const char *s);

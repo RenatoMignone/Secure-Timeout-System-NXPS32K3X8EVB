@@ -42,7 +42,6 @@
 #include "hw/i2c/i2c.h"
 #include "hw/timer/cmsdk-apb-timer.h"
 #include "hw/arm/armv7m.h"
-#include "hw/char/pl011.h"
 #include "hw/misc/unimp.h"
 
 /* System Emulation */
@@ -57,6 +56,9 @@
 
 /* User Interface */
 #include "ui/input.h"
+
+/* LPUART Includes */
+#include "hw/char/stm32l4x5_usart.h"
 
 /*------------------------------------------------------------------------------*/
 
@@ -133,21 +135,21 @@ DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACH
 
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
-	fprintf(stdout, "\n\n------------------ Initialization of the memory regions ------------------\n");
+    fprintf(stdout, "\n\n------------------ Initialization of the memory regions ------------------\n");
     MemoryRegion *flash = g_new(MemoryRegion, 1);
     MemoryRegion *sram = g_new(MemoryRegion, 1);
 
-	// Flash memory initialization (Read-Only)
-	fprintf(stdout, "\nInitializing flash memory...\n\n");
-	memory_region_init_rom(flash, NULL, "s32k3x8.flash", FLASH_SIZE, &error_fatal);
-	memory_region_add_subregion(system_memory, FLASH_BASE_ADDR, flash);
+    // Flash memory initialization (Read-Only)
+    fprintf(stdout, "\nInitializing flash memory...\n\n");
+    memory_region_init_rom(flash, NULL, "s32k3x8.flash", FLASH_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BASE_ADDR, flash);
 
-	// SRAM memory initialization (RAM - Read-Write)
-	fprintf(stdout, "Initializing SRAM memory...\n\n");
-	memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
-	memory_region_add_subregion_overlap(system_memory, SRAM_BASE_ADDR, sram, 0);
+    // SRAM memory initialization (RAM - Read-Write)
+    fprintf(stdout, "Initializing SRAM memory...\n\n");
+    memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
+    memory_region_add_subregion_overlap(system_memory, SRAM_BASE_ADDR, sram, 0);
 
-	fprintf(stdout, "Memory regions initialized successfully.\n");
+    fprintf(stdout, "Memory regions initialized successfully.\n");
 }
 
 /*------------------------------------------------------------------------------*/
@@ -260,14 +262,19 @@ static void s32k3x8_init(MachineState *ms) {
     fprintf(stdout, "\nNVIC realized.\n");
 
     /*--------------------------------------------------------------------------------------*/
-    /*--------------------------Initialize the UART device----------------------------------*/
+    /*--------------------------Initialize the LPUART device--------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf(stdout, "\n----------------------- Initialization of the UART -----------------------\n");
+    fprintf(stdout, "\n----------------------- Initialization of the LPUART -----------------------\n");
 
-    pl011_create(UART_BASE_ADDR, qdev_get_gpio_in(nvic, 0), serial_hd(0));
+    DeviceState *lpuart = qdev_new(TYPE_STM32L4X5_LPUART);
+    qdev_prop_set_chr(lpuart, "chardev", serial_hd(0));
+    qdev_connect_clock_in(lpuart, "clk", m_state->sys.sysclk);
+    sysbus_realize_and_unref(SYS_BUS_DEVICE(lpuart), &error_fatal);
+    sysbus_mmio_map(SYS_BUS_DEVICE(lpuart), 0, UART_BASE_ADDR);
+    sysbus_connect_irq(SYS_BUS_DEVICE(lpuart), 0, qdev_get_gpio_in(nvic, 0));
 
-    fprintf(stdout, "\nUART initialized and connected to NVIC.\n");
+    fprintf(stdout, "\nLPUART initialized and connected to NVIC.\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
@@ -359,4 +366,3 @@ static void s32k3x8evb_machine_init(void) {
 type_init(s32k3x8evb_machine_init);
 
 /*------------------------------------------------------------------------------*/
-
