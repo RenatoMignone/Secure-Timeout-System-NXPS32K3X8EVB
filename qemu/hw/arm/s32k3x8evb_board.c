@@ -75,11 +75,34 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
 // Define constants for memory regions
 
-#define FLASH_BASE_ADDR         0x00000000    // Flash memory base address
-#define FLASH_SIZE              0x00C00000    // 12 MB program flash
+// Flash memory blocks
+#define FLASH_BLOCK0_BASE_ADDR  0x00400000  // Block0 base address
+#define FLASH_BLOCK0_SIZE       0x00200000  // 2 MB (Block0 size)
 
-#define SRAM_BASE_ADDR          0x20400000    // SRAM base address
-#define SRAM_SIZE               0x00240000    // 2.25 MB SRAM
+#define FLASH_BLOCK1_BASE_ADDR  0x00600000  // Block1 base address
+#define FLASH_BLOCK1_SIZE       0x00200000  // 2 MB (Block1 size)
+
+#define FLASH_BLOCK2_BASE_ADDR  0x00800000  // Block2 base address
+#define FLASH_BLOCK2_SIZE       0x00200000  // 2 MB (Block2 size)
+
+#define FLASH_BLOCK3_BASE_ADDR  0x00AD0000  // Block3 base address
+#define FLASH_BLOCK3_SIZE       0x00200000  // 2 MB (Block3 size)
+
+#define FLASH_BLOCK4_BASE_ADDR  0x10000000  // Block4 base address
+#define FLASH_BLOCK4_SIZE       0x00020000  // 128 KB (Block4 size)
+
+#define FLASH_UTEST_BASE_ADDR   0x18000000  // Utest base address
+#define FLASH_UTEST_SIZE        0x00002000  // 8 KB (Utest size)
+
+// SRAM memory blocks
+#define SRAM0_BASE_ADDR   0x20400000        // Block0  base address
+#define SRAM0_SIZE        0x00040000        // 265 KB (Block0 size)
+
+#define SRAM1_BASE_ADDR   0x20440000        // SRAM1 base address
+#define SRAM1_SIZE        0x00040000        // 256 KB (Block1 size)
+
+#define SRAM2_BASE_ADDR   0x20480000        // SRAM2 base address
+#define SRAM2_SIZE        0x00040000        // 256 KB (Block2 size)
 
 #define UART_BASE_ADDR          0x4006A000    // UART base address
 
@@ -132,24 +155,55 @@ DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACH
 /*------------------------------------------------------------------------------*/
 
 // Implementation of the function to initialize the memory regions
-
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
-    fprintf(stdout, "\n\n------------------ Initialization of the memory regions ------------------\n");
-    MemoryRegion *flash = g_new(MemoryRegion, 1);
-    MemoryRegion *sram = g_new(MemoryRegion, 1);
-
+	fprintf(stdout, "\n\n--------------- Initialization of the memory regions ---------------\n");
+    MemoryRegion *flash0 = g_new(MemoryRegion, 1);
+    MemoryRegion *flash1 = g_new(MemoryRegion, 1);
+    MemoryRegion *flash2 = g_new(MemoryRegion, 1);
+    MemoryRegion *flash3 = g_new(MemoryRegion, 1);
+    MemoryRegion *flash4 = g_new(MemoryRegion, 1);
+    MemoryRegion *utest = g_new(MemoryRegion, 1);
+    MemoryRegion *flash0_alias = g_new(MemoryRegion, 1);
+    MemoryRegion *sram0 = g_new(MemoryRegion, 1);
+    MemoryRegion *sram1 = g_new(MemoryRegion, 1);
+    MemoryRegion *sram2 = g_new(MemoryRegion, 1);
+	
     // Flash memory initialization (Read-Only)
-    fprintf(stdout, "\nInitializing flash memory...\n\n");
-    memory_region_init_rom(flash, NULL, "s32k3x8.flash", FLASH_SIZE, &error_fatal);
-    memory_region_add_subregion(system_memory, FLASH_BASE_ADDR, flash);
+	fprintf(stdout, "\nInitializing flash memory...\n\n");
 
+    memory_region_init_rom(flash0, NULL, "s32k3x8.flash0", FLASH_BLOCK0_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BLOCK0_BASE_ADDR, flash0);
+
+    memory_region_init_rom(flash1, NULL, "s32k3x8.flash1", FLASH_BLOCK1_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BLOCK1_BASE_ADDR, flash1);
+
+    memory_region_init_rom(flash2, NULL, "s32k3x8.flash2", FLASH_BLOCK2_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BLOCK2_BASE_ADDR, flash2);
+
+    memory_region_init_rom(flash3, NULL, "s32k3x8.flash3", FLASH_BLOCK3_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BLOCK3_BASE_ADDR, flash3);
+
+    memory_region_init_rom(flash4, NULL, "s32k3x8.flash4", FLASH_BLOCK4_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_BLOCK4_BASE_ADDR, flash4);
+
+    memory_region_init_rom(utest, NULL, "s32k3x8.utest", FLASH_UTEST_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, FLASH_UTEST_BASE_ADDR, utest);
+    
+    memory_region_init_alias(flash0_alias, NULL, "s32k3x8.flash0.alias", flash0, 0, FLASH_BLOCK0_SIZE);
+    memory_region_add_subregion(system_memory, 0, flash0_alias);
     // SRAM memory initialization (RAM - Read-Write)
-    fprintf(stdout, "Initializing SRAM memory...\n\n");
-    memory_region_init_ram(sram, NULL, "s32k3x8.sram", SRAM_SIZE, &error_fatal);
-    memory_region_add_subregion_overlap(system_memory, SRAM_BASE_ADDR, sram, 0);
+	fprintf(stdout, "Initializing SRAM memory...\n\n");
+	memory_region_init_ram(sram0, NULL, "s32k3x8.sram0", SRAM0_SIZE, &error_fatal);
+	memory_region_add_subregion_overlap(system_memory, SRAM0_BASE_ADDR, sram0, 0);
 
-    fprintf(stdout, "Memory regions initialized successfully.\n");
+    memory_region_init_ram(sram1, NULL, "s32k3x8.sram1", SRAM1_SIZE, &error_fatal);
+	memory_region_add_subregion_overlap(system_memory, SRAM1_BASE_ADDR, sram1, 0);
+
+	memory_region_init_ram(sram2, NULL, "s32k3x8.sram2", SRAM2_SIZE, &error_fatal);
+	memory_region_add_subregion_overlap(system_memory, SRAM2_BASE_ADDR, sram2, 0);
+    
+    fprintf(stdout, "Memory regions initialized successfully.\n\n");
 }
 
 /*------------------------------------------------------------------------------*/
@@ -160,8 +214,7 @@ static void s32k3x8_init(MachineState *ms) {
 
     fprintf(stdout, "\n\n======================== Initializing the System =========================\n");
 
-    /*--------------------------------------------------------------------------------------*/
-    /*------------Declaration of pointers for various QEMU device models--------------------*/
+    /*--------------------------------------------------------------------------------------*/    /*------------Declaration of pointers for various QEMU device models--------------------*/
     /*--------------------------------------------------------------------------------------*/
 
     DeviceState *nvic; // Device models for NVIC and PIT timer
@@ -311,7 +364,7 @@ static void s32k3x8_init(MachineState *ms) {
     fprintf(stdout, "\n---------------- Loading the Kernel into the flash memory ----------------\n");
 
     // The firmware file is specified in the machine state (ms->kernel_filename)
-    armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, 0, FLASH_SIZE);
+    armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, FLASH_BLOCK0_BASE_ADDR, FLASH_BLOCK0_SIZE);
 
     // Log the successful loading of the firmware
     fprintf(stdout, "\nKernel loaded into flash memory.\n\n");
