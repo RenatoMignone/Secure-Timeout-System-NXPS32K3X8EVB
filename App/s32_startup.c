@@ -118,22 +118,23 @@ __attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStack
     char buffer[100];
 
     UART_printf("\nHard Fault Handler:\n");
-    sprintf(buffer,"R0   = 0x%08X\n", r0);
+    sprintf(buffer,"R0   = 0x%08lX\n", r0);
     UART_printf(buffer);
-    sprintf(buffer,"R1   = 0x%08X\n", r1);
+    sprintf(buffer,"R1   = 0x%08lX\n", r1);
     UART_printf(buffer);
-    sprintf(buffer,"R2   = 0x%08X\n", r2);
+    sprintf(buffer,"R2   = 0x%08lX\n", r2);
     UART_printf(buffer);
-    sprintf(buffer,"R3   = 0x%08X\n", r3);
+    sprintf(buffer,"R3   = 0x%08lX\n", r3);
     UART_printf(buffer);
-    sprintf(buffer,"R12  = 0x%08X\n", r12);
+    sprintf(buffer,"R12  = 0x%08lX\n", r12);
     UART_printf(buffer);
-    sprintf(buffer,"LR   = 0x%08X\n", lr);
+    sprintf(buffer,"LR   = 0x%08lX\n", lr);
     UART_printf(buffer);
-    sprintf(buffer,"PC   = 0x%08X\n", pc);
+    sprintf(buffer,"PC   = 0x%08lX\n", pc);
     UART_printf(buffer);
-    sprintf(buffer,"PSR  = 0x%08X\n", psr);
+    sprintf(buffer,"PSR  = 0x%08lX\n", psr);
     UART_printf(buffer);
+    
 
     ////////////////////////////////////////////////////////////////////////////
 

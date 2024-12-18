@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
     /* Hardware initialisation. */
     UART_init();
 
+    // Se non inizializziamo prima la UART non printa
     printf("=========================== Starting the Main ============================\n\n");
 
     // Start the secure timeout system
