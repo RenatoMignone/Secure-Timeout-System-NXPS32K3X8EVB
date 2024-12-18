@@ -11,7 +11,7 @@ void UART_init(void)
     /* Enable the UART */
     LPUART_CR1 |= (1 << 0); // UE (USART enable)
 
-    UART_printf("\nUART initialized!\n\n");
+    //UART_printf("\nUART initialized!\n\n");
 }
 
 void UART_printf(const char *s) 

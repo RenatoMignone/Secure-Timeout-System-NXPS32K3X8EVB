@@ -2,7 +2,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-/*Application includes */
+/* Application includes */
 #include "secure_timeout_system.h"
 #include "globals.h"
 
@@ -37,7 +37,7 @@ static uint32_t seed = 14536;
 /* Custom function to generate a pseudo-random number */
 uint32_t simpleRandom() 
 {
-    // Linear Congruential Generator (LCG) parameters
+    /* Linear Congruential Generator (LCG) parameters */
     seed = (seed * 1664525 + 1013904223); // Modulus is implicitly 2^32
     return seed;
 }
@@ -50,9 +50,7 @@ void vStartSecureTimeoutSystem(void)
     /* Create the tasks */
     xTaskCreate(vMonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIORITY, NULL);
     xTaskCreate(vAlertTask,   "AlertTask",   configMINIMAL_STACK_SIZE, NULL, ALERT_TASK_PRIORITY,   NULL);
-    xTaskCreate(vEventTask,   "EventTask",   configMINIMAL_STACK_SIZE, NULL, EVENT_TASK_PRIORITY,   NULL);
-    
-
+    xTaskCreate(vEventTask,   "EventTask",   configMINIMAL_STACK_SIZE, NULL, EVENT_TASK_PRIORITY,   NULL);  
 }
 
 static void vMonitorTask(void *pvParameters) {

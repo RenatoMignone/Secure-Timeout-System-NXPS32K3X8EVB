@@ -62,19 +62,38 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 
 ### Installation
 
-1. Clone the repository:
+Clone the repository:
+```sh
+git clone --recurse-submodules https://baltig.polito.it/caos2024/group2.git 
+cd group2
+```
+
+### Running the Emulator and the Application
+
+1. To configure and build QEMU, just do:
+   ```bash
+   cd App
+   make qemu_build
+   ```
+   This implicitly does `make qemu_configure qemu_ninja`.
+
+2. To run the App:
     ```sh
-    git clone --recurse-submodules https://baltig.polito.it/caos2024/group2.git 
-    cd group2
+    make run
+    ```
+    This implicitly does `make clean all qemu_start`.
+
+3. There is also a command to build and run:
+    ```sh
+    cd App
+    make jesus
     ```
 
-2. Configure QEMU:
-   To configure QEMU, navigate to the `qemu` directory and run the configuration script:
-   ```bash
-   cd qemu
-   ./configure
-   ninja -C build qemu-system-arm
-   ```
+4. For `make jesus` and `make qemu_build`, there are "verbose" versions that print the logging of the build of the board:
+    ```sh
+    make qemu_build_v
+    make jesus_v
+    ```
 
 ## Project structure
 
@@ -109,24 +128,6 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 ### FreeRTOS Application
 
 The FreeRTOS application includes tasks for monitoring user activity, handling alerts, and simulating events. The tasks are created and managed by FreeRTOS, and the system uses hardware timers for periodic operations.
-
-### Running the App
-
-1. Build the project:
-    ```sh
-    cd App
-    make clean all
-    ```
-
-2. To run the emulator with the built project:
-    ```sh
-    make qemu_start
-    ```
-
-3. To run the emulator in debug mode:
-    ```sh
-    make qemu_debug
-    ```
 
 ### Available Configuration Options
 

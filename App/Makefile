@@ -156,15 +156,18 @@ qemu_configure:
 qemu_ninja:
 	cd ../qemu && ninja -C build qemu-system-arm 
 
+# Configure and build QEMU using Ninja
+qemu_build: qemu_configure qemu_ninja
+
 # Configure and build QEMU using Ninja with verbose output
-qemu_build_verbose:
+qemu_build_v:
 	cd ../qemu && ./configure --extra-cflags="-DVERBOSE" && ninja -C build qemu-system-arm
 
 #----------------------------------------------------------------------#
 #-------------------------- Final command -----------------------------#
 
 # Run the full build and start QEMU
-jesus: qemu_configure qemu_ninja clean all qemu_start
+jesus: qemu_build run
 
 # Run the full build and start QEMU with verbose output
-jesus_v: qemu_build_verbose clean all qemu_start
+jesus_v: qemu_build_v run
