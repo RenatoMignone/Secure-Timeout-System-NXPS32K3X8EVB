@@ -19,9 +19,14 @@ extern int userActivityDetection;
 extern int suspiciousActivity;
 extern int suspiciousActivityDetection;
 
-// #define tmrTIMER_0_FREQUENCY	( 2UL )   // TODO: update (?)
-// #define tmrTIMER_1_FREQUENCY	( 2UL )   // TODO: update (?)
+/* CPU clock frequency */
+#define configCPU_CLOCK_HZ      ( 143000000UL ) // TODO: update (?)
 
+/* Timer 0 and Timer 1 frequencies */
+#define tmrTIMER_0_FREQUENCY	( 2UL )         // TODO: update (?)
+#define tmrTIMER_1_FREQUENCY	( 2UL )         // TODO: update (?)
+
+/* Timer IRQ numbers */
 #define TIMER0_IRQ_num 8
 #define TIMER1_IRQ_num 9
 
@@ -33,11 +38,11 @@ void vInitialiseTimers( void )
 
     printf("Initialising Timer 0\n");
 
-    S32K3X8_TIMER0->INTCLR = TIMER_INTCLR_Msk;     /* Clear any pending interrupts */
-    S32K3X8_TIMER0->RELOAD = (12500000);           /* Set reload value */
-    //S32K3X8_TIMER0->RELOAD   = ( configCPU_CLOCK_HZ / tmrTIMER_0_FREQUENCY );
-    S32K3X8_TIMER0->CTRL     = ( ( 1ul <<  3 ) |   /* Enable Timer interrupt. */
-                                 ( 1ul <<  0 ) );  /* Enable Timer. */
+    S32K3X8_TIMER0->INTCLR = TIMER_INTCLR_Msk;             /* Clear any pending interrupts */
+    S32K3X8_TIMER0->RELOAD   = ( configCPU_CLOCK_HZ /      /* Set reload value */
+                                 tmrTIMER_0_FREQUENCY );
+    S32K3X8_TIMER0->CTRL     = ( ( 1ul <<  3 ) |           /* Enable Timer interrupt. */
+                                 ( 1ul <<  0 ) );          /* Enable Timer. */
     
     NVIC_SetPriority( TIMER0_IRQ_num, configMAX_SYSCALL_INTERRUPT_PRIORITY );
     NVIC_EnableIRQ( TIMER0_IRQ_num );
@@ -48,11 +53,11 @@ void vInitialiseTimers( void )
 
     printf("Initialising Timer 1\n");
 
-    S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;     /* Clear any pending interrupts */
-    S32K3X8_TIMER1->RELOAD = (12500000);           /* Set reload value */
-    // S32K3X8_TIMER1->RELOAD   = ( configCPU_CLOCK_HZ / tmrTIMER_1_FREQUENCY );
-    S32K3X8_TIMER1->CTRL     = ( ( 1ul <<  3 ) |   /* Enable Timer interrupt. */
-                                 ( 1ul <<  0 ) );  /* Enable Timer. */
+    S32K3X8_TIMER1->INTCLR = TIMER_INTCLR_Msk;             /* Clear any pending interrupts */
+    S32K3X8_TIMER1->RELOAD   = ( configCPU_CLOCK_HZ /      /* Set reload value */
+                                 tmrTIMER_1_FREQUENCY );
+    S32K3X8_TIMER1->CTRL     = ( ( 1ul <<  3 ) |           /* Enable Timer interrupt. */
+                                 ( 1ul <<  0 ) );          /* Enable Timer. */
 
     NVIC_SetPriority( TIMER1_IRQ_num, configMAX_SYSCALL_INTERRUPT_PRIORITY );
     NVIC_EnableIRQ( TIMER1_IRQ_num );

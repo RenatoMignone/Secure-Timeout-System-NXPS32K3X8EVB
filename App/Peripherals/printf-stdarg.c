@@ -28,8 +28,6 @@
 #include <stdarg.h>
 #include "uart.h"
 
-
-
 #define putchar(c)      UART_putChar(c)
 
 static int tiny_print( char **out, const char *format, va_list args, unsigned int buflen );
@@ -222,4 +220,3 @@ int	write( int i, char* c, int n)
 	(void)c;
 	return 0;
 }
-

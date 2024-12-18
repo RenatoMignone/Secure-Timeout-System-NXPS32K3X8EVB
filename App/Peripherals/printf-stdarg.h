@@ -1,10 +1,11 @@
-// printf-stdarg.h
-// Header for a minimal printf implementation based on stdarg
+/* printf-stdarg.h */
+
+/* Header for a minimal printf implementation based on stdarg */
 
 #ifndef PRINTF_STDARG_H
 #define PRINTF_STDARG_H
 
-#include <stdarg.h> // Necessario per utilizzare va_list
+#include <stdarg.h> // Necessary for va_list
 
 int printf(const char *format, ...);
 

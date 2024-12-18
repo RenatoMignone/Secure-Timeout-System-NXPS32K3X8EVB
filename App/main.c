@@ -4,11 +4,10 @@
 #include "semphr.h"
 #include "queue.h"
 
-/* Standard includes 
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-*/
+/* Standard includes */
+// #include <stdio.h>
+// #include <string.h>
+// #include <limits.h>
 
 /* Application includes */
 #include "secure_timeout_system.h"
@@ -21,9 +20,7 @@
 /* Task priorities */
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
 
-/* Task functions */
-void TaskA(void *pvParameters);
-void TaskB(void *pvParameters);
+/* Extra functions */
 extern void vStartSecureTimeoutSystem(void);
 
 /*--------------------------------------------------------------------------------*/
@@ -36,10 +33,9 @@ int main(int argc, char **argv) {
     /* Hardware initialisation. */
     UART_init();
 
-    // Se non inizializziamo prima la UART non printa
     printf("=========================== Starting the Main ============================\n\n");
 
-    // Start the secure timeout system
+    /* Start the secure timeout system */
     vStartSecureTimeoutSystem();
 
     printf("Ready to run the scheduler...\n");
