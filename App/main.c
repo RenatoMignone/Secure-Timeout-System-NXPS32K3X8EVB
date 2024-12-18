@@ -4,10 +4,11 @@
 #include "semphr.h"
 #include "queue.h"
 
-/* Standard includes */
+/* Standard includes 
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+*/
 
 /* Application includes */
 #include "secure_timeout_system.h"
@@ -15,6 +16,7 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
+#include "printf-stdarg.h"
 
 /* Task priorities */
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -28,16 +30,13 @@ extern void vStartSecureTimeoutSystem(void);
 
 int main(int argc, char **argv) {
 
-    printf("\n=========================== Starting the Main ============================\n\n");
-
     (void) argc;
     (void) argv;
 
     /* Hardware initialisation. */
     UART_init();
 
-    // xTaskCreate(TaskA, "TaskA", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
-    // xTaskCreate(TaskB, "TaskB", configMINIMAL_STACK_SIZE, NULL, mainTASK_PRIORITY+1, NULL);
+    printf("=========================== Starting the Main ============================\n\n");
 
     // Start the secure timeout system
     vStartSecureTimeoutSystem();

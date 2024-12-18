@@ -9,6 +9,8 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
+#include "printf-stdarg.h"
+
 /* Task priorities */
 #define MONITOR_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
 #define ALERT_TASK_PRIORITY   (tskIDLE_PRIORITY + 3)

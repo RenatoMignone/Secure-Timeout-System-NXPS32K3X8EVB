@@ -8,9 +8,11 @@
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
+#include "printf-stdarg.h"
 
 /* Library includes. */
 #include "S32K3X8EVB.h"
+
 /* External variables and functions */
 extern int userActivity;
 extern int userActivityDetection;
