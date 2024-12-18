@@ -74,7 +74,11 @@ typedef short int my_bool;
 #define false 0
 
 /* Define the verbosity of the output */
-my_bool verbose = false; 
+#ifdef VERBOSE
+    my_bool verbose = true;
+#else
+    my_bool verbose = false;
+#endif
 
 /*------------------------------------------------------------------------------*/
 
@@ -178,7 +182,7 @@ DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACH
 /* Implementation of the function to initialize the memory regions */
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
-	if (verbose) fprintf(stdout, "\n\n------------------ Initialization of the memory regions ------------------\n");
+	if (verbose) fprintf(stdout, "\n------------------ Initialization of the memory regions ------------------\n");
 
     /* Initialize the memory regions for the flash, SRAM, and DRAM */
 

@@ -102,9 +102,8 @@ OBJS_NOPATH = $(notdir $(OBJS))
 # Prepend output dir to object filenames
 OBJS_OUTPUT = $(patsubst %.o, $(OUTPUT_DIR)/%.o, $(OBJS_NOPATH))
 
-
 #----------------------------------------------------------------------#
-#-------------- Section Dedicated to APplication ----------------------#
+#-------------- Section Dedicated to Application ----------------------#
 
 # Link the final executable
 $(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
@@ -134,7 +133,6 @@ qemu_start:
 # New run command: clean, build, and start QEMU
 run: clean all qemu_start
 
-
 #----------------------------------------------------------------------#
 #------------------ Section Dedicated to qemu -------------------------#
 
@@ -158,9 +156,15 @@ qemu_configure:
 qemu_ninja:
 	cd ../qemu && ninja -C build qemu-system-arm 
 
+# Configure and build QEMU using Ninja with verbose output
+qemu_build_verbose:
+	cd ../qemu && ./configure --extra-cflags="-DVERBOSE" && ninja -C build qemu-system-arm
+
 #----------------------------------------------------------------------#
 #-------------------------- Final command -----------------------------#
 
 # Run the full build and start QEMU
 jesus: qemu_configure qemu_ninja clean all qemu_start
 
+# Run the full build and start QEMU with verbose output
+jesus_v: qemu_build_verbose clean all qemu_start
