@@ -171,3 +171,10 @@ gdb_start:
 	gdb-multiarch $(ELF)
 qemu_monitor:
 	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio
+qemu_configure:
+	cd ../qemu && ./configure
+ninja:
+	cd ../qemu && ninja -C build qemu-system-arm 
+jesus: qemu_configure ninja clean all qemu_start
+
+
