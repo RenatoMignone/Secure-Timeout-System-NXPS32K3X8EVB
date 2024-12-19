@@ -108,28 +108,28 @@ OBJS_OUTPUT = $(patsubst %.o, $(OUTPUT_DIR)/%.o, $(OBJS_NOPATH))
 
 # Link the final executable
 $(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
-    echo "\n\n--- Final linking ---\n"
-    $(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
-    $(SIZE) $(ELF)
+	echo "\n\n--- Final linking ---\n"
+	$(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
+	$(SIZE) $(ELF)
 
 # Compile source files to object files
 $(OUTPUT_DIR)/%.o : %.c Makefile $(OUTPUT_DIR)
-    $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Create output directory if it doesn't exist
 $(OUTPUT_DIR):
-    mkdir -p $(OUTPUT_DIR)
+	mkdir -p $(OUTPUT_DIR)
 
 # Clean all generated files
 clean:
-    rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
+	rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
 
 # Default target
 all: $(ELF)
 
 # Run QEMU emulator
 qemu_start:
-    $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio
 
 # New run command: clean, build, and start QEMU
 run: clean all qemu_start
@@ -140,23 +140,23 @@ run: clean all qemu_start
 
 # Run QEMU emulator in debug mode
 qemu_debug:
-    $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
 
 # Start GDB
 gdb_start:
-    gdb-multiarch $(ELF)
+	gdb-multiarch $(ELF)
 
 # Run QEMU emulator with monitor
 qemu_monitor:
-    $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio
 
 # Configure QEMU
 qemu_configure:
-    cd ../qemu && ./configure
+	cd ../qemu && ./configure
 
 # Build QEMU using Ninja
 qemu_ninja:
-    cd ../qemu && ninja -C build qemu-system-arm 
+	cd ../qemu && ninja -C build qemu-system-arm 
 
 #----------------------------------------------------------------------#
 #-------------------------- Final command -----------------------------#
