@@ -1,5 +1,5 @@
 # The directory that contains FreeRTOS source code
-FREERTOS_ROOT := ../FreeRTOS/FreeRTOS/
+FREERTOS_ROOT := ../../../FreeRTOS/FreeRTOS/
 
 # Demo code
 DEMO_PROJECT := .
@@ -170,4 +170,4 @@ qemu_debug:
 gdb_start:
 	gdb-multiarch $(ELF)
 qemu_monitor:
-	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio $(QEMU_FLAGS_DBG)
+	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio

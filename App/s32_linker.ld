@@ -6,7 +6,7 @@
 /* Define memory regions */
 MEMORY
 {
-    FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 2M  /* Program flash memory */
+    FLASH (rx)  : ORIGIN = 0x00400000, LENGTH = 2M  /* Program flash memory */
     RAM  (rwx) : ORIGIN = 0x20400000, LENGTH = 256K /* RAM */
 }
 ENTRY(Reset_Handler)

@@ -104,6 +104,9 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM2_BASE_ADDR   0x20480000        // SRAM2 base address
 #define SRAM2_SIZE        0x00040000        // 256 KB (Block2 size)
 
+#define DRAM_BASE_ADDR  0x30000000          // DRAM base address
+#define DRAM_SIZE       0x00100000          // 1 MB (DRAM size)
+
 #define UART_BASE_ADDR          0x4006A000    // UART base address
 
 #define PIT_TIMER1_BASE_ADDR    0x40037000    // PIT base address
@@ -157,7 +160,7 @@ DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACH
 // Implementation of the function to initialize the memory regions
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
-	fprintf(stdout, "\n\n--------------- Initialization of the memory regions ---------------\n");
+    fprintf(stdout, "\n\n--------------- Initialization of the memory regions ---------------\n");
     MemoryRegion *flash0 = g_new(MemoryRegion, 1);
     MemoryRegion *flash1 = g_new(MemoryRegion, 1);
     MemoryRegion *flash2 = g_new(MemoryRegion, 1);
@@ -168,9 +171,10 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     MemoryRegion *sram0 = g_new(MemoryRegion, 1);
     MemoryRegion *sram1 = g_new(MemoryRegion, 1);
     MemoryRegion *sram2 = g_new(MemoryRegion, 1);
-	
+    MemoryRegion *dram = g_new(MemoryRegion, 1);  // Add DRAM memory region
+
     // Flash memory initialization (Read-Only)
-	fprintf(stdout, "\nInitializing flash memory...\n\n");
+    fprintf(stdout, "\nInitializing flash memory...\n\n");
 
     memory_region_init_rom(flash0, NULL, "s32k3x8.flash0", FLASH_BLOCK0_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, FLASH_BLOCK0_BASE_ADDR, flash0);
@@ -189,20 +193,26 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     memory_region_init_rom(utest, NULL, "s32k3x8.utest", FLASH_UTEST_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, FLASH_UTEST_BASE_ADDR, utest);
-    
+
     memory_region_init_alias(flash0_alias, NULL, "s32k3x8.flash0.alias", flash0, 0, FLASH_BLOCK0_SIZE);
     memory_region_add_subregion(system_memory, 0, flash0_alias);
+
     // SRAM memory initialization (RAM - Read-Write)
-	fprintf(stdout, "Initializing SRAM memory...\n\n");
-	memory_region_init_ram(sram0, NULL, "s32k3x8.sram0", SRAM0_SIZE, &error_fatal);
-	memory_region_add_subregion_overlap(system_memory, SRAM0_BASE_ADDR, sram0, 0);
+    fprintf(stdout, "Initializing SRAM memory...\n\n");
+    memory_region_init_ram(sram0, NULL, "s32k3x8.sram0", SRAM0_SIZE, &error_fatal);
+    memory_region_add_subregion_overlap(system_memory, SRAM0_BASE_ADDR, sram0, 0);
 
     memory_region_init_ram(sram1, NULL, "s32k3x8.sram1", SRAM1_SIZE, &error_fatal);
-	memory_region_add_subregion_overlap(system_memory, SRAM1_BASE_ADDR, sram1, 0);
+    memory_region_add_subregion_overlap(system_memory, SRAM1_BASE_ADDR, sram1, 0);
 
-	memory_region_init_ram(sram2, NULL, "s32k3x8.sram2", SRAM2_SIZE, &error_fatal);
-	memory_region_add_subregion_overlap(system_memory, SRAM2_BASE_ADDR, sram2, 0);
-    
+    memory_region_init_ram(sram2, NULL, "s32k3x8.sram2", SRAM2_SIZE, &error_fatal);
+    memory_region_add_subregion_overlap(system_memory, SRAM2_BASE_ADDR, sram2, 0);
+
+    // DRAM memory initialization (RAM - Read-Write)
+    fprintf(stdout, "Initializing DRAM memory...\n\n");
+    memory_region_init_ram(dram, NULL, "s32k3x8.dram", DRAM_SIZE, &error_fatal);
+    memory_region_add_subregion_overlap(system_memory, DRAM_BASE_ADDR, dram, 0);
+
     fprintf(stdout, "Memory regions initialized successfully.\n\n");
 }
 
