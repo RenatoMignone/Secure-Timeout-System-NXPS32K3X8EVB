@@ -11,6 +11,7 @@ KERNEL_PORT_DIR := $(KERNEL_DIR)/portable/GCC/ARM_CM7/r0p1
 # Where to store all the generated files (objects, elf and map)
 OUTPUT_DIR := ./Output
 
+# Demo project name and output files
 DEMO_NAME := SecureTimeoutSystem
 ELF := $(OUTPUT_DIR)/$(DEMO_NAME).elf
 MAP := $(OUTPUT_DIR)/$(DEMO_NAME).map
@@ -20,22 +21,24 @@ CC := arm-none-eabi-gcc
 LD := arm-none-eabi-gcc
 SIZE := arm-none-eabi-size
 
-#Emulator used for ARM systems
+# Emulator used for ARM systems
 QEMU := ../qemu/build/qemu-system-arm
 
 # Target embedded board and CPU
 MACHINE := s32k3x8evb 
 CPU := cortex-m7
 
-# Use -s to connect to gdb port 1234 and -S to wait before executing
+# QEMU flags for debugging
 QEMU_FLAGS_DBG = -s -S 
 
+# Include directories
 INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
 INCLUDE_DIRS += -I$(DEMO_PROJECT) 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/CMSIS 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/Peripherals 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/SecureTimeoutSystem
 
+# Source file search paths
 VPATH += $(KERNEL_DIR)
 VPATH += $(KERNEL_PORT_DIR)
 VPATH += $(KERNEL_DIR)/portable/MemMang
@@ -44,70 +47,33 @@ VPATH += $(DEMO_PROJECT)/CMSIS
 VPATH += $(DEMO_PROJECT)/Peripherals
 VPATH += $(DEMO_PROJECT)/SecureTimeoutSystem
 
-# Include paths. See INCLUDE_DIRS
+# Compiler flags
 CFLAGS = $(INCLUDE_DIRS)
-
-# Don't include standard libraries
 CFLAGS += -ffreestanding
-
-# Target ARM Cortex-M7 processor
 CFLAGS += -mcpu=$(CPU)
-
-# Use the thumb 16 bits instruction set. Required for Cortex-M
 CFLAGS += -mthumb
-
-# Enable hardware floating point for Cortex-M7
 CFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
-
-# Print all the most common warnings
 CFLAGS += -Wall
-
-# Print extra warnings, not included in -Wall
 CFLAGS += -Wextra
-
-# Print warnings about variable shadowing (var name = outer scope var name)
 CFLAGS += -Wshadow
-
-# Include debug information (-g) with maximum level of detail (3)
 CFLAGS += -g3
-
-# Optimize (-O) the size (s) of the generated executable 
 CFLAGS += -Os
-
-# Place each function in a dedicated section (see -gc-sections in LDFLAGS)
 CFLAGS += -ffunction-sections
-
-# Place each variable in a dedicated section (see -gc-sections in LDFLAGS)
 CFLAGS += -fdata-sections
-
-# Define the device macro
 CFLAGS += -DCMSDK_CM7
 
-# Specify the linker script
+# Linker flags
 LDFLAGS = -T ./s32_linker.ld
-
-# Don't use the standard start-up files
 LDFLAGS += -nostartfiles
-
-# Optimize compilation to reduce memory
 LDFLAGS += -specs=nano.specs
-
-# Optimize compilation targeting a system without any operating system
 LDFLAGS += -specs=nosys.specs
-
-# Generate map file with memory layout. Pass option to the linker (-Xlinker)
 LDFLAGS += -Xlinker -Map=$(MAP)
-
-# Remove unused sections. Used with -ffunction-sections and -fdata-sections
-# optimized memory. Pass option to the linker (-Xlinker)
 LDFLAGS += -Xlinker --gc-sections
-
-# Link specifically for Cortex-M7 and thumb instruction set and floating point
 LDFLAGS += -mcpu=$(CPU)
 LDFLAGS += -mthumb
 LDFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
 
-# Kernel files
+# Kernel source files
 SOURCE_FILES += $(KERNEL_DIR)/list.c
 SOURCE_FILES += $(KERNEL_DIR)/tasks.c
 SOURCE_FILES += $(KERNEL_DIR)/queue.c
@@ -116,13 +82,12 @@ SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
 SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
 SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
 
-# Demo files
+# Demo source files
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/IntTimer.c
 SOURCE_FILES += $(DEMO_PROJECT)/SecureTimeoutSystem/secure_timeout_system.c
-# Lightweight print formatting to use in place of the heavier GCC equivalent.
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/printf-stdarg.c
 
 # Start-up code
@@ -137,46 +102,65 @@ OBJS_NOPATH = $(notdir $(OBJS))
 # Prepend output dir to object filenames
 OBJS_OUTPUT = $(patsubst %.o, $(OUTPUT_DIR)/%.o, $(OBJS_NOPATH))
 
+
+#----------------------------------------------------------------------#
+#-------------- Section Dedicated to APplication ----------------------#
+
+# Link the final executable
+$(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
+    echo "\n\n--- Final linking ---\n"
+    $(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
+    $(SIZE) $(ELF)
+
+# Compile source files to object files
+$(OUTPUT_DIR)/%.o : %.c Makefile $(OUTPUT_DIR)
+    $(CC) $(CFLAGS) -c $< -o $@
+
+# Create output directory if it doesn't exist
+$(OUTPUT_DIR):
+    mkdir -p $(OUTPUT_DIR)
+
+# Clean all generated files
+clean:
+    rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
+
+# Default target
 all: $(ELF)
 
-$(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
-	echo "\n\n--- Final linking ---\n"
-	$(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
-	$(SIZE) $(ELF)
-
-$(OUTPUT_DIR)/%.o : %.c Makefile $(OUTPUT_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OUTPUT_DIR):
-	mkdir -p $(OUTPUT_DIR)
-
-cleanobj:
-	rm -f $(OUTPUT_DIR)/*.o
-
-clean:
-	rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
-
-# Use "make print-[VARIABLE_NAME] to print the value of a variable generated by this makefile.
-print-%  : ; @echo $* = $($*)
-
+# Run QEMU emulator
 qemu_start:
-	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel \
-	$(ELF) -monitor none -nographic -serial stdio
+    $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio
 
+# New run command: clean, build, and start QEMU
+run: clean all qemu_start
+
+
+#----------------------------------------------------------------------#
+#------------------ Section Dedicated to qemu -------------------------#
+
+# Run QEMU emulator in debug mode
 qemu_debug:
-	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel \
-	$(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
+    $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio $(QEMU_FLAGS_DBG)
 
+# Start GDB
 gdb_start:
-	gdb-multiarch $(ELF)
+    gdb-multiarch $(ELF)
 
+# Run QEMU emulator with monitor
 qemu_monitor:
-	$(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio
+    $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor stdio
 
+# Configure QEMU
 qemu_configure:
-	cd ../qemu && ./configure
+    cd ../qemu && ./configure
 
-ninja:
-	cd ../qemu && ninja -C build qemu-system-arm 
+# Build QEMU using Ninja
+qemu_ninja:
+    cd ../qemu && ninja -C build qemu-system-arm 
 
-jesus: qemu_configure ninja clean all qemu_start
+#----------------------------------------------------------------------#
+#-------------------------- Final command -----------------------------#
+
+# Run the full build and start QEMU
+jesus: qemu_configure qemu_ninja clean all qemu_start
+
