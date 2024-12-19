@@ -19,6 +19,10 @@
  * - Fabrizio Emanuel  (fabrizio.emanuel@studenti.polito.it)
  * 
  * All authors are students from the Politecnico di Torino, Italy.
+ * 
+ * Documentation:
+ * - GitHub: https://github.com/neo-CAOS/group2.git
+ * - GitLab: https://baltig.polito.it/caos2024/group2.git
  */
 
 

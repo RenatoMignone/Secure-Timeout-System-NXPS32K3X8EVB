@@ -25,8 +25,8 @@ extern void vStartSecureTimeoutSystem(void);
 
 /*--------------------------------------------------------------------------------*/
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv) 
+{
     (void) argc;
     (void) argv;
 
@@ -42,13 +42,12 @@ int main(int argc, char **argv) {
     vTaskStartScheduler();
 
     for (;;);
-
 }
 
 /*--------------------------------------------------------------------------------*/
 
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
-
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) 
+{
     /* This function will get called if a task overflows its stack. */
 
     (void)xTask;
@@ -60,5 +59,4 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
     taskDISABLE_INTERRUPTS();
 
     for (;;);
-
 }
