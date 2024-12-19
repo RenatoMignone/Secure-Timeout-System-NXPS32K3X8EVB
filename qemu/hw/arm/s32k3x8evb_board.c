@@ -311,8 +311,8 @@ static void s32k3x8_init(MachineState *ms) {
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
     
-    /* Set the clock period to 40.69ns (equivalent to 24.5MHz frequency) */
-    clock_set_ns(m_state->sys.sysclk, 40.69);
+    /* Set the clock period to 40.69ns (equivalent to 140MHz frequency) */
+    clock_set_ns(m_state->sys.sysclk, 7.14);
 
     m_state->sys.refclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "refclk");
     clock_set_hz(m_state->sys.refclk, 1000000);
