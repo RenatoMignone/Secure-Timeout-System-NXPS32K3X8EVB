@@ -4,10 +4,6 @@
 #include "semphr.h"
 #include "queue.h"
 
-/* Standard includes */
-// #include <stdio.h>
-// #include <string.h>
-// #include <limits.h>
 
 /* Application includes */
 #include "secure_timeout_system.h"
