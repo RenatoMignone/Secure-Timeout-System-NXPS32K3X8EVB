@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     /* Hardware initialisation. */
     UART_init();
 
-    printf("=========================== Starting the Main ============================\n\n");
+    printf("\n=========================== Starting the Main ============================\n\n");
 
     /* Start the secure timeout system */
     vStartSecureTimeoutSystem();
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) 
 {
-    /* This function will get called if a task overflows its stack. */
+    // This function will get called if a task overflows its stack.
 
     (void)xTask;
     (void)pcTaskName;

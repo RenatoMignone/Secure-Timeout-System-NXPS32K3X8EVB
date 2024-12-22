@@ -384,7 +384,7 @@ static void s32k3x8_init(MachineState *ms) {
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    if (verbose) fprintf(stdout, "\n-------------------- Initialization of the Two timers --------------------\n");
+    if (verbose) fprintf(stdout, "\n---------------------- Initialization of the Timers ----------------------\n");
 
     /* First Timer */
     pit_timer1 = qdev_new(TYPE_CMSDK_APB_TIMER);

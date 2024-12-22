@@ -1,6 +1,7 @@
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "FreeRTOSConfig.h"
 
 /* Application includes */
 #include "globals.h"
@@ -19,9 +20,13 @@ extern int userActivity;
 extern int userActivityDetection;
 extern int suspiciousActivity;
 extern int suspiciousActivityDetection;
+// extern uint32_t userActivity;
+// extern uint32_t userActivityDetection;
+// extern uint32_t suspiciousActivity;
+// extern uint32_t suspiciousActivityDetection;
 
 /* CPU clock frequency */
-#define configCPU_CLOCK_HZ      ( 143000000UL )
+// #define configCPU_CLOCK_HZ      ( 143000000UL )      // Already defined in FreeRTOSConfig.h
 
 /* Timer 0 and Timer 1 frequencies */
 #define tmrTIMER_0_FREQUENCY	( 2UL )         // TODO: update (?)
