@@ -42,6 +42,10 @@ swapfile.*
 .project
 .cproject
 
+# Obsidian
+
+.obsidian/
+
 # Other IDEs
 *.sublime-project
 *.sublime-workspace
