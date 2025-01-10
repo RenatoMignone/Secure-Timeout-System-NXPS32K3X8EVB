@@ -3,21 +3,21 @@
 <details closed>
 <summary><b>Table of Contents</b></summary>
  
-&nbsp;• [Introduction](#introduction)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Requirements](#requirements)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up the Project Environment](#setting-up-the-project-environment)
-&nbsp;• [Part 1 - QEMU Board Emulation](#part-1---qemu-board-emulation)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up QEMU](#setting-up-qemu)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating the Board](#creating-the-board)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Adding the S32K3X8EVB Board](#adding-the-s32k3x8evb-board)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling QEMU](#compiling-qemu)
-&nbsp;• [Part 2 - FreeRTOS Porting](#part-2---freertos-porting)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up FreeRTOS](#setting-up-freertos)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running FreeRTOS on QEMU](#running-freertos-on-qemu)
-&nbsp;• [Part 3 - Simple Application](#part-3---simple-application)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating all the files](#creating-all-the-files)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling and Running the Application](#compiling-and-running-the-application)
-&nbsp;• [Conclusion](#conclusion)
+&nbsp;• [Introduction](#introduction) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Requirements](#requirements) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up the Project Environment](#setting-up-the-project-environment) <br>
+&nbsp;• [Part 1 - QEMU Board Emulation](#part-1---qemu-board-emulation) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up QEMU](#setting-up-qemu) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating the Board](#creating-the-board) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Adding the S32K3X8EVB Board](#adding-the-s32k3x8evb-board) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling QEMU](#compiling-qemu) <br>
+&nbsp;• [Part 2 - FreeRTOS Porting](#part-2---freertos-porting) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up FreeRTOS](#setting-up-freertos) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running FreeRTOS on QEMU](#running-freertos-on-qemu) <br>
+&nbsp;• [Part 3 - Simple Application](#part-3---simple-application) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating all the files](#creating-all-the-files) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling and Running the Application](#compiling-and-running-the-application) <br>
+&nbsp;• [Conclusion](#conclusion) <br>
 
 </details>
 
