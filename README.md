@@ -120,10 +120,21 @@ cd group2
 
 ### Board Specifications
 
-- **Flash Memory**: 12MB
-- **SRAM**: 2.25 MB
+- **Flash Memory**: 10 MB
+  - **Block 0**: 2 MB at 0x00400000
+  - **Block 1**: 2 MB at 0x00600000
+  - **Block 2**: 2 MB at 0x00800000
+  - **Block 3**: 2 MB at 0x00AD0000
+  - **Block 4**: 128 KB at 0x10000000
+  - **Utest**: 8 KB at 0x18000000
+- **SRAM**: 768 KB
+  - **Block 0**: 256 KB at 0x20400000
+  - **Block 1**: 256 KB at 0x20440000
+  - **Block 2**: 256 KB at 0x20480000
 - **UART Base Address**: 0x4006A000
-- **PIT Timer Base Address**: 0x40037000
+- **PIT Timer Base Addresses**:
+  - **Timer 1**: 0x40037000
+  - **Timer 2**: 0x40038000
 
 ### FreeRTOS Application
 

@@ -1,11 +1,9 @@
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
-#include "semphr.h"
 #include "FreeRTOSConfig.h"
 
 /* Application includes */
 #include "globals.h"
-// # include "secure_timeout_system.h" // Debug
 
 /* Peripheral includes */
 #include "uart.h"
@@ -16,14 +14,10 @@
 #include "S32K3X8EVB.h"
 
 /* External variables and functions */
-extern int userActivity;
-extern int userActivityDetection;
-extern int suspiciousActivity;
-extern int suspiciousActivityDetection;
-// extern uint32_t userActivity;
-// extern uint32_t userActivityDetection;
-// extern uint32_t suspiciousActivity;
-// extern uint32_t suspiciousActivityDetection;
+// extern int userActivity;
+// extern int userActivityDetection;
+// extern int suspiciousActivity;
+// extern int suspiciousActivityDetection;
 
 /* CPU clock frequency */
 // #define configCPU_CLOCK_HZ      ( 143000000UL )      // Already defined in FreeRTOSConfig.h
@@ -83,9 +77,7 @@ void TIMER0_IRQHandler(void)
 
     /* Main functionality */
     printf("Timer 0 Interrupt: looking for user activities...\n");
-    printf("Timer 0: userActivity = %d\n", userActivity); // Debug
     userActivityDetection = (userActivity == 1) ? 1 : 0;
-    printf("Timer 0: userActivityDetection = %d\n", userActivityDetection); // Debug
 
     /* Perform a context switch if necessary */
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
@@ -100,9 +92,7 @@ void TIMER1_IRQHandler(void)
 
     /* Main functionality */
     printf("Timer 1 Interrupt: looking for suspicious activities...\n");
-    printf("Timer 1: suspiciousActivity = %d\n", suspiciousActivity); // Debug
     suspiciousActivityDetection = (suspiciousActivity == 1) ? 1 : 0;
-    printf("Timer 1: suspiciousActivityDetection = %d\n", suspiciousActivityDetection); // Debug
 
     /* Perform a context switch if necessary */
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

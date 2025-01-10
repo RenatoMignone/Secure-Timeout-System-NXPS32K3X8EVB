@@ -1,0 +1,56 @@
+======================== Initializing the System =========================
+
+------------------ Initialization of the memory regions ------------------
+
+Initializing flash memory...
+
+Initializing SRAM memory...
+
+Memory regions initialized successfully.
+
+------------------- Initialization of the system Clock -------------------
+
+Clock initialized.
+
+------------------- Initialization of the system NVIC --------------------
+
+NVIC realized.
+
+---------------------- Initializing LPUART Devices ----------------------
+
+Initialized LPUART0 at base address 0x4006a000
+Initialized LPUART1 at base address 0x4006b000
+Initialized LPUART2 at base address 0x4006c000
+Initialized LPUART3 at base address 0x4006d000
+Initialized LPUART4 at base address 0x4006e000
+Initialized LPUART5 at base address 0x4006f000
+Initialized LPUART6 at base address 0x40070000
+Initialized LPUART7 at base address 0x40071000
+Initialized LPUART8 at base address 0x40072000
+Initialized LPUART9 at base address 0x40073000
+Initialized LPUART10 at base address 0x40074000
+Initialized LPUART11 at base address 0x40075000
+Initialized LPUART12 at base address 0x40076000
+Initialized LPUART13 at base address 0x40077000
+Initialized LPUART14 at base address 0x40078000
+Initialized LPUART15 at base address 0x40079000
+
+All LPUART devices initialized and connected to NVIC.
+
+---------------------- Initialization of the Timers ----------------------
+
+First Timer Initialized Correctly
+
+Second Timer Initialized Correctly
+
+Third Timer Initialized Correctly
+
+---------------- Loading the Kernel into the flash memory ----------------
+
+Kernel loaded into flash memory.
+
+System initialized.
+
+Starting to run...
+
+==========================================================================

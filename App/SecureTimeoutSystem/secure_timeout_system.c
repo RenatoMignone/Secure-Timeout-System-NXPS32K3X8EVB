@@ -1,7 +1,6 @@
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "task.h"
-// #include "semphr.h" // TODO: uncomment (?)
 
 /* Application includes */
 #include "secure_timeout_system.h"
@@ -27,16 +26,6 @@ int userActivity = 0;
 int userActivityDetection = 0;
 int suspiciousActivity = 0;
 int suspiciousActivityDetection = 0;
-// uint32_t userActivity = 0;                             // Overflow?
-// uint32_t userActivityDetection = 0;                    // Overflow?
-// uint32_t suspiciousActivity = 0;                       // Overflow?
-// uint32_t suspiciousActivityDetection = 0;              // Overflow?
-// static volatile int userActivity = 0;                  // Debug
-// static volatile int userActivityDetection = 0;         // Debug
-// static volatile int suspiciousActivity = 0;            // Debug
-// static volatile int suspiciousActivityDetection = 0;   // Debug
-
-/* Do these variables have to be implemented as sempahores ? */
 
 /* Activity Detection counters */
 static int userADCount = 0;
@@ -61,12 +50,6 @@ void initSecureTimeoutSystem(void)
     suspiciousActivityDetection = 0;
 }
 
-/* Setters and Getters */
-int getUserActivity(void) { return userActivity; }
-int getSuspiciousActivity(void) { return suspiciousActivity; }
-void setUserActivityDetection(int value) { userActivityDetection = value; }
-void setSuspiciousActivityDetection(int value) { suspiciousActivityDetection = value; }
-
 /*--------------------------------------------------------------------------------*/
 
 void vStartSecureTimeoutSystem(void) 
@@ -90,12 +73,15 @@ static void vMonitorTask(void *pvParameters)
     vTaskDelay(pdMS_TO_TICKS(500));
 
     for (;;) {
-        if (userActivityDetection == 1) {
-            printf("User activity detected!\n");
+        if (userActivityDetection == 1) 
+        {
             userActivityDetection = 0;
+            printf("[USER MONITOR] Activity detected              | Status: ACTIVE\n");
             // Extra implementation
-        } else {
-            printf("No user activity detected.\n");
+        } 
+        else 
+        {
+            printf("[USER MONITOR] No activity                    | Status: IDLE\n");
         }
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -107,14 +93,18 @@ static void vAlertTask(void *pvParameters)
 
     vTaskDelay(pdMS_TO_TICKS(500));
 
-    for (;;) {
-        printf("Alert Task: suspiciousActivityDetection = %d\n", suspiciousActivityDetection); // Debug
-        if (suspiciousActivityDetection == 1) {
-            printf("!!!!!!!!!!!!!!!!!!! Suspicious activity detected !!!!!!!!!!!!!!!!!!!\n");
+    for (;;) 
+    {
+        if (suspiciousActivityDetection == 1) 
+        {
             suspiciousActivityDetection = 0;
+            printf("[SECURITY ALERT] Suspicious activity detected | Status: ALARM\n");
+            printf("[SECURITY ALERT] Initiating security protocols...\n");
             // Extra implementation
-        } else {
-            printf("No suspicious activity detected.\n");
+        } 
+        else 
+        {
+            printf("[SECURITY ALERT] System secure                | Status: NORMAL\n");
         }
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -124,25 +114,26 @@ static void vEventTask(void *pvParameters)
 {
     (void) pvParameters;
 
-    for (;;) {
-        printf("\n@@@@@@@@@@@@@@@@@@@ Simulating events... @@@@@@@@@@@@@@@@@@@\n\n");
+    for (;;) 
+    {
+        printf("\n[EVENT SIMULATOR] ------ New Cycle Started -------------------\n");
                   
         /* Reset Activities */
         userActivity = 0;
         suspiciousActivity = 0;
 
-        if (simpleRandom() % 2 == 1) {
+        if (simpleRandom() % 2 == 1) 
+        {
             userActivity = 1;
             userADCount++;
-            printf("Simulated user activity.\n");
-        } else {
+            printf("[EVENT SIMULATOR] Generated: User Activity    | Count: %d\n\n", userADCount);
+        } 
+        else 
+        {
             suspiciousActivity = 1;
             suspiciousADCount++;
-            printf("Simulated suspicious activity.\n");
+            printf("[EVENT SIMULATOR] Generated: Security Event   | Count: %d\n\n", suspiciousADCount);
         }
-
-        printf("Event Task: userActivity = %d\n", userActivity); // Debug
-        printf("Event Task: suspiciousActivity = %d\n", suspiciousActivity); // Debug
 
         vTaskDelay(pdMS_TO_TICKS(5000));
     }

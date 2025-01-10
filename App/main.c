@@ -1,11 +1,9 @@
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "semphr.h"
-#include "queue.h"
-
 
 /* Application includes */
+#include "globals.h"
 #include "secure_timeout_system.h"
 
 /* Peripheral includes */

@@ -84,6 +84,10 @@ typedef short int my_bool;
     my_bool verbose = false;
 #endif
 
+/* Macro to print verbose output */
+// #define fprintf_v(stream, format, ...) \
+//     do { if (verbose) fprintf(stream, format, ##__VA_ARGS__); } while(0)
+
 /*------------------------------------------------------------------------------*/
 
 /* Function to load an image into the target physical memory */
@@ -248,7 +252,8 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
 /* Function to initialize LPUART devices */
 static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, int num_lpuarts) {
-    if (verbose) fprintf(stdout, "\n---------------------- Initializing LPUART Devices ----------------------\n");
+
+    if (verbose) fprintf(stdout, "\n---------------------- Initializing LPUART Devices ----------------------\n\n");
 
     for (int i = 0; i < num_lpuarts; i++) {
         char device_name[32];
@@ -388,7 +393,6 @@ static void s32k3x8_init(MachineState *ms) {
     /*--------------------------------------------------------------------------------------*/
 
     initialize_lpuarts(m_state, nvic, 16);
-
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
