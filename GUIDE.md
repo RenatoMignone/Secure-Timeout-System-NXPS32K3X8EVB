@@ -2,6 +2,8 @@
 
 ## Table of Contents
 
+<!-- TODO: make it look better? -->
+
 - [QEMU and FreeRTOS on NXP S32K3X8EVB](#qemu-and-freertos-on-nxp-s32k3x8evb)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
@@ -96,38 +98,53 @@ The `s32k3x8evb_board.c` file is the core of the QEMU board emulation. It includ
 1. **File Header and Includes**:
     - The file starts with a header that includes the authors and a brief description of the functionalities provided.
     - It includes necessary QEMU headers and other system headers required for memory management, hardware components, and system emulation.
+  
+    <!-- TODO: write -->
 
 2. **Memory Regions**:
     - Defines constants for memory regions such as flash and SRAM.
     - Functions to initialize these memory regions, including `s32k3x8_initialize_memory_regions()`, which sets up the flash and SRAM memory blocks.
 
+    <!-- TODO: write -->
+
 3. **LPUART Initialization**:
     - The `initialize_lpuarts()` function sets up the LPUART devices.
     - It configures each LPUART, assigns base addresses, and connects interrupts to the NVIC.
+
+    <!-- TODO: write -->
 
 4. **Interrupts and NVIC**:
     - The Nested Vectored Interrupt Controller (NVIC) is initialized in the `s32k3x8_init()` function.
     - Configures the NVIC with the number of IRQs and priority bits, and connects it to the system clock.
 
+    <!-- TODO: write -->
+
 5. **Timers**:
     - Initializes PIT timers in the `s32k3x8_init()` function.
     - Each timer is configured with a base address and connected to the NVIC.
 
+    <!-- TODO: write -->
+
 6. **Firmware Loading**:
     - The `s32k3x8_load_firmware()` function loads the firmware into the emulated flash memory.
     - Uses the `armv7m_load_kernel()` function to load the kernel into the flash memory.
+
+    <!-- TODO: write -->
 
 7. **Machine Initialization**:
     - The `s32k3x8_init()` function is the main initialization function for the board.
     - It sets up the system memory, SoC container, system controller, clocks, NVIC, LPUARTs, and timers.
     - Logs the initialization process if verbose mode is enabled.
 
+    <!-- TODO: write -->
+
 8. **Class Initialization**:
     - The `s32k3x8_class_init()` function sets up the machine class, including the default CPU type and number of CPUs.
     - Registers the machine type with QEMU.
 
-For the full content of the `s32k3x8evb_board.c` file, refer to the file located at: [qemu/hw/arm/s32k3x8evb_board.c](qemu/hw/arm/s32k3x8evb_board.c)
-<!-- TODO: check link -->
+    <!-- TODO: write -->
+
+For the full content of the `s32k3x8evb_board.c` file, refer to the file located at: [qemu/hw/arm/s32k3x8evb_board.c](qemu/hw/arm/s32k3x8evb_board.c).
 
 ### Adding the S32K3X8EVB Board
 
@@ -155,7 +172,7 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
     ```
 
 4. Update the [default.mak](http://_vscodecontentref_/4) file:
-    ```makefile
+    ```plaintext
     // filepath: /project_name/qemu/configs/devices/s32k3x8evb-softmmu/default.mak
     CONFIG_S32K3X8EVB=y
     ```
@@ -168,6 +185,13 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
     cd qemu && ninja -C build qemu-system-arm
     ```
 
+2. Verify the build and display the machine:
+    ```sh
+    ./build/qemu-system-arm --machine help | grep s32k3x8evb
+    ```
+
+    This command should list the `s32k3x8evb` machine if the build was successful.
+
 ## Part 2 - FreeRTOS Porting
 
 ### Setting Up FreeRTOS
@@ -175,14 +199,14 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
 1. Clone the FreeRTOS repository:
     ```sh
     git clone https://github.com/FreeRTOS/FreeRTOS.git
-    cd FreeRTOS
     ```
 
-2. Add support for the S32K3X8EVB board in the FreeRTOS configuration files.
+2. ...
 
 ### Running FreeRTOS on QEMU
 
 1. Build the FreeRTOS project for the S32K3X8EVB board.
+   
 2. Run the FreeRTOS binary on the QEMU emulated board:
     ```sh
     ../qemu/build/qemu-system-arm -machine s32k3x8evb -cpu cortex-m7 -kernel path/to/freertos.bin -monitor none -nographic -serial stdio
@@ -193,16 +217,8 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
 ### Creating Tasks
 
 1. Create a simple FreeRTOS application with multiple tasks.
-2. Example task creation:
-    ```c
-    void vTaskFunction(void *pvParameters) {
-        for (;;) {
-            // Task code
-        }
-    }
-
-    xTaskCreate(vTaskFunction, "Task 1", 1000, NULL, 1, NULL);
-    ```
+   
+2. Files needed ...
 
 ### Compiling and Running the Application
 
@@ -213,9 +229,11 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
 
 2. Run the compiled application on QEMU:
     ```sh
-    ../qemu/build/qemu-system-arm -machine s32k3x8evb -cpu cortex-m7 -kernel ./Output/SecureTimeoutSystem.elf -monitor none -nographic -serial stdio
+    ../qemu/build/qemu-system-arm -machine s32k3x8evb -cpu cortex-m7 -kernel ./Output/app_name.elf -monitor none -nographic -serial stdio
     ```
 
 ## Conclusion
 
-This guide provides a detailed walkthrough of our project, from setting up QEMU to running a FreeRTOS application on the emulated S32K3X8EVB board. By following these steps, you should be able to recreate our project and understand the process of emulating hardware and running an RTOS on it.
+This guide provides a detailed walkthrough of our project, from setting up QEMU to running a FreeRTOS application on the emulated NXP S32K3X8EVB board. By following these steps, you should be able to recreate our project and understand the process of emulating hardware and running an RTOS on it.
+
+If you encounter any errors or bugs, please refer to or contact the ([authors](README.md#authors)).

@@ -17,6 +17,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Prerequisites](#prerequisites) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Installation](#installation) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running the Emulator](#running-the-emulator) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Guide for Recreating the Project](#guide-for-recreating-the-project) <br>
 &nbsp;• [Project Structure](#project-structure) <br>
 &nbsp;• [Board and FreeRTOS Integration](#board-and-freertos-integration) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Board Specifications](#board-specifications) <br>
@@ -54,11 +55,13 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 
 ### Prerequisites
 
-- ARM GCC Toolchain (`arm-none-eabi-gcc`)
-- QEMU for ARM
-- FreeRTOS source code (added as a submodule)
-- Make
-- Ninja
+- A Linux-based operating system (e.g., Ubuntu)
+- Git for version control
+- QEMU for hardware emulation
+- FreeRTOS for the real-time operating system
+- ARM GCC Toolchain (`arm-none-eabi-gcc`) for compiling the code
+- Make for building the project
+- Ninja build system for building QEMU
 
 ### Installation
 
@@ -95,6 +98,10 @@ cd group2
     make jesus_v
     ```
 
+### Guide for Recreating the Project
+
+For a detailed guide on setting up, running, and recreating the project, refer to the [`GUIDE.md`](GUIDE.md) file. This guide provides comprehensive instructions and explanations of all the steps and details involved in the project.
+
 ## Project structure
 
 - `App/`: Contains the main project files and source code.
@@ -114,11 +121,14 @@ cd group2
 - `qemu`: QEMU emulator files.
 - `resources/`: Additional resources such as images and documentation.
 - `README.md`: Project documentation.
+- `GUIDE.md`: Detailed guide for setting up, running, and recreating the project, explaining all the steps and details.
 - `LICENSE-CC-BY-NC-4.0.md`: License file.
 
 ## Board and FreeRTOS Integration
 
 ### Board Specifications
+
+<!-- TODO: update -->
 
 - **Flash Memory**: 10 MB
   - **Block 0**: 2 MB at 0x00400000
