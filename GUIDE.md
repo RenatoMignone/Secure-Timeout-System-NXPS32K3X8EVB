@@ -2,25 +2,26 @@
 
 ## Table of Contents
 
-<!-- TODO: make it look better? -->
+<details closed>
+<summary><b>Table of Contents</b></summary>
+ 
+&nbsp;• [Introduction](#introduction)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Requirements](#requirements)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up the Project Environment](#setting-up-the-project-environment)
+&nbsp;• [Part 1 - QEMU Board Emulation](#part-1---qemu-board-emulation)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up QEMU](#setting-up-qemu)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating the Board](#creating-the-board)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Adding the S32K3X8EVB Board](#adding-the-s32k3x8evb-board)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling QEMU](#compiling-qemu)
+&nbsp;• [Part 2 - FreeRTOS Porting](#part-2---freertos-porting)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Setting Up FreeRTOS](#setting-up-freertos)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running FreeRTOS on QEMU](#running-freertos-on-qemu)
+&nbsp;• [Part 3 - Simple Application](#part-3---simple-application)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating all the files](#creating-all-the-files)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling and Running the Application](#compiling-and-running-the-application)
+&nbsp;• [Conclusion](#conclusion)
 
-- [QEMU and FreeRTOS on NXP S32K3X8EVB](#qemu-and-freertos-on-nxp-s32k3x8evb)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-    - [Requirements](#requirements)
-    - [Setting Up the Project Environment](#setting-up-the-project-environment)
-  - [Part 1 - QEMU Board Emulation](#part-1---qemu-board-emulation)
-    - [Setting Up QEMU](#setting-up-qemu)
-    - [Creating the Board](#creating-the-board)
-    - [Adding the S32K3X8EVB Board](#adding-the-s32k3x8evb-board)
-    - [Compiling QEMU](#compiling-qemu)
-  - [Part 2 - FreeRTOS Porting](#part-2---freertos-porting)
-    - [Setting Up FreeRTOS](#setting-up-freertos)
-    - [Running FreeRTOS on QEMU](#running-freertos-on-qemu)
-  - [Part 3 - Simple Application](#part-3---simple-application)
-    - [Creating Tasks](#creating-tasks)
-    - [Compiling and Running the Application](#compiling-and-running-the-application)
-  - [Conclusion](#conclusion)
+</details>
 
 ## Introduction
 
@@ -154,13 +155,13 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
     // ...existing code...
     ```
 
-2. Update the [meson.build](http://_vscodecontentref_/2) file to include the new board:
+2. Update the `meson.build` file to include the new board:
     ```plaintext
     // filepath: /project_name/qemu/hw/arm/meson.build
     arm_ss.add(when: 'CONFIG_S32K3X8EVB', if_true: files('s32k3x8evb_board.c'))
     ```
 
-3. Add the configuration in [Kconfig](http://_vscodecontentref_/3):
+3. Add the configuration in `Kconfig`:
     ```plaintext
     // filepath: /project_name/qemu/hw/arm/Kconfig
     config S32K3X8EVB
@@ -171,7 +172,7 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
         select ARM_TIMER
     ```
 
-4. Update the [default.mak](http://_vscodecontentref_/4) file:
+4. Update the `default.mak` file:
     ```plaintext
     // filepath: /project_name/qemu/configs/devices/s32k3x8evb-softmmu/default.mak
     CONFIG_S32K3X8EVB=y
@@ -201,24 +202,39 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
     git clone https://github.com/FreeRTOS/FreeRTOS.git
     ```
 
-2. ...
+<!-- TODO: is there anything else? -->
 
 ### Running FreeRTOS on QEMU
 
-1. Build the FreeRTOS project for the S32K3X8EVB board.
-   
-2. Run the FreeRTOS binary on the QEMU emulated board:
-    ```sh
-    ../qemu/build/qemu-system-arm -machine s32k3x8evb -cpu cortex-m7 -kernel path/to/freertos.bin -monitor none -nographic -serial stdio
-    ```
+<!-- TODO: add the test with a kernel -->
+
+
 
 ## Part 3 - Simple Application
 
-### Creating Tasks
+### Creating all the files
 
-1. Create a simple FreeRTOS application with multiple tasks.
-   
-2. Files needed ...
+To create a simple application, you need to set up several files, including the Makefile, startup code, linker script, FreeRTOS configuration, and the main application code.
+
+1. **Makefile**: This file contains the build configuration and rules.
+
+    <!-- TODO: add some details -->
+
+2. **Startup Code (`s32_startup.c`)**: This file contains the startup code for the S32K3X8EVB board.
+
+    <!-- TODO: add some details -->
+
+3. **Linker Script (`s32_linker.ld`)**: This file defines the memory layout for the application.
+
+    <!-- TODO: add some details -->
+
+4. **FreeRTOS Configuration (`FreeRTOSConfig.h`)**: This file contains the FreeRTOS configuration settings.
+
+    <!-- TODO: add some details -->
+
+5. **Main Application Code (`main.c`)**: This file contains the main application code.
+
+    <!-- TODO: add some details -->
 
 ### Compiling and Running the Application
 
@@ -236,4 +252,4 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
 
 This guide provides a detailed walkthrough of our project, from setting up QEMU to running a FreeRTOS application on the emulated NXP S32K3X8EVB board. By following these steps, you should be able to recreate our project and understand the process of emulating hardware and running an RTOS on it.
 
-If you encounter any errors or bugs, please refer to or contact the ([authors](README.md#authors)).
+If you encounter any errors or bugs, please refer to or contact the [authors](README.md#authors).

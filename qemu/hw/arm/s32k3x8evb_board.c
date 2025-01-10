@@ -132,14 +132,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM2_BASE_ADDR         0x20480000    // SRAM2 base address
 #define SRAM2_SIZE              0x00040000    // 256 KB (Block2 size)
 
-/* DTCM memory block*/
-#define DTCM_BASE_ADDR          0x20000000    // DTCM base address
-#define DTCM_SIZE               0x00020000    // 128 KB 
-
-/* ITCM memory block*/
-#define ITCM_BASE_ADDR          0x00000000    // ITCM base address
-#define ITCM_SIZE               0x00010000    // 64KB
-
 /*LPUART memory address*/
 #define UART_BASE_ADDR          0x4006A000    // UART base address
 
@@ -209,14 +201,12 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     MemoryRegion *utest = g_new(MemoryRegion, 1);
 
+    MemoryRegion *flash0_alias = g_new(MemoryRegion, 1);
 
     MemoryRegion *sram0 = g_new(MemoryRegion, 1);
     MemoryRegion *sram1 = g_new(MemoryRegion, 1);
     MemoryRegion *sram2 = g_new(MemoryRegion, 1);
-		
-    MemoryRegion *itcm = g_new(MemoryRegion, 1);
-    MemoryRegion *dtcm = g_new(MemoryRegion, 1);
-    
+	
     /* Flash memory initialization (Read-Only) */
 
 	if (verbose) fprintf(stdout, "\nInitializing flash memory...\n\n");
@@ -239,6 +229,8 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     memory_region_init_rom(utest, NULL, "s32k3x8.utest", FLASH_UTEST_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, FLASH_UTEST_BASE_ADDR, utest);
     
+    memory_region_init_alias(flash0_alias, NULL, "s32k3x8.flash0.alias", flash0, 0, FLASH_BLOCK0_SIZE);
+    memory_region_add_subregion(system_memory, 0, flash0_alias);
 
     /* SRAM memory initialization (RAM - Read-Write) */
 
@@ -253,16 +245,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     memory_region_init_ram(sram2, NULL, "s32k3x8.sram2", SRAM2_SIZE, &error_fatal);
     memory_region_add_subregion_overlap(system_memory, SRAM2_BASE_ADDR, sram2, 0);
     
-    /* ITCM memory inizialization */
-
-    memory_region_init_ram(itcm, NULL, "s32k3x8.itcm", ITCM_SIZE, &error_fatal);
-    memory_region_add_subregion_overlap(system_memory, ITCM_BASE_ADDR, itcm, 0);
- 
-    /* DTCM memory inizialization */
-
-    memory_region_init_ram(dtcm, NULL, "s32k3x8.dtcm", DTCM_SIZE, &error_fatal);
-    memory_region_add_subregion_overlap(system_memory,DTCM_BASE_ADDR, dtcm, 0);
- 
     if (verbose) fprintf(stdout, "Memory regions initialized successfully.\n");
 }
 
