@@ -78,7 +78,7 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
     0,
     0,
     0,
-    0, // Ethernet   13
+    0,
     0,
     0,
     0,

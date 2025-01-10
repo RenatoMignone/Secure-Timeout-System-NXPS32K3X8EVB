@@ -85,7 +85,7 @@ typedef short int my_bool;
 #endif
 
 /* Macro to print verbose output */
-// #define fprintf_v(stream, format, ...) \
+// #define fprintf_v(stream, format, ...)
 //     do { if (verbose) fprintf(stream, format, ##__VA_ARGS__); } while(0)
 
 /*------------------------------------------------------------------------------*/
@@ -113,13 +113,13 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define FLASH_BLOCK2_BASE_ADDR  0x00800000    // Block2 base address
 #define FLASH_BLOCK2_SIZE       0x00200000    // 2 MB (Block2 size)
 
-#define FLASH_BLOCK3_BASE_ADDR  0x00AD0000    // Block3 base address
+#define FLASH_BLOCK3_BASE_ADDR  0x00A00000    // Block3 base address
 #define FLASH_BLOCK3_SIZE       0x00200000    // 2 MB (Block3 size)
 
 #define FLASH_BLOCK4_BASE_ADDR  0x10000000    // Block4 base address
 #define FLASH_BLOCK4_SIZE       0x00020000    // 128 KB (Block4 size)
 
-#define FLASH_UTEST_BASE_ADDR   0x18000000    // Utest base address
+#define FLASH_UTEST_BASE_ADDR   0x1B000000    // Utest base address
 #define FLASH_UTEST_SIZE        0x00002000    // 8 KB (Utest size)
 
 /* SRAM memory blocks */
@@ -132,14 +132,26 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM2_BASE_ADDR         0x20480000    // SRAM2 base address
 #define SRAM2_SIZE              0x00040000    // 256 KB (Block2 size)
 
+/* DTCM memory block*/
+#define DTCM0_BASE_ADDR          0x20000000    // DTCM0 base address
+#define DTCM0_SIZE               0x00020000    // 128 KB 
+
+#define DTCM2_BASE_ADDR          0x21800000    // DTCM2 base address
+#define DTCM2_SIZE               0x00020000    // 128 KB
+
+/* ITCM memory block*/
+#define ITCM0_BASE_ADDR          0x00000000    // ITCM0 base address
+#define ITCM0_SIZE               0x00010000    // 64KB
+
+#define ITCM2_BASE_ADDR          0x00010000    // ITCM2 base address
+#define ITCM2_SIZE               0x00010000    // 64KB
+
 /*LPUART memory address*/
 #define UART_BASE_ADDR          0x4006A000    // UART base address
 
 /* PIT Timer base addresses */
 #define PIT_TIMER1_BASE_ADDR    0x40037000    // PIT base address
-
 #define PIT_TIMER2_BASE_ADDR    0x40038000    // PIT base address
-
 #define PIT_TIMER3_BASE_ADDR    0x40039000    // PIT base address
 
 /*------------------------------------------------------------------------------*/
@@ -201,12 +213,17 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     MemoryRegion *utest = g_new(MemoryRegion, 1);
 
-    MemoryRegion *flash0_alias = g_new(MemoryRegion, 1);
 
     MemoryRegion *sram0 = g_new(MemoryRegion, 1);
     MemoryRegion *sram1 = g_new(MemoryRegion, 1);
     MemoryRegion *sram2 = g_new(MemoryRegion, 1);
-	
+		
+    MemoryRegion *itcm0 = g_new(MemoryRegion, 1);
+    MemoryRegion *itcm2 = g_new(MemoryRegion, 1);
+    MemoryRegion *dtcm0 = g_new(MemoryRegion, 1);
+    MemoryRegion *dtcm2 = g_new(MemoryRegion, 1);
+
+
     /* Flash memory initialization (Read-Only) */
 
 	if (verbose) fprintf(stdout, "\nInitializing flash memory...\n\n");
@@ -228,9 +245,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     memory_region_init_rom(utest, NULL, "s32k3x8.utest", FLASH_UTEST_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, FLASH_UTEST_BASE_ADDR, utest);
-    
-    memory_region_init_alias(flash0_alias, NULL, "s32k3x8.flash0.alias", flash0, 0, FLASH_BLOCK0_SIZE);
-    memory_region_add_subregion(system_memory, 0, flash0_alias);
 
     /* SRAM memory initialization (RAM - Read-Write) */
 
@@ -245,7 +259,28 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     memory_region_init_ram(sram2, NULL, "s32k3x8.sram2", SRAM2_SIZE, &error_fatal);
     memory_region_add_subregion_overlap(system_memory, SRAM2_BASE_ADDR, sram2, 0);
     
+    /* ITCM memory inizialization */
+
+    if (verbose) fprintf(stdout, "Initializing ITCM memory...\n\n");
+
+    memory_region_init_ram(itcm0, NULL, "s32k3x8.itcm0", ITCM0_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, ITCM0_BASE_ADDR, itcm0);
+
+    memory_region_init_ram(itcm2, NULL, "s32k3x8.itcm2", ITCM2_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, ITCM2_BASE_ADDR, itcm2);
+ 
+    /* DTCM memory inizialization */
+
+    if (verbose) fprintf(stdout, "Initializing DTCM memory...\n\n");
+
+    memory_region_init_ram(dtcm0, NULL, "s32k3x8.dtcm0", DTCM0_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, DTCM0_BASE_ADDR, dtcm0);
+
+    memory_region_init_ram(dtcm2, NULL, "s32k3x8.dtcm2", DTCM2_SIZE, &error_fatal);
+    memory_region_add_subregion(system_memory, DTCM2_BASE_ADDR, dtcm2);
+
     if (verbose) fprintf(stdout, "Memory regions initialized successfully.\n");
+
 }
 
 /*------------------------------------------------------------------------------*/
