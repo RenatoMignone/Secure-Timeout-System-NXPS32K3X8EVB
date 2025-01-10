@@ -1,7 +1,5 @@
 # QEMU and FreeRTOS on NXP S32K3X8EVB
 
-## Table of Contents
-
 <details closed>
 <summary><b>Table of Contents</b></summary>
  
