@@ -128,6 +128,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM2_BASE_ADDR         0x20480000    // SRAM2 base address
 #define SRAM2_SIZE              0x00040000    // 256 KB (Block2 size)
 
+/*LPUART memory address*/
 #define UART_BASE_ADDR          0x4006A000    // UART base address
 
 /* PIT Timer base addresses */
@@ -245,6 +246,34 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
 /*------------------------------------------------------------------------------*/
 
+/* Function to initialize LPUART devices */
+static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, int num_lpuarts) {
+    if (verbose) fprintf(stdout, "\n---------------------- Initializing LPUART Devices ----------------------\n");
+
+    for (int i = 0; i < num_lpuarts; i++) {
+        char device_name[32];
+        snprintf(device_name, sizeof(device_name), "s32k3x8.lpuart%d", i);
+
+        DeviceState *lpuart = qdev_new(TYPE_STM32L4X5_LPUART);
+        qdev_prop_set_chr(lpuart, "chardev", serial_hd(i));
+        qdev_connect_clock_in(lpuart, "clk", m_state->sys.sysclk);
+        sysbus_realize_and_unref(SYS_BUS_DEVICE(lpuart), &error_fatal);
+
+        // Calculate base address for each LPUART
+        hwaddr base_addr = UART_BASE_ADDR + (i * 0x1000); // Assuming 0x1000 offset between LPUARTs
+        sysbus_mmio_map(SYS_BUS_DEVICE(lpuart), 0, base_addr);
+
+        // Connect LPUART interrupt to NVIC
+        sysbus_connect_irq(SYS_BUS_DEVICE(lpuart), 0, qdev_get_gpio_in(nvic, i));
+
+        if (verbose) fprintf(stdout, "Initialized LPUART%d at base address 0x%08lx\n", i, base_addr);
+    }
+
+    if (verbose) fprintf(stdout, "\nAll LPUART devices initialized and connected to NVIC.\n");
+}
+
+/*------------------------------------------------------------------------------*/
+
 /* Function to initialize the S32K3X8 board for QEMU */
 
 static void s32k3x8_init(MachineState *ms) {
@@ -308,8 +337,8 @@ static void s32k3x8_init(MachineState *ms) {
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
     
-    /* Set the clock period to 7.14ns (equivalent to 140MHz frequency) */
-    clock_set_ns(m_state->sys.sysclk, 7.14);
+    /* Set the clock period to 4.16ns (equivalent to 240MHz frequency) */
+    clock_set_ns(m_state->sys.sysclk, 4.16);
 
     m_state->sys.refclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "refclk");
     clock_set_hz(m_state->sys.refclk, 1000000);
@@ -358,16 +387,8 @@ static void s32k3x8_init(MachineState *ms) {
     /*--------------------------Initialize the LPUART device--------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    if (verbose) fprintf(stdout, "\n---------------------- Initialization of the LPUART ----------------------\n");
+    initialize_lpuarts(m_state, nvic, 16);
 
-    DeviceState *lpuart = qdev_new(TYPE_STM32L4X5_LPUART);
-    qdev_prop_set_chr(lpuart, "chardev", serial_hd(0));
-    qdev_connect_clock_in(lpuart, "clk", m_state->sys.sysclk);
-    sysbus_realize_and_unref(SYS_BUS_DEVICE(lpuart), &error_fatal);
-    sysbus_mmio_map(SYS_BUS_DEVICE(lpuart), 0, UART_BASE_ADDR);
-    sysbus_connect_irq(SYS_BUS_DEVICE(lpuart), 0, qdev_get_gpio_in(nvic, 0));
-
-    if (verbose) fprintf(stdout, "\nLPUART initialized and connected to NVIC.\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
