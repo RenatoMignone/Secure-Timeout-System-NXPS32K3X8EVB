@@ -120,17 +120,13 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
 /* SRAM memory blocks */
 #define SRAM0_BASE_ADDR         0x20400000    // Block0  base address
-#define SRAM0_SIZE              0x00040000    // 265 KB (Block0 size)
+#define SRAM0_SIZE              0x00040000    // 256 KB (Block0 size)
 
 #define SRAM1_BASE_ADDR         0x20440000    // SRAM1 base address
 #define SRAM1_SIZE              0x00040000    // 256 KB (Block1 size)
 
 #define SRAM2_BASE_ADDR         0x20480000    // SRAM2 base address
 #define SRAM2_SIZE              0x00040000    // 256 KB (Block2 size)
-
-/* DRAM memory block */
-#define DRAM_BASE_ADDR          0x30000000    // DRAM base address
-#define DRAM_SIZE               0x00100000    // 1 MB (DRAM size)
 
 #define UART_BASE_ADDR          0x4006A000    // UART base address
 
@@ -203,8 +199,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     MemoryRegion *sram0 = g_new(MemoryRegion, 1);
     MemoryRegion *sram1 = g_new(MemoryRegion, 1);
     MemoryRegion *sram2 = g_new(MemoryRegion, 1);
-
-    MemoryRegion *dram = g_new(MemoryRegion, 1);
 	
     /* Flash memory initialization (Read-Only) */
 
@@ -243,13 +237,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     memory_region_init_ram(sram2, NULL, "s32k3x8.sram2", SRAM2_SIZE, &error_fatal);
     memory_region_add_subregion_overlap(system_memory, SRAM2_BASE_ADDR, sram2, 0);
-
-    /* DRAM memory initialization (RAM - Read-Write) */
-
-    if (verbose) fprintf(stdout, "Initializing DRAM memory...\n\n");
-
-    memory_region_init_ram(dram, NULL, "s32k3x8.dram", DRAM_SIZE, &error_fatal);
-    memory_region_add_subregion_overlap(system_memory, DRAM_BASE_ADDR, dram, 0);
     
     if (verbose) fprintf(stdout, "Memory regions initialized successfully.\n");
 }
@@ -448,7 +435,7 @@ static void s32k3x8_class_init(ObjectClass *oc, void *data) {
 
 /*------------------------------------------------------------------------------*/
 
-/* Section of code to define the infos of the board, wehere we do specify the functions to run for the init and class init */
+/* Section of code to define the infos of the board, where we do specify the functions to run for the init and class init */
 
 static const TypeInfo s32k3x8_machine_types = {
     .name           = TYPE_S32K3X8_MACHINE,

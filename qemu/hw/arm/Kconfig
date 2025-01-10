@@ -4,7 +4,6 @@ config S32K3X8EVB
     depends on TCG && ARM
     select ARM_V7M
     select ARM_TIMER # sp804
-    select PL011 if !HAVE_RUST # UART
 
 
 config ARM_VIRT
