@@ -7,7 +7,7 @@
 MEMORY
 {
     FLASH (rx)  : ORIGIN = 0x00400000, LENGTH = 2M  /* Program flash memory */
-    RAM  (rwx) : ORIGIN = 0x20400000, LENGTH = 256K /* RAM */
+    RAM  (rwx) : ORIGIN = 0x20400000, LENGTH = 256k /* RAM */
 }
 ENTRY(Reset_Handler)
 
@@ -30,6 +30,9 @@ SECTIONS
     {
         *(.text*)       /* Code */
         *(.rodata*)     /* Read-only data */
+        *(.constdata*)
+        _etext = .;
+        _sidata = .;
         KEEP(*(.init))  /* Startup initialization */
     } > FLASH
 
@@ -37,28 +40,24 @@ SECTIONS
     .data :
     {
         . = ALIGN(8);
-        _sdata = .;               /* Start address of data section */
-        *(.data*)                 /* Data */
-        _edata = .;               /* End address of data section */
-    } > RAM AT > FLASH
+        _data = .;
+        _sdata = .;
+        *(vtable)
+        *(.data)
+        _edata = .;
+    } > RAM
 
     /* Zero-initialized data */
     .bss :
     {
         . = ALIGN(8);
-        _sbss = .;                /* Start address of BSS */
-        *(.bss*)                  /* BSS */
-        *(COMMON)                 /* Common variables */
-        _ebss = .;                /* End address of BSS */
+        _bss = .;
+        _sbss = .;
+        *(.bss)
+        _ebss = .;
     } > RAM
 
-    /* Stack section */
-    ._user_stack :
-    {
-        . = ALIGN(8);
-        _estack = .;              /* End of stack (initial stack pointer) */
-        . += 0x4000;              /* Stack size (adjust as needed) */
-    } > RAM
+
 
     /* Heap section */
     .heap :
@@ -71,7 +70,7 @@ SECTIONS
         _heap_top = .;
         . = . + _Min_Stack_Size;
         . = ALIGN(8);
-     } > RAM
+   } >RAM
 
 
    __StackTop = ORIGIN(RAM) + LENGTH(RAM);
