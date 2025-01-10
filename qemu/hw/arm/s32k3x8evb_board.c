@@ -135,6 +135,8 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 
 #define PIT_TIMER2_BASE_ADDR    0x40038000    // PIT base address
 
+#define PIT_TIMER3_BASE_ADDR    0x40039000    // PIT base address
+
 /*------------------------------------------------------------------------------*/
 
 /* Define the machine state */
@@ -253,11 +255,11 @@ static void s32k3x8_init(MachineState *ms) {
     /*------------Declaration of pointers for various QEMU device models--------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    DeviceState *nvic;                    // Device models for NVIC and PIT timer
-    Object *soc_container;                // Container object for the System-on-Chip (SoC)
-    DeviceState *syss_dev;                // Device state for the system controller
-    DeviceState *pit_timer1,*pit_timer2;  // DeviceState for the PIT timers
-    MemoryRegion *system_memory;          // Initialize the pointer to the system memory
+    DeviceState *nvic;                                  // Device models for NVIC and PIT timer
+    Object *soc_container;                              // Container object for the System-on-Chip (SoC)
+    DeviceState *syss_dev;                              // Device state for the system controller
+    DeviceState *pit_timer1,*pit_timer2,*pit_timer3;    // DeviceState for the PIT timers
+    MemoryRegion *system_memory;                        // Initialize the pointer to the system memory
 
     /*--------------------------------------------------------------------------------------*/
     /*------------Allocate memory and initialize the machine state structure----------------*/
@@ -394,6 +396,17 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_connect_irq(sbd2, 0, qdev_get_gpio_in(nvic, 9));
 
     if (verbose) fprintf(stdout,"\nSecond Timer Initialized Correctly\n");
+
+    /* Third Timer */
+    pit_timer3 = qdev_new(TYPE_CMSDK_APB_TIMER);
+    SysBusDevice *sbd3;
+    sbd3 = SYS_BUS_DEVICE(pit_timer3);
+    qdev_connect_clock_in(DEVICE(pit_timer3), "pclk", m_state->sys.sysclk);
+    sysbus_realize_and_unref(sbd3, &error_fatal);
+    sysbus_mmio_map(sbd3, 0, PIT_TIMER3_BASE_ADDR);
+    sysbus_connect_irq(sbd3, 0, qdev_get_gpio_in(nvic, 10));
+
+    if (verbose) fprintf(stdout,"\nThird Timer Initialized Correctly\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------Load firmware into the emulated flash memory----------------------*/
