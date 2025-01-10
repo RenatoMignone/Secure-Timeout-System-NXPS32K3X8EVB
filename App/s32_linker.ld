@@ -25,8 +25,8 @@ MEMORY
     SRAM1      (RW)  : ORIGIN = 0x20440000, LENGTH = 256k
     SRAM2      (RW)  : ORIGIN = 0x20480000, LENGTH = 256k
 
-    /* Flash UTEST  (Non implementata nel linker)
-    UTEST      (RX)  : ORIGIN = 0x1B000000, LENGTH = 8k */
+    /* Flash UTEST */
+    UTEST      (RX)  : ORIGIN = 0x1B000000, LENGTH = 8k 
 }
 
 /* Dimensione minima per heap e stack */
@@ -77,6 +77,12 @@ SECTIONS
         *(.bss)
         _ebss = .;
     } > SRAM0
+
+    /* Dati di test */
+    .utest :
+    {
+        KEEP(*(.utest))
+    } > UTEST
 
     /* Heap */
     .heap :
