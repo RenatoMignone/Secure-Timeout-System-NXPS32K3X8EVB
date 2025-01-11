@@ -146,32 +146,3 @@ In case of conflicts:
    ```bash
    ./sync.sh push
    ```
-
-## Working with Submodules [TO BE DECIDED]
-
-### Submodule Usage
-
-For dependencies (e.g., QEMU or FreeRTOS), you can use submodules for better modularity.
-
-#### Adding Submodules
-
-To add a submodule:
-
-```bash
-git submodule add <repository_link> <path>
-```
-
-#### Updating Submodules
-
-To initialize and update submodules in a cloned repository:
-
-```bash
-git submodule update --init --recursive
-```
-
-### Recommendations
-
-- If you don’t need to modify the dependency files, use submodules to keep the repository lightweight.
-- If modifications are required, include the dependency as part of the main repository and manage it directly.
-
-For additional details, consult the official Git documentation on submodules.
