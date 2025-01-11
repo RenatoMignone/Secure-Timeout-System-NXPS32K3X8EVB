@@ -6,6 +6,10 @@ Initializing flash memory...
 
 Initializing SRAM memory...
 
+Initializing ITCM memory...
+
+Initializing DTCM memory...
+
 Memory regions initialized successfully.
 
 ------------------- Initialization of the system Clock -------------------
@@ -16,24 +20,24 @@ Clock initialized.
 
 NVIC realized.
 
----------------------- Initializing LPUART Devices ----------------------
+---------------------- Initializing LPUART Devices -----------------------
 
-Initialized LPUART0 at base address 0x4006a000
-Initialized LPUART1 at base address 0x4006b000
-Initialized LPUART2 at base address 0x4006c000
-Initialized LPUART3 at base address 0x4006d000
-Initialized LPUART4 at base address 0x4006e000
-Initialized LPUART5 at base address 0x4006f000
-Initialized LPUART6 at base address 0x40070000
-Initialized LPUART7 at base address 0x40071000
-Initialized LPUART8 at base address 0x40072000
-Initialized LPUART9 at base address 0x40073000
-Initialized LPUART10 at base address 0x40074000
-Initialized LPUART11 at base address 0x40075000
-Initialized LPUART12 at base address 0x40076000
-Initialized LPUART13 at base address 0x40077000
-Initialized LPUART14 at base address 0x40078000
-Initialized LPUART15 at base address 0x40079000
+Initialized LPUART  0 at base address 0x4006a000
+Initialized LPUART  1 at base address 0x4006b000
+Initialized LPUART  2 at base address 0x4006c000
+Initialized LPUART  3 at base address 0x4006d000
+Initialized LPUART  4 at base address 0x4006e000
+Initialized LPUART  5 at base address 0x4006f000
+Initialized LPUART  6 at base address 0x40070000
+Initialized LPUART  7 at base address 0x40071000
+Initialized LPUART  8 at base address 0x40072000
+Initialized LPUART  9 at base address 0x40073000
+Initialized LPUART 10 at base address 0x40074000
+Initialized LPUART 11 at base address 0x40075000
+Initialized LPUART 12 at base address 0x40076000
+Initialized LPUART 13 at base address 0x40077000
+Initialized LPUART 14 at base address 0x40078000
+Initialized LPUART 15 at base address 0x40079000
 
 All LPUART devices initialized and connected to NVIC.
 

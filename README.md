@@ -128,23 +128,29 @@ For a detailed guide on setting up, running, and recreating the project, refer t
 
 ### Board Specifications
 
-<!-- TODO: update -->
-
-- **Flash Memory**: 10 MB
+- **Flash Memory**: -- MB
   - **Block 0**: 2 MB at 0x00400000
   - **Block 1**: 2 MB at 0x00600000
   - **Block 2**: 2 MB at 0x00800000
-  - **Block 3**: 2 MB at 0x00AD0000
+  - **Block 3**: 2 MB at 0x00A00000
   - **Block 4**: 128 KB at 0x10000000
-  - **Utest**: 8 KB at 0x18000000
-- **SRAM**: 768 KB
+  - **Utest**: 8 KB at 0x1B000000
+- **SRAM**: --- KB
   - **Block 0**: 256 KB at 0x20400000
   - **Block 1**: 256 KB at 0x20440000
   - **Block 2**: 256 KB at 0x20480000
+- **DTCM Memory Blocks**:
+  - **DTCM0**: 128 KB at 0x20000000
+  - **DTCM2**: 128 KB at 0x21800000
+- **ITCM Memory Blocks**:
+  - **ITCM0**: 64 KB at 0x00000000
+  - **ITCM2**: 64 KB at 0x00010000
 - **UART Base Address**: 0x4006A000
 - **PIT Timer Base Addresses**:
   - **Timer 1**: 0x40037000
   - **Timer 2**: 0x40038000
+  - **Timer 3**: 0x40039000
+- **LPUART**: `serial_hd(0)`
 
 ### FreeRTOS Application
 

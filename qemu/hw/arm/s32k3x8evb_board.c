@@ -12,19 +12,20 @@
  * - Managing system clocks and interrupts.
  *
  * Authors:
- * - Renato Mignone    (renato.mignone@studenti.polito.it)
- * - Simone Romano     (simone.romano2@studenti.polito.it)
- * - Elia Innocenti    (elia.innocenti@studenti.polito.it)
  * - Andrea Botticella (andrea.botticella@studenti.polito.it)
  * - Fabrizio Emanuel  (fabrizio.emanuel@studenti.polito.it)
+ * - Elia Innocenti    (elia.innocenti@studenti.polito.it)
+ * - Renato Mignone    (renato.mignone@studenti.polito.it)
+ * - Simone Romano     (simone.romano2@studenti.polito.it)
  * 
  * All authors are students from the Politecnico di Torino, Italy.
  * 
+ * Note: The authors are listed in alphabetical order.
+ * 
  * Documentation:
- * - GitHub: https://github.com/neo-CAOS/group2.git
+ * - GitHub: https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB.git
  * - GitLab: https://baltig.polito.it/caos2024/group2.git
  */
-
 
 /* System Includes */
 
@@ -85,8 +86,8 @@ typedef short int my_bool;
 #endif
 
 /* Macro to print verbose output */
-// #define fprintf_v(stream, format, ...)
-//     do { if (verbose) fprintf(stream, format, ##__VA_ARGS__); } while(0)
+#define fprintf_v(stream, format, ...) \
+    do { if (verbose) fprintf(stream, format, ##__VA_ARGS__); } while(0)
 
 /*------------------------------------------------------------------------------*/
 
@@ -133,18 +134,18 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define SRAM2_SIZE              0x00040000    // 256 KB (Block2 size)
 
 /* DTCM memory block*/
-#define DTCM0_BASE_ADDR          0x20000000    // DTCM0 base address
-#define DTCM0_SIZE               0x00020000    // 128 KB 
+#define DTCM0_BASE_ADDR         0x20000000    // DTCM0 base address
+#define DTCM0_SIZE              0x00020000    // 128 KB 
 
-#define DTCM2_BASE_ADDR          0x21800000    // DTCM2 base address
-#define DTCM2_SIZE               0x00020000    // 128 KB
+#define DTCM2_BASE_ADDR         0x21800000    // DTCM2 base address
+#define DTCM2_SIZE              0x00020000    // 128 KB
 
 /* ITCM memory block*/
-#define ITCM0_BASE_ADDR          0x00000000    // ITCM0 base address
-#define ITCM0_SIZE               0x00010000    // 64KB
+#define ITCM0_BASE_ADDR         0x00000000    // ITCM0 base address
+#define ITCM0_SIZE              0x00010000    // 64KB
 
-#define ITCM2_BASE_ADDR          0x00010000    // ITCM2 base address
-#define ITCM2_SIZE               0x00010000    // 64KB
+#define ITCM2_BASE_ADDR         0x00010000    // ITCM2 base address
+#define ITCM2_SIZE              0x00010000    // 64KB
 
 /*LPUART memory address*/
 #define UART_BASE_ADDR          0x4006A000    // UART base address
@@ -201,7 +202,7 @@ DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACH
 /* Implementation of the function to initialize the memory regions */
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
-	if (verbose) fprintf(stdout, "\n------------------ Initialization of the memory regions ------------------\n");
+    fprintf_v(stdout, "\n------------------ Initialization of the memory regions ------------------\n");
 
     /* Initialize the memory regions for the flash, SRAM, and DRAM */
 
@@ -213,7 +214,6 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     MemoryRegion *utest = g_new(MemoryRegion, 1);
 
-
     MemoryRegion *sram0 = g_new(MemoryRegion, 1);
     MemoryRegion *sram1 = g_new(MemoryRegion, 1);
     MemoryRegion *sram2 = g_new(MemoryRegion, 1);
@@ -223,10 +223,9 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     MemoryRegion *dtcm0 = g_new(MemoryRegion, 1);
     MemoryRegion *dtcm2 = g_new(MemoryRegion, 1);
 
-
     /* Flash memory initialization (Read-Only) */
 
-	if (verbose) fprintf(stdout, "\nInitializing flash memory...\n\n");
+    fprintf_v(stdout, "\nInitializing flash memory...\n\n");
 
     memory_region_init_rom(flash0, NULL, "s32k3x8.flash0", FLASH_BLOCK0_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, FLASH_BLOCK0_BASE_ADDR, flash0);
@@ -248,7 +247,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     /* SRAM memory initialization (RAM - Read-Write) */
 
-	if (verbose) fprintf(stdout, "Initializing SRAM memory...\n\n");
+    fprintf_v(stdout, "Initializing SRAM memory...\n\n");
 
 	memory_region_init_ram(sram0, NULL, "s32k3x8.sram0", SRAM0_SIZE, &error_fatal);
     memory_region_add_subregion_overlap(system_memory, SRAM0_BASE_ADDR, sram0, 0);
@@ -261,7 +260,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     
     /* ITCM memory inizialization */
 
-    if (verbose) fprintf(stdout, "Initializing ITCM memory...\n\n");
+    fprintf_v(stdout, "Initializing ITCM memory...\n\n");
 
     memory_region_init_ram(itcm0, NULL, "s32k3x8.itcm0", ITCM0_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, ITCM0_BASE_ADDR, itcm0);
@@ -271,7 +270,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
  
     /* DTCM memory inizialization */
 
-    if (verbose) fprintf(stdout, "Initializing DTCM memory...\n\n");
+    fprintf_v(stdout, "Initializing DTCM memory...\n\n");
 
     memory_region_init_ram(dtcm0, NULL, "s32k3x8.dtcm0", DTCM0_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, DTCM0_BASE_ADDR, dtcm0);
@@ -279,16 +278,16 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     memory_region_init_ram(dtcm2, NULL, "s32k3x8.dtcm2", DTCM2_SIZE, &error_fatal);
     memory_region_add_subregion(system_memory, DTCM2_BASE_ADDR, dtcm2);
 
-    if (verbose) fprintf(stdout, "Memory regions initialized successfully.\n");
-
+    fprintf_v(stdout, "Memory regions initialized successfully.\n");
 }
 
 /*------------------------------------------------------------------------------*/
 
 /* Function to initialize LPUART devices */
+
 static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, int num_lpuarts) {
 
-    if (verbose) fprintf(stdout, "\n---------------------- Initializing LPUART Devices ----------------------\n\n");
+    fprintf_v(stdout, "\n---------------------- Initializing LPUART Devices -----------------------\n\n");
 
     for (int i = 0; i < num_lpuarts; i++) {
         char device_name[32];
@@ -299,17 +298,17 @@ static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, 
         qdev_connect_clock_in(lpuart, "clk", m_state->sys.sysclk);
         sysbus_realize_and_unref(SYS_BUS_DEVICE(lpuart), &error_fatal);
 
-        // Calculate base address for each LPUART
+        /* Calculate base address for each LPUART */
         hwaddr base_addr = UART_BASE_ADDR + (i * 0x1000); // Assuming 0x1000 offset between LPUARTs
         sysbus_mmio_map(SYS_BUS_DEVICE(lpuart), 0, base_addr);
 
-        // Connect LPUART interrupt to NVIC
+        /* Connect LPUART interrupt to NVIC */
         sysbus_connect_irq(SYS_BUS_DEVICE(lpuart), 0, qdev_get_gpio_in(nvic, i));
 
-        if (verbose) fprintf(stdout, "Initialized LPUART%d at base address 0x%08lx\n", i, base_addr);
+        fprintf_v(stdout, "Initialized LPUART %2d at base address 0x%08lx\n", i, base_addr);
     }
 
-    if (verbose) fprintf(stdout, "\nAll LPUART devices initialized and connected to NVIC.\n");
+    fprintf_v(stdout, "\nAll LPUART devices initialized and connected to NVIC.\n");
 }
 
 /*------------------------------------------------------------------------------*/
@@ -318,7 +317,7 @@ static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, 
 
 static void s32k3x8_init(MachineState *ms) {
 
-    if (verbose) fprintf(stdout, "\n\n======================== Initializing the System =========================\n");
+    fprintf_v(stdout, "\n\n======================== Initializing the System =========================\n");
 
     /*--------------------------------------------------------------------------------------*/    
     /*------------Declaration of pointers for various QEMU device models--------------------*/
@@ -373,7 +372,7 @@ static void s32k3x8_init(MachineState *ms) {
     /*------------------------ Initialize a clock for the system----------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    if (verbose) fprintf(stdout, "\n------------------- Initialization of the system Clock -------------------\n");
+    fprintf_v(stdout, "\n------------------- Initialization of the system Clock -------------------\n");
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
     
@@ -384,13 +383,13 @@ static void s32k3x8_init(MachineState *ms) {
     clock_set_hz(m_state->sys.refclk, 1000000);
 
     /* Log the successful clock initialization */
-    if (verbose) fprintf(stdout, "\nClock initialized.\n");
+    fprintf_v(stdout, "\nClock initialized.\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*-------------Initialize the Nested Vectored Interrupt Controller (NVIC)---------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    if (verbose) fprintf(stdout, "\n------------------- Initialization of the system NVIC --------------------\n");
+    fprintf_v(stdout, "\n------------------- Initialization of the system NVIC --------------------\n");
 
     nvic = qdev_new(TYPE_ARMV7M); // Create a new NVIC device model
 
@@ -421,7 +420,7 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_realize_and_unref(SYS_BUS_DEVICE(nvic), &error_fatal);
 
     /* Log the successful realization of the NVIC */
-    if (verbose) fprintf(stdout, "\nNVIC realized.\n");
+    fprintf_v(stdout, "\nNVIC realized.\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------------Initialize the LPUART device--------------------------------*/
@@ -433,7 +432,7 @@ static void s32k3x8_init(MachineState *ms) {
     /*-------------------------- Initialize the PIT timer-----------------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    if (verbose) fprintf(stdout, "\n---------------------- Initialization of the Timers ----------------------\n");
+    fprintf_v(stdout, "\n---------------------- Initialization of the Timers ----------------------\n");
 
     /* First Timer */
     pit_timer1 = qdev_new(TYPE_CMSDK_APB_TIMER);
@@ -444,7 +443,7 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_mmio_map(sbd1, 0, PIT_TIMER1_BASE_ADDR);
     sysbus_connect_irq(sbd1, 0, qdev_get_gpio_in(nvic, 8));
 
-    if (verbose) fprintf(stdout,"\nFirst Timer Initialized Correctly\n");
+    fprintf_v(stdout,"\nFirst Timer Initialized Correctly\n");
 
     /* Second Timer */
     pit_timer2 = qdev_new(TYPE_CMSDK_APB_TIMER);
@@ -455,7 +454,7 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_mmio_map(sbd2, 0, PIT_TIMER2_BASE_ADDR);
     sysbus_connect_irq(sbd2, 0, qdev_get_gpio_in(nvic, 9));
 
-    if (verbose) fprintf(stdout,"\nSecond Timer Initialized Correctly\n");
+    fprintf_v(stdout,"\nSecond Timer Initialized Correctly\n");
 
     /* Third Timer */
     pit_timer3 = qdev_new(TYPE_CMSDK_APB_TIMER);
@@ -466,26 +465,26 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_mmio_map(sbd3, 0, PIT_TIMER3_BASE_ADDR);
     sysbus_connect_irq(sbd3, 0, qdev_get_gpio_in(nvic, 10));
 
-    if (verbose) fprintf(stdout,"\nThird Timer Initialized Correctly\n");
+    fprintf_v(stdout,"\nThird Timer Initialized Correctly\n");
 
     /*--------------------------------------------------------------------------------------*/
     /*--------------------Load firmware into the emulated flash memory----------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    if (verbose) fprintf(stdout, "\n---------------- Loading the Kernel into the flash memory ----------------\n");
+    fprintf_v(stdout, "\n---------------- Loading the Kernel into the flash memory ----------------\n");
 
     /* The firmware file is specified in the machine state (ms->kernel_filename) */
     armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, FLASH_BLOCK0_BASE_ADDR, FLASH_BLOCK0_SIZE);
 
     /* Log the successful loading of the firmware */
-    if (verbose) fprintf(stdout, "\nKernel loaded into flash memory.\n\n");
+    fprintf_v(stdout, "\nKernel loaded into flash memory.\n\n");
 
     /* Log the completion of the board initialization */
-    if (verbose) fprintf(stdout, "System initialized.\n\n");
+    fprintf_v(stdout, "System initialized.\n\n");
 
-    if (verbose) fprintf(stdout, "Starting to run...\n");
+    fprintf_v(stdout, "Starting to run...\n");
 
-    if (verbose) fprintf(stdout, "\n==========================================================================\n");
+    fprintf_v(stdout, "\n==========================================================================\n");
 }
 
 /*------------------------------------------------------------------------------*/
