@@ -21,7 +21,8 @@ MEMORY
     DTCM2      (RW)  : ORIGIN = 0x21800000, LENGTH = 128k
 
     /* SRAM: Dati generici */
-    SRAM0      (RW)  : ORIGIN = 0x20400000, LENGTH = 256k
+    SRAM_STDBY (RW)  : ORIGIN = 0x20400000, LENGTH = 64k  /* SRAM Standby */
+    SRAM0      (RW)  : ORIGIN = 0x20410000, LENGTH = 192k /* Restante SRAM0 */
     SRAM1      (RW)  : ORIGIN = 0x20440000, LENGTH = 256k
     SRAM2      (RW)  : ORIGIN = 0x20480000, LENGTH = 256k
 
@@ -50,21 +51,22 @@ SECTIONS
     /* Sezione codice e dati readonly */
     .text :
     {
-        *(.text*)        /* Codice */
-        *(.rodata*)      /* Dati readonly */
-        *(.constdata*)   /* Costanti */
-        _etext = .;      /* Fine del codice */
-        KEEP(*(.init))   /* Inizializzazione */
+        __coderom_start__ = .;
+        *(.text*)        
+        *(.rodata*)      
+        *(.constdata*)   
+        _etext = .;      
+        KEEP(*(.init))   
     } > PFLASH
 
     /* Dati inizializzati (RAM) */
     .data :
     {
         . = ALIGN(8);
-        _data = .;
-        _sdata = .;
+        __data_start__ = .;
+        *(.data)         
+        *(.data.*)       
         *(vtable)
-        *(.data)
         _edata = .;
     } > DTCM0 AT > PFLASH
 
@@ -72,11 +74,18 @@ SECTIONS
     .bss :
     {
         . = ALIGN(8);
-        _bss = .;
-        _sbss = .;
+        __bss_start__ = .;
         *(.bss)
+        *(.bss.*)
         _ebss = .;
     } > SRAM0
+
+    /* Standby ram */
+    .standby_ram :
+    {
+        . = ALIGN(8);
+        *(.standby_ram)
+    } > SRAM_STDBY
 
     /* Dati di test */
     .utest :
@@ -96,10 +105,15 @@ SECTIONS
     } > DTCM0
 
     /* Stack */
-    __StackTop = ORIGIN(DTCM2) + LENGTH(DTCM2);
-    __StackLimit = __StackTop - _Min_Stack_Size;
+    .stack :
+    {
+        . = ALIGN(8);
+        __stack_start__ = .;
+        . = . + _Min_Stack_Size;
+        __stack_end__ = .;
+    } > DTCM2
 
-    ASSERT(__StackLimit >= _heap_top, "Overflow: stack e heap si sovrappongono!")
+    ASSERT(__stack_end__ <= ORIGIN(DTCM2) + LENGTH(DTCM2), "Stack overflow in DTCM2!")
 }
 
 /* Entry point */

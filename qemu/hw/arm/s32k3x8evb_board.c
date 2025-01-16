@@ -124,8 +124,12 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory);
 #define FLASH_UTEST_SIZE        0x00002000    // 8 KB (Utest size)
 
 /* SRAM memory blocks */
-#define SRAM0_BASE_ADDR         0x20400000    // Block0  base address
-#define SRAM0_SIZE              0x00040000    // 256 KB (Block0 size)
+
+#define SRAM_STDBY_BASE_ADDR    0x20400000    // SRAM standby base address
+#define SRAM_STDBY_SIZE         0x00010000    // 64 KB
+
+#define SRAM0_BASE_ADDR         0x20410000    // Block0  base address
+#define SRAM0_SIZE              0x00030000    // 192 KB (Block0 size) Total = 256 KB (standby + Sram0)
 
 #define SRAM1_BASE_ADDR         0x20440000    // SRAM1 base address
 #define SRAM1_SIZE              0x00040000    // 256 KB (Block1 size)
@@ -214,6 +218,7 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     MemoryRegion *utest = g_new(MemoryRegion, 1);
 
+    MemoryRegion *sram_standby = g_new(MemoryRegion, 1);
     MemoryRegion *sram0 = g_new(MemoryRegion, 1);
     MemoryRegion *sram1 = g_new(MemoryRegion, 1);
     MemoryRegion *sram2 = g_new(MemoryRegion, 1);
@@ -248,6 +253,10 @@ void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
     /* SRAM memory initialization (RAM - Read-Write) */
 
     fprintf_v(stdout, "Initializing SRAM memory...\n\n");
+
+    /* SRAM Standby */
+    memory_region_init_ram(sram_standby, NULL, "s32k3x8.sram_standby", SRAM_STDBY_SIZE, &error_fatal);
+    memory_region_add_subregion_overlap(system_memory, SRAM_STDBY_BASE_ADDR, sram_standby, 0);
 
 	memory_region_init_ram(sram0, NULL, "s32k3x8.sram0", SRAM0_SIZE, &error_fatal);
     memory_region_add_subregion_overlap(system_memory, SRAM0_BASE_ADDR, sram0, 0);
