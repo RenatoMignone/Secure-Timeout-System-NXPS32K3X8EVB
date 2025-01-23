@@ -35,7 +35,7 @@ To successfully complete this project, you will need the following:
 - ARM GCC toolchain for compiling the code
 - Ninja build system for building QEMU
 
-You can check if you have all the necessary tools installed by running the following commands:
+You can verify if you have all the necessary tools installed by running the following commands:
 
 ```sh
 # Check for Git
@@ -51,7 +51,68 @@ arm-none-eabi-gcc --version
 ninja --version
 ```
 
-If any of these commands return an error or are not found, you will need to install the corresponding tool.
+If any of these commands return an error or indicate the tool is not installed, follow the detailed configuration steps below.
+
+<details closed>
+<summary><b>Configuration Details</b></summary>
+
+### Strictly Needed Dependencies
+
+The following packages are essential for building and running QEMU, the ARM GCC toolchain, and the rest of the project:
+    
+- **Core Build Tools**:
+  - `build-essential` (includes `gcc`, `g++`, `make`)
+  - `python3` (needed for QEMU build scripts)
+  - `python3-pip` (for installing Python-related dependencies, if needed)
+
+- **QEMU-Specific Build Dependencies**:
+  - `git` (version control to clone repositories)
+  - `libglib2.0-dev` (core library for QEMU)
+  - `libfdt-dev` (for working with device tree files)
+  - `libpixman-1-dev` (required for graphics emulation)
+  - `zlib1g-dev` (for compression support)
+  - `ninja-build` (for faster builds compared to Makefiles)
+
+- **ARM Toolchain**:
+  - `arm-none-eabi-gcc` (the ARM GCC compiler)
+
+### Optional Dependencies
+
+These dependencies provide additional QEMU functionality or extend its features. They are not strictly required but are recommended if you want advanced capabilities:
+    
+- **Virtualization and I/O Support**:
+  - `libaio-dev`, `libcap-ng-dev`, `libudev-dev`
+
+- **Networking and Filesystem Support**:
+  - `libslirp-dev`, `libattr1-dev`, `libnfs-dev`
+
+- **Graphical and Display Support**:
+  - `libdrm-dev`, `libsdl2-dev`, `libspice-protocol-dev`, `libspice-server-dev`, `libgbm-dev`, `libepoxy-dev`, `libvirglrenderer-dev`, `libgtk-3-dev`
+
+- **Peripheral and USB Support**:
+  - `libusb-1.0-0-dev`
+
+- **Sound Support**:
+  - `libpulse-dev`
+
+- **Terminal and UI Support**:
+  - `libncurses5-dev`, `libncursesw5-dev`, `libvte-2.91-dev`
+
+- **Multimedia and File Format Support**:
+  - `libjpeg8-dev`, `libpng-dev`
+
+### Installation Command
+
+To install all necessary dependencies (strictly needed and optional), run the following commands:
+
+```sh
+sudo apt update && sudo apt upgrade -y
+sudo apt install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev   ninja-build build-essential python3 python3-pip libaio-dev libcap-ng-dev   libiscsi-dev libattr1-dev libnfs-dev libudev-dev libxen-dev libepoxy-dev   libdrm-dev libgbm-dev libvirglrenderer-dev libgtk-3-dev libspice-protocol-dev   libspice-server-dev libusb-1.0-0-dev libpulse-dev libsdl2-dev libslirp-dev   libncurses5-dev libncursesw5-dev libx11-dev libxext-dev libxt-dev   libpng-dev libjpeg8-dev libvte-2.91-dev libfuse-dev arm-none-eabi-gcc
+```
+
+Once these dependencies are installed, re-run the verification commands listed above to ensure everything is set up correctly.
+
+</details>
 
 ### Setting Up the Project Environment
 

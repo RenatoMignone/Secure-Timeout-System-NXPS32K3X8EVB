@@ -10,7 +10,6 @@ This guide provides clear instructions for setting up Git repositories, configur
 - [Synchronization](#synchronization)
 - [Usage Instructions](#usage-instructions)
 - [Error Handling](#error-handling)
-- [Working with Submodules](#working-with-submodules)
 
 ---
 

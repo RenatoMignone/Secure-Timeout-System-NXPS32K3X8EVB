@@ -43,7 +43,8 @@ This project implements a very simple secure timeout system application on the N
 
 This project has been assigned for the [Computer Architectures and Operating Systems](#acknowledgments) course. The work has been carried out by group 2. For more information about the authors, please refer to the [Authors](#authors) section.
 
-Original Repo: [neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB](https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB)
+Original Project Repository: [neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB](https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB)  
+Original Beamer Repository: [neo-CAOS/latex-beamer](https://github.com/neo-CAOS/latex-beamer)
 
 ## Features
 
