@@ -72,9 +72,11 @@ The following packages are essential for building and running QEMU, the ARM GCC 
   - `libpixman-1-dev` (required for graphics emulation)
   - `zlib1g-dev` (for compression support)
   - `ninja-build` (for faster builds compared to Makefiles)
+  -  `flex` and `bison` (required for QEMU's device emulation parsing logic)
 
 - **ARM Toolchain**:
-  - `arm-none-eabi-gcc` (the ARM GCC compiler)
+  - `gcc-arm-none-eabi` (the ARM GCC compiler)
+  - `gdb-multiarch`  (a versatile debugger for cross-architecture debugging, including ARM)
 
 ### Optional Dependencies
 
@@ -107,7 +109,7 @@ To install all necessary dependencies (strictly needed and optional), run the fo
 
 ```sh
 sudo apt update && sudo apt upgrade -y
-sudo apt install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev   ninja-build build-essential python3 python3-pip libaio-dev libcap-ng-dev   libiscsi-dev libattr1-dev libnfs-dev libudev-dev libxen-dev libepoxy-dev   libdrm-dev libgbm-dev libvirglrenderer-dev libgtk-3-dev libspice-protocol-dev   libspice-server-dev libusb-1.0-0-dev libpulse-dev libsdl2-dev libslirp-dev   libncurses5-dev libncursesw5-dev libx11-dev libxext-dev libxt-dev   libpng-dev libjpeg8-dev libvte-2.91-dev libfuse-dev arm-none-eabi-gcc
+sudo apt install git bison flex libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev   ninja-build build-essential python3 python3-pip libaio-dev libcap-ng-dev   libiscsi-dev libattr1-dev libnfs-dev libudev-dev libxen-dev libepoxy-dev   libdrm-dev libgbm-dev libvirglrenderer-dev libgtk-3-dev libspice-protocol-dev   libspice-server-dev libusb-1.0-0-dev libpulse-dev libsdl2-dev libslirp-dev   libncurses5-dev libncursesw5-dev libx11-dev libxext-dev libxt-dev   libpng-dev libjpeg8-dev libvte-2.91-dev libfuse-dev gcc-arm-none-eabi gdb-multiarch
 ```
 
 Once these dependencies are installed, re-run the verification commands listed above to ensure everything is set up correctly.
