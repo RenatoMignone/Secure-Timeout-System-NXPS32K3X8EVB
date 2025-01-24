@@ -23,7 +23,16 @@
 
 ## Introduction
 
-This guide provides a comprehensive walkthrough of our project, which involves emulating the NXP S32K3X8EVB board using QEMU, porting FreeRTOS to run on the emulated board, and creating a simple application to demonstrate the setup.
+This guide provides a comprehensive walkthrough of our project, which involves:
+
+1. Emulating the NXP S32K3X8EVB board using QEMU.
+2. Porting FreeRTOS to run on the emulated board.
+3. Creating a simple application to demonstrate the setup.
+
+#### Prerequisites
+
+- The project was developed on **Ubuntu 22.04 LTS** and should work with most **Debian-based distributions**.
+- The commands provided in this guide use **`apt`** as the package manager. If you are using a non-Debian distribution, equivalent packages may be required, which might differ depending on the package manager used by your system.
 
 ### Requirements
 
@@ -137,7 +146,6 @@ Once these dependencies are installed, re-run the verification commands listed a
         ├── s32_startup.c
         └── ...
     ```
-
 ## Part 1 - QEMU Board Emulation
 
 ### Setting Up QEMU

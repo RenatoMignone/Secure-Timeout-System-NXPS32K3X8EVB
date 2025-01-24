@@ -179,6 +179,8 @@ struct ssys_state {
     qemu_irq irq;
     Clock *sysclk;
     Clock *refclk;
+    Clock *aips_plat_clk;
+    Clock *aips_slow_clk;
 };
 
 /*------------------------------------------------------------------------------*/
@@ -304,7 +306,10 @@ static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, 
 
         DeviceState *lpuart = qdev_new(TYPE_STM32L4X5_LPUART);
         qdev_prop_set_chr(lpuart, "chardev", serial_hd(i));
-        qdev_connect_clock_in(lpuart, "clk", m_state->sys.sysclk);
+	if(i==0 || i==1 || i==8)
+		qdev_connect_clock_in(lpuart, "clk", m_state->sys.aips_plat_clk);
+	else
+		qdev_connect_clock_in(lpuart, "clk", m_state->sys.aips_slow_clk);
         sysbus_realize_and_unref(SYS_BUS_DEVICE(lpuart), &error_fatal);
 
         /* Calculate base address for each LPUART */
@@ -378,10 +383,10 @@ static void s32k3x8_init(MachineState *ms) {
     sysbus_realize_and_unref(SYS_BUS_DEVICE(syss_dev), &error_fatal);
 
     /*--------------------------------------------------------------------------------------*/
-    /*------------------------ Initialize a clock for the system----------------------------*/
+    /*------------------------ Initialize the clocks  for the system----------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf_v(stdout, "\n------------------- Initialization of the system Clock -------------------\n");
+    fprintf_v(stdout, "\n------------------- Initialization of the Clocks -------------------\n");
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
     
@@ -390,6 +395,12 @@ static void s32k3x8_init(MachineState *ms) {
 
     m_state->sys.refclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "refclk");
     clock_set_hz(m_state->sys.refclk, 1000000);
+
+    m_state->sys.aips_plat_clk = clock_new(OBJECT(DEVICE(&m_state->sys)), "aips_plat_clk");
+    clock_set_hz(m_state->sys.aips_plat_clk, 80000000);
+
+    m_state->sys.aips_slow_clk = clock_new(OBJECT(DEVICE(&m_state->sys)), "aips_slow_clk");
+    clock_set_hz(m_state->sys.aips_slow_clk, 40000000);
 
     /* Log the successful clock initialization */
     fprintf_v(stdout, "\nClock initialized.\n");
