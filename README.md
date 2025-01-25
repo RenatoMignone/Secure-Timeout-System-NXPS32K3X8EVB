@@ -4,10 +4,6 @@
 
 <!-- ## Table of Contents -->
 
-<!-- TODO: make prettier -->
-
-<!-- TODO: add the documentation section (with all the references) -->
-
 <details closed>
 <summary><b>Table of Contents</b></summary>
  
@@ -16,14 +12,13 @@
 &nbsp;• [Getting Started](#getting-started) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Prerequisites](#prerequisites) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Installation](#installation) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running the Emulator](#running-the-emulator) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running the Emulator and the Application](#running-the-emulator-and-the-application) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Guide for Recreating the Project](#guide-for-recreating-the-project) <br>
 &nbsp;• [Project Structure](#project-structure) <br>
-&nbsp;• [Board and FreeRTOS Integration](#board-and-freertos-integration) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Board Specifications](#board-specifications) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [FreeRTOS Application](#freertos-application) <br>
-&nbsp;• [Usage](#usage) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [How to Run Applications](#how-to-run-applications) <br>
+&nbsp;• [Board Specifications](#board-specifications) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Memory](#memory) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Peripherals](#peripherals) <br>
+&nbsp;• [FreeRTOS Application](#freertos-application) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Available Configuration Options](#available-configuration-options) <br>
 &nbsp;• [Team Collaboration](#team-collaboration) <br>
 &nbsp;• [Contributing](#contributing) <br>
@@ -120,17 +115,17 @@ For a detailed guide on setting up, running, and recreating the project, refer t
     - `Makefile`: Build configuration and rules.
     - `s32_linker.ld`: Linker script for the project.
     - `s32_startup.c`: Startup code for the S32K3X8EVB board.
-- `FreeRTOS`: FreeRTOS kernel and related files.
-- `qemu`: QEMU emulator files.
+- `FreeRTOS/`: FreeRTOS kernel and related files.
+- `qemu/`: QEMU emulator files.
 - `resources/`: Additional resources such as images and documentation.
-- `scripts`: Collection of scripts used in the project.
+- `scripts/`: Collection of scripts used in the project.
 - `README.md`: Project documentation.
 - `GUIDE.md`: Detailed guide for setting up, running, and recreating the project, explaining all the steps and details.
 - `LICENSE-CC-BY-NC-4.0.md`: License file.
 
-## Board and FreeRTOS Integration
+## Board Specifications
 
-### Board Specifications
+### Memory
 
 ###### **Flash Memory Layout**
 
@@ -146,18 +141,22 @@ The board is equipped with multiple blocks of flash memory, each with specific s
 The following picture provides a detailed overview of the **FLASH** memory layout. Refer to the last column for the implementation that was used for the project.
 
 ![flash layout](./resources/images/flash.png)
-###### **SRAM,DTCM,ITCM Memory Layout
+
+###### **SRAM,DTCM,ITCM Memory Layout**
 
 The board features several blocks of SRAM and additional DTCM and ITCM block, each one starting at a specific address.
+
 ###### **SRAM Layout**:
 
   - **Block 0**: 256 KB at 0x20400000
   - **Block 1**: 256 KB at 0x20440000
   - **Block 2**: 256 KB at 0x20480000
+  
 ###### **DTCM Memory Blocks**:
 
   - **DTCM0**: 128 KB at 0x20000000
   - **DTCM2**: 128 KB at 0x20000000
+  
 ###### **ITCM Memory Blocks**:
  
   - **ITCM0**: 64 KB at 0x00000000
@@ -166,11 +165,17 @@ The board features several blocks of SRAM and additional DTCM and ITCM block, ea
 The layout is shown in the image below for reference. Refer to the last column for the implementation that was used for the project.
 
 ![sram layout](./resources/images/sram.png)
+
+### Peripherals
+
 ###### **Peripherals and Memory Mapping**
 
 - **UART Base Address**: 0x4006A000
+
 <!-- TODO: UART-->
+
 - **PIT Timer Base Addresses**:
+
   - **Timer 1**: 0x40037000
   - **Timer 2**: 0x40038000
   - **Timer 3**: 0x40039000
@@ -182,10 +187,12 @@ The layout is shown in the image below for reference. Refer to the last column f
 A detailed overview of the LPUART setup is provided in the following diagram:
 
 ![lpuart](./resources/images/lpuart.png)
-#### Note
 
-These specifications were derived with reference to the **NXP S32K3X8EVB** board equipped with the **S32K358 microcontroller**. For more detailed information, please refer to the official documentation available on the [NXP S32K3X8EVB product page](https://www.nxp.com/design/design-center/development-boards-and-designs/S32K3X8EVB-Q289).
-### FreeRTOS Application
+> #### Note
+> 
+> These specifications were derived with reference to the **NXP S32K3X8EVB** board equipped with the **S32K358 microcontroller**. For more detailed information, please refer to the official documentation available on the [NXP S32K3X8EVB product page](https://www.nxp.com/design/design-center/development-boards-and-designs/S32K3X8EVB-Q289).
+
+## FreeRTOS Application
 
 The FreeRTOS application includes tasks for monitoring user activity, handling alerts, and simulating events. The tasks are created and managed by FreeRTOS, and the system uses hardware timers for periodic operations.
 
@@ -195,6 +202,8 @@ The FreeRTOS application includes tasks for monitoring user activity, handling a
 - `MONITOR_TASK_PRIORITY`: Priority for the monitor task.
 - `ALERT_TASK_PRIORITY`: Priority for the alert task.
 - `EVENT_TASK_PRIORITY`: Priority for the event task.
+
+<!-- TODO: expand (?) -->
 
 ## Team Collaboration
 
