@@ -35,6 +35,7 @@ QEMU_FLAGS_DBG = -s -S
 INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
 INCLUDE_DIRS += -I$(DEMO_PROJECT) 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/CMSIS 
+#INCLUDE_DIRS += -I$(DEMO_PROJECT)/MPU
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/Peripherals 
 INCLUDE_DIRS += -I$(DEMO_PROJECT)/SecureTimeoutSystem
 
@@ -44,6 +45,7 @@ VPATH += $(KERNEL_PORT_DIR)
 VPATH += $(KERNEL_DIR)/portable/MemMang
 VPATH += $(DEMO_PROJECT)
 VPATH += $(DEMO_PROJECT)/CMSIS
+#VPATH += $(DEMO_PROJECT)/MPU
 VPATH += $(DEMO_PROJECT)/Peripherals
 VPATH += $(DEMO_PROJECT)/SecureTimeoutSystem
 
@@ -85,6 +87,10 @@ SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
 # Demo source files
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
+#SOURCE_FILES += $(DEMO_PROJECT)/MPU/app_main.c
+#SOURCE_FILES += $(DEMO_PROJECT)/MPU/mpu_demo.c
+#SOURCE_FILES += $(DEMO_PROJECT)/MPU/reg_tests.c
+#SOURCE_FILES += $(DEMO_PROJECT)/MPU/reg_tests_asm.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/IntTimer.c
 SOURCE_FILES += $(DEMO_PROJECT)/SecureTimeoutSystem/secure_timeout_system.c

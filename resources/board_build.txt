@@ -12,7 +12,7 @@ Initializing DTCM memory...
 
 Memory regions initialized successfully.
 
-------------------- Initialization of the system Clock -------------------
+--------------------- Initialization of the Clocks -----------------------
 
 Clock initialized.
 

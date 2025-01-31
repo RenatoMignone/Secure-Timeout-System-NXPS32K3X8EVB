@@ -386,7 +386,7 @@ static void s32k3x8_init(MachineState *ms) {
     /*------------------------ Initialize the clocks  for the system----------------------------*/
     /*--------------------------------------------------------------------------------------*/
 
-    fprintf_v(stdout, "\n------------------- Initialization of the Clocks -------------------\n");
+    fprintf_v(stdout, "\n--------------------- Initialization of the Clocks -----------------------\n");
 
     m_state->sys.sysclk = clock_new(OBJECT(DEVICE(&m_state->sys)), "sysclk"); // Create clock object
     
