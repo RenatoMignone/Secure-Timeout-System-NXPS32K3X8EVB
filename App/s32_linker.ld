@@ -1,6 +1,6 @@
 /*
  * Linker script per la S32K358 con FreeRTOS
- * Configurato per utilizzare le regioni di memoria ITCM, DTCM, SRAM e Flash definite.
+ * Configurato per utilizzare le regioni di memoria ITCM, DTCM, SRAM e Flash.
  */
 
 /* Definizione delle regioni di memoria */
@@ -14,7 +14,7 @@ MEMORY
     PFLASH     (RX)  : ORIGIN = 0x00400000, LENGTH = 8M
 
     /* DFLASH: Dati non volatili */
-    DFLASH     (RX)  : ORIGIN = 0x10000000, LENGTH = 128k
+    DFLASH     (RW)  : ORIGIN = 0x10000000, LENGTH = 128k
 
     /* DTCM: Stack, heap, e dati critici */
     DTCM0      (RW)  : ORIGIN = 0x20000000, LENGTH = 128k
@@ -31,7 +31,7 @@ MEMORY
 }
 
 /* Dimensione minima per heap e stack */
-_Min_Heap_Size = 0x8;
+_Min_Heap_Size = 0x1000;
 _Min_Stack_Size = 0x400;    /* Required amount of stack.  Used by main(), then re-used as the interrupt stack after the kernel starts. */
 
 /* Stack iniziale */
@@ -63,22 +63,25 @@ SECTIONS
     .data :
     {
         . = ALIGN(8);
-        __data_start__ = .;
+        _sdata = .;
         *(.data)         
         *(.data.*)       
         *(vtable)
-        _edata = .;
+        _edata = .; 
     } > DTCM0 AT > PFLASH
+
+    /* Simboli per la copia da FLASH a RAM */
+    _sidata = LOADADDR(.data);  /* Indirizzo di caricamento (FLASH) di .data */
 
     /* Dati non inizializzati (RAM) */
     .bss :
     {
         . = ALIGN(8);
-        __bss_start__ = .;
+        _sbss = .;
         *(.bss)
         *(.bss.*)
         _ebss = .;
-    } > SRAM0
+    } > DTCM0
 
     /* Standby ram */
     .standby_ram :
@@ -114,6 +117,7 @@ SECTIONS
     } > DTCM2
 
     ASSERT(__stack_end__ <= ORIGIN(DTCM2) + LENGTH(DTCM2), "Stack overflow in DTCM2!")
+
 }
 
 /* Entry point */

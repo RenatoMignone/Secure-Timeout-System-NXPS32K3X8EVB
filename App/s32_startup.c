@@ -40,7 +40,124 @@ static void Default_Handler( void ) __attribute__( ( naked ) );
 void Reset_Handler( void ) __attribute__( ( naked ) );
 
 extern int main( void );
-extern uint32_t _estack;
+
+/* Dichiarazioni esterne per i simboli del linker script */
+extern uint32_t _estack;  /* Indirizzo di fine stack */
+extern uint32_t _sidata;  /* Indirizzo FLASH di .data */
+extern uint32_t _sdata;   /* Indirizzo RAM di .data */
+extern uint32_t _edata;   /* Fine di .data in RAM */
+extern uint32_t _sbss;    /* Inizio di .bss in RAM */
+extern uint32_t _ebss;    /* Fine di .bss in RAM */
+
+void Reset_Handler(void) {
+    /* 1. Copia la sezione .data dalla FLASH alla RAM */
+    uint32_t *src = &_sidata;  // Indirizzo FLASH di .data
+    uint32_t *dst = &_sdata;   // Indirizzo RAM di .data
+
+    while (dst < &_edata) {
+        *dst++ = *src++;
+    }
+
+    /* 2. Azzera la sezione .bss */
+    dst = &_sbss;
+    while (dst < &_ebss) {
+        *dst++ = 0;
+    }
+
+    /* 3. Chiama main() */
+    main();
+}
+
+/* Variables used to store the value of registers at the time a hardfault
+ * occurs.  These are volatile to try and prevent the compiler/linker optimizing
+ * them away as the variables never actually get used. */
+volatile uint32_t r0;
+volatile uint32_t r1;
+volatile uint32_t r2;
+volatile uint32_t r3;
+volatile uint32_t r12;
+volatile uint32_t lr;   /* Link register. */
+volatile uint32_t pc;   /* Program counter. */
+volatile uint32_t psr;  /* Program status register. */
+
+/* Called from the hardfault handler to provide information on the processor
+ * state at the time of the fault.
+ */
+__attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress ) {
+
+    r0 = pulFaultStackAddress[ 0 ];
+    r1 = pulFaultStackAddress[ 1 ];
+    r2 = pulFaultStackAddress[ 2 ];
+    r3 = pulFaultStackAddress[ 3 ];
+
+    r12 = pulFaultStackAddress[ 4 ];
+    lr = pulFaultStackAddress[ 5 ];
+    pc = pulFaultStackAddress[ 6 ];
+    psr = pulFaultStackAddress[ 7 ];
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    char buffer[100];
+
+    UART_printf("\nHard Fault Handler:\n");
+    sprintf(buffer,"R0   = 0x%08lX\n", r0);
+    UART_printf(buffer);
+    sprintf(buffer,"R1   = 0x%08lX\n", r1);
+    UART_printf(buffer);
+    sprintf(buffer,"R2   = 0x%08lX\n", r2);
+    UART_printf(buffer);
+    sprintf(buffer,"R3   = 0x%08lX\n", r3);
+    UART_printf(buffer);
+    sprintf(buffer,"R12  = 0x%08lX\n", r12);
+    UART_printf(buffer);
+    sprintf(buffer,"LR   = 0x%08lX\n", lr);
+    UART_printf(buffer);
+    sprintf(buffer,"PC   = 0x%08lX\n", pc);
+    UART_printf(buffer);
+    sprintf(buffer,"PSR  = 0x%08lX\n", psr);
+    UART_printf(buffer);
+    
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    /* Infinite loop to halt the system */
+    for (;;);
+
+}
+
+
+void Default_Handler( void ) {
+
+    __asm volatile
+    (
+        ".align 8                                \n"
+        " ldr r3, =0xe000ed04                    \n" /* Load the address of the interrupt control register into r3. */
+        " ldr r2, [r3, #0]                       \n" /* Load the value of the interrupt control register into r2. */
+        " uxtb r2, r2                            \n" /* The interrupt number is in the least significant byte - clear all other bits. */
+        "Infinite_Loop:                          \n" /* Sit in an infinite loop - the number of the executing interrupt is held in r2. */
+        " b  Infinite_Loop                       \n"
+        " .ltorg                                 \n"
+    );
+
+}
+
+void HardFault_Handler( void ) {
+
+    __asm volatile
+    (
+        ".align 8                                                   \n"
+        " tst lr, #4                                                \n"
+        " ite eq                                                    \n"
+        " mrseq r0, msp                                             \n"
+        " mrsne r0, psp                                             \n"
+        " ldr r1, [r0, #24]                                         \n"
+        " ldr r2, =prvGetRegistersFromStack                         \n"
+        " bx r2                                                     \n"
+        " .ltorg                                                    \n"
+    );
+
+}
+
 
 /* Vector table. */
 const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
@@ -306,98 +423,3 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
     0,
     0
 };
-
-void Reset_Handler( void ) {    
-    main();
-
-}
-
-/* Variables used to store the value of registers at the time a hardfault
- * occurs.  These are volatile to try and prevent the compiler/linker optimizing
- * them away as the variables never actually get used. */
-volatile uint32_t r0;
-volatile uint32_t r1;
-volatile uint32_t r2;
-volatile uint32_t r3;
-volatile uint32_t r12;
-volatile uint32_t lr;   /* Link register. */
-volatile uint32_t pc;   /* Program counter. */
-volatile uint32_t psr;  /* Program status register. */
-
-/* Called from the hardfault handler to provide information on the processor
- * state at the time of the fault.
- */
-__attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress ) {
-
-    r0 = pulFaultStackAddress[ 0 ];
-    r1 = pulFaultStackAddress[ 1 ];
-    r2 = pulFaultStackAddress[ 2 ];
-    r3 = pulFaultStackAddress[ 3 ];
-
-    r12 = pulFaultStackAddress[ 4 ];
-    lr = pulFaultStackAddress[ 5 ];
-    pc = pulFaultStackAddress[ 6 ];
-    psr = pulFaultStackAddress[ 7 ];
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    char buffer[100];
-
-    UART_printf("\nHard Fault Handler:\n");
-    sprintf(buffer,"R0   = 0x%08lX\n", r0);
-    UART_printf(buffer);
-    sprintf(buffer,"R1   = 0x%08lX\n", r1);
-    UART_printf(buffer);
-    sprintf(buffer,"R2   = 0x%08lX\n", r2);
-    UART_printf(buffer);
-    sprintf(buffer,"R3   = 0x%08lX\n", r3);
-    UART_printf(buffer);
-    sprintf(buffer,"R12  = 0x%08lX\n", r12);
-    UART_printf(buffer);
-    sprintf(buffer,"LR   = 0x%08lX\n", lr);
-    UART_printf(buffer);
-    sprintf(buffer,"PC   = 0x%08lX\n", pc);
-    UART_printf(buffer);
-    sprintf(buffer,"PSR  = 0x%08lX\n", psr);
-    UART_printf(buffer);
-    
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    /* Infinite loop to halt the system */
-    for (;;);
-
-}
-
-
-void Default_Handler( void ) {
-
-    __asm volatile
-    (
-        ".align 8                                \n"
-        " ldr r3, =0xe000ed04                    \n" /* Load the address of the interrupt control register into r3. */
-        " ldr r2, [r3, #0]                       \n" /* Load the value of the interrupt control register into r2. */
-        " uxtb r2, r2                            \n" /* The interrupt number is in the least significant byte - clear all other bits. */
-        "Infinite_Loop:                          \n" /* Sit in an infinite loop - the number of the executing interrupt is held in r2. */
-        " b  Infinite_Loop                       \n"
-        " .ltorg                                 \n"
-    );
-
-}
-
-void HardFault_Handler( void ) {
-
-    __asm volatile
-    (
-        ".align 8                                                   \n"
-        " tst lr, #4                                                \n"
-        " ite eq                                                    \n"
-        " mrseq r0, msp                                             \n"
-        " mrsne r0, psp                                             \n"
-        " ldr r1, [r0, #24]                                         \n"
-        " ldr r2, =prvGetRegistersFromStack                         \n"
-        " bx r2                                                     \n"
-        " .ltorg                                                    \n"
-    );
-
-}
