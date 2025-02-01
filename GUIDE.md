@@ -145,12 +145,6 @@ Once these dependencies are installed, re-run the verification commands listed a
     ├── qemu
     ├── FreeRTOS
     └── App
-        ├── main.c
-        ├── FreeRTOSConfig.c
-        ├── Makefile
-        ├── s32_linker.ld
-        ├── s32_startup.c
-        └── ...
     ```
 ## Part 1 - QEMU Board Emulation
 
@@ -325,17 +319,30 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
 
     - `s32_startup.c`: This file contains the startup code for the S32K3X8EVB board.
 
+        <details closed>
+        <summary>Code snippet</summary>
+
         ```c
         /* TODO: insert code */
         ```
+
+        </details>
     
     - `s32_linker.ld`: This file defines the memory layout for the application.
+
+        <details closed>
+        <summary>Code snippet</summary>
 
         ```
         /* TODO: insert code */
         ```
 
+        </details>
+
     - `FreeRTOSConfig.h`: This file contains the FreeRTOS configuration settings.
+
+        <details closed>
+        <summary>Code snippet</summary>
 
         ```c
         /*
@@ -447,7 +454,12 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
         #endif /* FREERTOS_CONFIG_H */
         ```
 
+        </details>
+
     - `Makefile`: This file contains the build configuration and rules.
+
+        <details closed>
+        <summary>Code snippet</summary>
 
         ```Makefile
         # The directory that contains FreeRTOS source code
@@ -579,7 +591,13 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
         run: clean all qemu_start
         ```
 
+        </details>
+
 3. Implement the `main.c` file:
+
+    <details closed>
+    <summary>Code snippet</summary>
+
     ```c
     /* FreeRTOS includes */
     #include "FreeRTOS.h"
@@ -624,6 +642,8 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
         }
     }
     ```
+
+    </details>
 
 4. Test everything:
     ```sh
@@ -679,7 +699,7 @@ Most of the files have already been implemented to test the FreeRTOS porting. No
     /* Define task priorities */
     #define mainTASK_PRIORITY         ( tskIDLE_PRIORITY + 1 ) /* Main task priority */
     #define highTASK_PRIORITY         ( tskIDLE_PRIORITY + 2 ) /* High priority task */
-    #define lowTASK_PRIORITY          ( tskIDLE_PRIORITY + 3 ) /* Low priority task */
+    #define lowTASK_PRIORITY          ( tskIDLE_PRIORITY + 3 ) /* Low priority task  */
     ```
 
 4. **Makefile**: This file contains the build configuration and rules.
@@ -717,10 +737,10 @@ Most of the files have already been implemented to test the FreeRTOS porting. No
     ../qemu/build/qemu-system-arm -machine s32k3x8evb -cpu cortex-m7 -kernel ./Output/app_name.elf -monitor none -nographic -serial stdio
     ```
 
-3. It is possible to use a single command:
-    ```sh
-    make run
-    ```
+> It is possible to use a single command:
+>   ```sh
+>   make run
+>   ```
 
 ## Conclusion
 

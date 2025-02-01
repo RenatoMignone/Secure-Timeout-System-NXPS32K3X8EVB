@@ -13,7 +13,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Prerequisites](#prerequisites) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Installation](#installation) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Running the Emulator and the Application](#running-the-emulator-and-the-application) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Guide for Recreating the Project](#guide-for-recreating-the-project) <br>
+&nbsp;• [Guide for Recreating the Project](#guide-for-recreating-the-project) <br>
 &nbsp;• [Project Structure](#project-structure) <br>
 &nbsp;• [Board Specifications](#board-specifications) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Memory](#memory) <br>
@@ -84,19 +84,25 @@ cd group2
     ```
     This implicitly does `make clean all qemu_start`.
 
-3. There is also a command to build and run:
+3. To run the App in debug mode:
     ```sh
-    cd App
-    make jesus
+    make qemu_debug
     ```
+    This starts QEMU in debug mode, allowing you to connect a debugger like GDB.
 
-4. For `make jesus` and `make qemu_build`, there are "verbose" versions that print the logging of the build of the board:
-    ```sh
-    make qemu_build_v
-    make jesus_v
-    ```
+> There is also a command to build and run:
+>   ```sh
+>   cd App
+>   make jesus
+>   ```
 
-### Guide for Recreating the Project
+> For `make jesus` and `make qemu_build`, there are "verbose" versions that print the logging of the build of the board:
+>   ```sh
+>   make qemu_build_v
+>   make jesus_v
+>   ```
+
+## Guide for Recreating the Project
 
 For a detailed guide on setting up, running, and recreating the project, refer to the [`GUIDE.md`](GUIDE.md) file. This guide provides comprehensive instructions and explanations of all the steps and details involved in the project.
 
