@@ -108,6 +108,8 @@
 #define bktSECONDARY_PRIORITY    ( configMAX_PRIORITIES - 4 ) /* Secondary background tasks */
 
 #define configENABLE_BACKWARD_COMPATIBILITY 0
+#define configUSE_MPU 1
+
 
 #endif /* FREERTOS_CONFIG_H */
 

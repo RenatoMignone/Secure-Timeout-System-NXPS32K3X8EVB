@@ -2645,6 +2645,34 @@ static void armv7m_nvic_reset(DeviceState *dev)
         }
     }
 
+    /* Inizializza i registri MPU per entrambe le copie (NS e S) */
+    {
+        ARMCPU *cpu = s->cpu;
+        int i;
+
+        /* Disabilita la MPU impostando MPU_CTRL a 0 */
+        cpu->env.v7m.mpu_ctrl[M_REG_NS] = 0;
+        cpu->env.v7m.mpu_ctrl[M_REG_S] = 0;
+
+        /* Imposta MPU_RNR a 0 per entrambe le copie */
+        cpu->env.pmsav7.rnr[M_REG_NS] = 0;
+        cpu->env.pmsav7.rnr[M_REG_S] = 0;
+
+        /* Inizializza a zero tutte le regioni MPU configurabili.
+           cpu->pmsav7_dregion contiene il numero di regioni implementate */
+        for (i = 0; i < cpu->pmsav7_dregion; i++) {
+            cpu->env.pmsav7.drbar[i] = 0;
+            cpu->env.pmsav7.drsr[i] = 0;
+            cpu->env.pmsav7.dracr[i] = 0;
+            #if defined(ARM_FEATURE_V8)
+            cpu->env.pmsav8.rbar[M_REG_NS][i] = 0;
+            cpu->env.pmsav8.rbar[M_REG_S][i] = 0;
+            cpu->env.pmsav8.rlar[M_REG_NS][i] = 0;
+            cpu->env.pmsav8.rlar[M_REG_S][i] = 0;
+            #endif
+        }
+    }
+
     if (tcg_enabled()) {
         /*
          * We updated state that affects the CPU's MMUidx and thus its

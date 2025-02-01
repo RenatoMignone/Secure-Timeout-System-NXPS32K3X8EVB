@@ -337,6 +337,13 @@ static void armv7m_realize(DeviceState *dev, Error **errp)
     object_property_set_bool(OBJECT(s->cpu), "start-powered-off",
                              s->start_powered_off, &error_abort);
 
+    /* Se le proprietà mpu-ns-regions e mpu-s-regions non sono state impostate,
+       assegna un valore di default (ad es. 8 regioni per Cortex-M7) */
+    if (s->mpu_ns_regions == UINT_MAX) {
+        s->mpu_ns_regions = 8;
+        s->mpu_s_regions = 8;
+    }
+
     /*
      * Real M-profile hardware can be configured with a different number of
      * MPU regions for Secure vs NonSecure. QEMU's CPU implementation doesn't
