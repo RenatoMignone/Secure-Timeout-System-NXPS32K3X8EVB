@@ -41,13 +41,13 @@ void Reset_Handler( void ) __attribute__( ( naked ) );
 
 extern int main( void );
 
-/* Dichiarazioni esterne per i simboli del linker script */
-extern uint32_t _estack;  /* Indirizzo di fine stack */
-extern uint32_t _sidata;  /* Indirizzo FLASH di .data */
-extern uint32_t _sdata;   /* Indirizzo RAM di .data */
-extern uint32_t _edata;   /* Fine di .data in RAM */
-extern uint32_t _sbss;    /* Inizio di .bss in RAM */
-extern uint32_t _ebss;    /* Fine di .bss in RAM */
+/* External declarations for script linker symbols */
+extern uint32_t _estack;    /* End of stack address */
+extern uint32_t _sidata;    /* FLASH address of .data */
+extern uint32_t _sdata;     /* RAM address of .data */
+extern uint32_t _edata;     /* End of .data in RAM */
+extern uint32_t _sbss;      /* Start of .bss in RAM */
+extern uint32_t _ebss;      /* End of .bss in RAM */
 
 void Reset_Handler(void) {
     /* 1. Copia la sezione .data dalla FLASH alla RAM */
@@ -192,7 +192,7 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
     // we set 2 handlers for the 2 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined.
     ( uint32_t * ) TIMER0_IRQHandler,     // Timer 0
     ( uint32_t * ) TIMER1_IRQHandler,     // Timer 1
-    0,
+    ( uint32_t * ) TIMER2_IRQHandler,     // Timer 2
     0,
     0,
     0,

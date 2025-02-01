@@ -63,12 +63,14 @@ typedef struct
 /******************************************************************************/
 #define S32K3X8_TIMER0_BASE       (0x40037000UL)  // Timer 0 base address
 #define S32K3X8_TIMER1_BASE       (0x40038000UL)  // Timer 1 base address
+#define S32K3X8_TIMER2_BASE       (0x40039000UL)  // Timer 2 base address 
 
 /******************************************************************************/
 /*                          Peripheral declaration                            */
 /******************************************************************************/
 #define S32K3X8_TIMER0            ((S32K3X8_TIMER_TypeDef *) S32K3X8_TIMER0_BASE)
 #define S32K3X8_TIMER1            ((S32K3X8_TIMER_TypeDef *) S32K3X8_TIMER1_BASE)
+#define S32K3X8_TIMER2            ((S32K3X8_TIMER_TypeDef *) S32K3X8_TIMER2_BASE)
 
 /******************************************************************************/
 /*                          Timer Control Register Definitions                */

@@ -494,7 +494,7 @@ static void s32k3x8_init(MachineState *ms) {
     fprintf_v(stdout, "\n---------------- Loading the Kernel into the flash memory ----------------\n");
 
     /* The firmware file is specified in the machine state (ms->kernel_filename) */
-    armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, ITCM0_BASE_ADDR, ITCM0_SIZE);
+    armv7m_load_kernel(ARM_CPU(first_cpu), ms->kernel_filename, FLASH_BLOCK0_BASE_ADDR, FLASH_BLOCK0_SIZE);
 
     /* Log the successful loading of the firmware */
     fprintf_v(stdout, "\nKernel loaded into flash memory.\n\n");

@@ -25,10 +25,12 @@
 /* Timer 0 and Timer 1 frequencies */
 #define tmrTIMER_0_FREQUENCY	( 2UL )         // TODO: update (?)
 #define tmrTIMER_1_FREQUENCY	( 2UL )         // TODO: update (?)
+#define tmrTIMER_2_FREQUENCY    ( 2UL )         // TODO: update (?)
 
 /* Timer IRQ numbers */
 #define TIMER0_IRQ_num 8
 #define TIMER1_IRQ_num 9
+#define TIMER2_IRQ_num 10
 
 void vInitialiseTimers( void )
 {
@@ -64,6 +66,16 @@ void vInitialiseTimers( void )
 
     printf("Timer 1 initialised\n");
 
+    /* Initialise Timer 2 */
+    
+    printf("Initialising Timer 2\n");
+    S32K3X8_TIMER2->INTCLR = TIMER_INTCLR_Msk;             /* Clear any pending interrupts */
+    S32K3X8_TIMER2->RELOAD = ( configCPU_CLOCK_HZ / tmrTIMER_2_FREQUENCY );
+    S32K3X8_TIMER2->CTRL   = ( ( 1ul << 3 ) | ( 1ul << 0 ) ); /* Enable Timer interrupt and start timer */
+    NVIC_SetPriority( TIMER2_IRQ_num, configMAX_SYSCALL_INTERRUPT_PRIORITY );
+    NVIC_EnableIRQ( TIMER2_IRQ_num );
+    printf("Timer 2 initialised\n");
+
     printf("\n--------------------------------------------------------------------------\n");
     printf("\n");
 }
@@ -94,6 +106,19 @@ void TIMER1_IRQHandler(void)
     printf("Timer 1 Interrupt: looking for suspicious activities...\n");
     suspiciousActivityDetection = (suspiciousActivity == 1) ? 1 : 0;
 
+    /* Perform a context switch if necessary */
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void TIMER2_IRQHandler(void)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    /* Clear the interrupt */
+    S32K3X8_TIMER2->INTCLR = TIMER_INTCLR_Msk;
+
+    /* Main functionality: qui puoi aggiungere la logica desiderata per Timer 2 */
+    
     /* Perform a context switch if necessary */
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }

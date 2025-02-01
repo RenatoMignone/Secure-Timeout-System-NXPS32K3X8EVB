@@ -18,7 +18,9 @@ void UART_printf(const char *s)
 {
     while (*s != '\0') {
         /* Wait until the transmit data register is empty */
-
+        while (!(LPUART_ISR & TXE_FLAG)) {
+            /* Wait for the transmission register to be empty */
+        }
         /* Write the character to the TDR */
         LPUART_TDR = (unsigned int)(*s);
         s++;
@@ -29,6 +31,9 @@ void UART_putChar(char c)
 {
     /* Wait until the transmit data register is empty */
    
+    while (!(LPUART_ISR & TXE_FLAG)) {
+        /* Wait for the transmission register to be empty */
+    }
     /* Write the character to the TDR */
     LPUART_TDR = (unsigned int)c;
 }

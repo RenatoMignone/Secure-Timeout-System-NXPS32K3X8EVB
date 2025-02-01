@@ -1,26 +1,26 @@
 /*
- * Linker script per la S32K358 con FreeRTOS
- * Configurato per utilizzare le regioni di memoria ITCM, DTCM, SRAM e Flash.
- */
+* Linker script for S32K358 with FreeRTOS
+* Configured to use ITCM, DTCM, SRAM and Flash memory regions.
+*/
 
-/* Definizione delle regioni di memoria */
+/* Defining memory regions */
 MEMORY
 {
-    /* ITCM: Code e dati critici per le prestazioni */
+    /* ITCM: Queues and performance-critical data */
     ITCM0      (RWX) : ORIGIN = 0x00000000, LENGTH = 64k
     ITCM2      (RWX) : ORIGIN = 0x00010000, LENGTH = 64k
 
-    /* PFLASH: Programma principale */
+    /* PFLASH: Main program */
     PFLASH     (RX)  : ORIGIN = 0x00400000, LENGTH = 8M
 
-    /* DFLASH: Dati non volatili */
+    /* DFLASH: Non-volatile data */
     DFLASH     (RW)  : ORIGIN = 0x10000000, LENGTH = 128k
 
-    /* DTCM: Stack, heap, e dati critici */
+    /* DTCM: Stack, heap, and critical data */
     DTCM0      (RW)  : ORIGIN = 0x20000000, LENGTH = 128k
     DTCM2      (RW)  : ORIGIN = 0x21800000, LENGTH = 128k
 
-    /* SRAM: Dati generici */
+    /* SRAM: Generic data */
     SRAM_STDBY (RW)  : ORIGIN = 0x20400000, LENGTH = 64k  /* SRAM Standby */
     SRAM0      (RW)  : ORIGIN = 0x20410000, LENGTH = 192k /* Restante SRAM0 */
     SRAM1      (RW)  : ORIGIN = 0x20440000, LENGTH = 256k
@@ -30,17 +30,17 @@ MEMORY
     UTEST      (RX)  : ORIGIN = 0x1B000000, LENGTH = 8k 
 }
 
-/* Dimensione minima per heap e stack */
+/* Minimum size for heap and stack */
 _Min_Heap_Size = 0x1000;
 _Min_Stack_Size = 0x400;    /* Required amount of stack.  Used by main(), then re-used as the interrupt stack after the kernel starts. */
 
-/* Stack iniziale */
+/* Initial stack */
 _estack = ORIGIN(DTCM2) + LENGTH(DTCM2);
 
-/* Sezioni del linker */
+/* Linker Sections */
 SECTIONS
 {
-    /* Vettore ISR */
+    /* ISR Vector */
     .isr_vector :
     {
         __vector_table = .;
@@ -48,7 +48,7 @@ SECTIONS
         . = ALIGN(4);
     } > ITCM0
 
-    /* Sezione codice e dati readonly */
+    /* Readonly code and data section */
     .text :
     {
         __coderom_start__ = .;
@@ -59,7 +59,7 @@ SECTIONS
         KEEP(*(.init))   
     } > PFLASH
 
-    /* Dati inizializzati (RAM) */
+    /* Initialized data (RAM) */
     .data :
     {
         . = ALIGN(8);
@@ -70,10 +70,10 @@ SECTIONS
         _edata = .; 
     } > DTCM0 AT > PFLASH
 
-    /* Simboli per la copia da FLASH a RAM */
-    _sidata = LOADADDR(.data);  /* Indirizzo di caricamento (FLASH) di .data */
+    /* Symbols for copying from FLASH to RAM */
+    _sidata = LOADADDR(.data);  /* Load address (FLASH) of .data */
 
-    /* Dati non inizializzati (RAM) */
+    /* Uninitialized data (RAM) */
     .bss :
     {
         . = ALIGN(8);
@@ -90,7 +90,7 @@ SECTIONS
         *(.standby_ram)
     } > SRAM_STDBY
 
-    /* Dati di test */
+    /* Test data */
     .utest :
     {
         KEEP(*(.utest))
@@ -123,5 +123,5 @@ SECTIONS
 /* Entry point */
 ENTRY(Reset_Handler)
 
-/* Stack iniziale */
+/* Initial stack */
 PROVIDE(_stack = _estack);

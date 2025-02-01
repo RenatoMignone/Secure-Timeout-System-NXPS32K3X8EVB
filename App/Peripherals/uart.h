@@ -17,6 +17,8 @@
 #define LPUART_RDR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x24))
 #define LPUART_TDR   (*(volatile uint32_t *)(LPUART_BASE_ADDR + 0x28))
 
+/* Flag for ISR register */
+#define TXE_FLAG  (1 << 7)  // TXE (Transmit Data Register Empty)
 
 void UART_init(void);
 void UART_printf(const char *s);
