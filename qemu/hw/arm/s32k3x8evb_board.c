@@ -416,8 +416,8 @@ static void s32k3x8_init(MachineState *ms) {
     /* Add the NVIC to the SoC container */
     object_property_add_child(soc_container, "v7m", OBJECT(nvic));
 
-    /* Configure the NVIC with the number of IRQs (128 for S32K3X8) */
-    qdev_prop_set_uint32(nvic, "num-irq", 32);
+    /* Configure the NVIC with the number of IRQs (256 for S32K3X8) */
+    qdev_prop_set_uint32(nvic, "num-irq", 256);
 
     /* Configure the number of priority bits for the NVIC */
     qdev_prop_set_uint8(nvic, "num-prio-bits", 4);
