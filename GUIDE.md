@@ -319,273 +319,265 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
 
 ### Running FreeRTOS on QEMU
 
-1. The `Peripherals` files can be copied from the files in [App/Peripherals](App/Peripherals).
+1. The `Peripherals` files (`uart.c/.h` and `printf-stdarg.c/.h`) can be copied from the files in [App/Peripherals](App/Peripherals).
 
-2. Implement the following files: `s32_startup.c`, `s32_linker.ld`, `FreeRTOSConfig.h`, and `Makefile`.
+2. Implement the following files:
 
-    <details closed>
-    <summary><b>s32_startup.c</b></summary>
-    ```c
+    - `s32_startup.c`: This file contains the startup code for the S32K3X8EVB board.
 
-    TODO: insert the code
+        ```c
+        /* TODO: insert code */
+        ```
+    
+    - `s32_linker.ld`: This file defines the memory layout for the application.
 
-    ```
-    <details>
+        ```
+        /* TODO: insert code */
+        ```
 
-    <details closed>
-    <summary><b>s32_linker.ld</b></summary>
-    ```
+    - `FreeRTOSConfig.h`: This file contains the FreeRTOS configuration settings.
 
-    TODO: insert the code
+        ```c
+        /*
+        * FreeRTOS V202212.00
+        * Copyright (C) 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+        *
+        * Permission is hereby granted, free of charge, to any person obtaining a copy of
+        * this software and associated documentation files (the "Software"), to deal in
+        * the Software without restriction, including without limitation the rights to
+        * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+        * the Software, and to permit persons to whom the Software is furnished to do so,
+        * subject to the following conditions:
+        *
+        * The above copyright notice and this permission notice shall be included in all
+        * copies or substantial portions of the Software.
+        *
+        * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+        * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+        * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+        * IN AN ACTION OF CONTRACT, TORT or OTHERWISE, ARISING FROM, OUT OF OR IN
+        * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        *
+        * https://www.FreeRTOS.org
+        * https://github.com/FreeRTOS
+        *
+        */
 
-    ```
-    <details>
+        #ifndef FREERTOS_CONFIG_H
+        #define FREERTOS_CONFIG_H
 
-    <details closed>
-    <summary><b>FreeRTOSConfig.h</b></summary>
-    ```c
-    /*
-    * FreeRTOS V202212.00
-    * Copyright (C) 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-    *
-    * Permission is hereby granted, free of charge, to any person obtaining a copy of
-    * this software and associated documentation files (the "Software"), to deal in
-    * the Software without restriction, including without limitation the rights to
-    * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-    * the Software, and to permit persons to whom the Software is furnished to do so,
-    * subject to the following conditions:
-    *
-    * The above copyright notice and this permission notice shall be included in all
-    * copies or substantial portions of the Software.
-    *
-    * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-    * IN AN ACTION OF CONTRACT, TORT or OTHERWISE, ARISING FROM, OUT OF OR IN
-    * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    *
-    * https://www.FreeRTOS.org
-    * https://github.com/FreeRTOS
-    *
-    */
+        /*-----------------------------------------------------------
+        * Application specific definitions.
+        * Adjusted for balanced priorities and stable timer operation.
+        *----------------------------------------------------------*/
 
-    #ifndef FREERTOS_CONFIG_H
-    #define FREERTOS_CONFIG_H
+        #ifndef __NVIC_PRIO_BITS
+        #define __NVIC_PRIO_BITS 4  /* Cortex-M7 uses 4 priority bits */
+        #endif
 
-    /*-----------------------------------------------------------
-    * Application specific definitions.
-    * Adjusted for balanced priorities and stable timer operation.
-    *----------------------------------------------------------*/
+        #define configUSE_TRACE_FACILITY                 0
+        #define configGENERATE_RUN_TIME_STATS            0
 
-    #ifndef __NVIC_PRIO_BITS
-    #define __NVIC_PRIO_BITS 4  /* Cortex-M7 uses 4 priority bits */
-    #endif
+        #define configUSE_PREEMPTION                     1
+        #define configUSE_IDLE_HOOK                      0
+        #define configUSE_TICK_HOOK                      0
+        #define configCPU_CLOCK_HZ                       ( ( unsigned long ) 143000000 )
+        #define configTICK_RATE_HZ                       ( ( TickType_t ) 1000 )
+        #define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 160 )
+        #define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 100 * 1024 ) )
+        #define configMAX_TASK_NAME_LEN                  ( 12 )
+        #define configUSE_16_BIT_TICKS                   0
+        #define configIDLE_SHOULD_YIELD                  0
+        #define configUSE_CO_ROUTINES                    0
+        #define configUSE_MUTEXES                        1
+        #define configUSE_RECURSIVE_MUTEXES              1
+        #define configCHECK_FOR_STACK_OVERFLOW           0
+        #define configUSE_MALLOC_FAILED_HOOK             0
+        #define configUSE_QUEUE_SETS                     1
+        #define configUSE_COUNTING_SEMAPHORES            1
 
-    #define configUSE_TRACE_FACILITY                 0
-    #define configGENERATE_RUN_TIME_STATS            0
+        #define configMAX_PRIORITIES                     ( 9UL )
+        #define configMAX_CO_ROUTINE_PRIORITIES          ( 2 )
+        #define configQUEUE_REGISTRY_SIZE                10
+        #define configSUPPORT_STATIC_ALLOCATION          0
 
-    #define configUSE_PREEMPTION                     1
-    #define configUSE_IDLE_HOOK                      0
-    #define configUSE_TICK_HOOK                      0
-    #define configCPU_CLOCK_HZ                       ( ( unsigned long ) 143000000 )
-    #define configTICK_RATE_HZ                       ( ( TickType_t ) 1000 )
-    #define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 160 )
-    #define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 100 * 1024 ) )
-    #define configMAX_TASK_NAME_LEN                  ( 12 )
-    #define configUSE_16_BIT_TICKS                   0
-    #define configIDLE_SHOULD_YIELD                  0
-    #define configUSE_CO_ROUTINES                    0
-    #define configUSE_MUTEXES                        1
-    #define configUSE_RECURSIVE_MUTEXES              1
-    #define configCHECK_FOR_STACK_OVERFLOW           0
-    #define configUSE_MALLOC_FAILED_HOOK             0
-    #define configUSE_QUEUE_SETS                     1
-    #define configUSE_COUNTING_SEMAPHORES            1
+        /* Timer-related defines: Balanced priorities for stable operation. */
+        #define configUSE_TIMERS                         0
+        #define configTIMER_TASK_PRIORITY                (configMAX_PRIORITIES - 4 )
+        #define configTIMER_QUEUE_LENGTH                 20
+        #define configTIMER_TASK_STACK_DEPTH             (configMINIMAL_STACK_SIZE * 2)
 
-    #define configMAX_PRIORITIES                     ( 9UL )
-    #define configMAX_CO_ROUTINE_PRIORITIES          ( 2 )
-    #define configQUEUE_REGISTRY_SIZE                10
-    #define configSUPPORT_STATIC_ALLOCATION          0
+        #define configUSE_TASK_NOTIFICATIONS             1
+        #define configTASK_NOTIFICATION_ARRAY_ENTRIES    3
 
-    /* Timer-related defines: Balanced priorities for stable operation. */
-    #define configUSE_TIMERS                         0
-    #define configTIMER_TASK_PRIORITY                (configMAX_PRIORITIES - 4 )
-    #define configTIMER_QUEUE_LENGTH                 20
-    #define configTIMER_TASK_STACK_DEPTH             (configMINIMAL_STACK_SIZE * 2)
+        /* Include API functions for required functionality. */
+        #define INCLUDE_vTaskPrioritySet                  1
+        #define INCLUDE_uxTaskPriorityGet                 1
+        #define INCLUDE_vTaskDelete                       1
+        #define INCLUDE_vTaskCleanUpResources             0
+        #define INCLUDE_vTaskSuspend                      1
+        #define INCLUDE_vTaskDelayUntil                   1
+        #define INCLUDE_vTaskDelay                        1
+        #define INCLUDE_uxTaskGetStackHighWaterMark       1
+        #define INCLUDE_xTaskGetSchedulerState            1
+        #define INCLUDE_xTimerGetTimerDaemonTaskHandle    1
+        #define INCLUDE_xTaskGetIdleTaskHandle            1
+        #define INCLUDE_xSemaphoreGetMutexHolder          1
+        #define INCLUDE_eTaskGetState                     1
+        #define INCLUDE_xTimerPendFunctionCall            1
+        #define INCLUDE_xTaskAbortDelay                   1
+        #define INCLUDE_xTaskGetHandle                    1
 
-    #define configUSE_TASK_NOTIFICATIONS             1
-    #define configTASK_NOTIFICATION_ARRAY_ENTRIES    3
+        #define configUSE_STATS_FORMATTING_FUNCTIONS      0
 
-    /* Include API functions for required functionality. */
-    #define INCLUDE_vTaskPrioritySet                  1
-    #define INCLUDE_uxTaskPriorityGet                 1
-    #define INCLUDE_vTaskDelete                       1
-    #define INCLUDE_vTaskCleanUpResources             0
-    #define INCLUDE_vTaskSuspend                      1
-    #define INCLUDE_vTaskDelayUntil                   1
-    #define INCLUDE_vTaskDelay                        1
-    #define INCLUDE_uxTaskGetStackHighWaterMark       1
-    #define INCLUDE_xTaskGetSchedulerState            1
-    #define INCLUDE_xTimerGetTimerDaemonTaskHandle    1
-    #define INCLUDE_xTaskGetIdleTaskHandle            1
-    #define INCLUDE_xSemaphoreGetMutexHolder          1
-    #define INCLUDE_eTaskGetState                     1
-    #define INCLUDE_xTimerPendFunctionCall            1
-    #define INCLUDE_xTaskAbortDelay                   1
-    #define INCLUDE_xTaskGetHandle                    1
+        #define configKERNEL_INTERRUPT_PRIORITY           ( 255 )  /* Lowest priority for kernel interrupt */
+        #define configMAX_SYSCALL_INTERRUPT_PRIORITY      ( 5 << (8 - __NVIC_PRIO_BITS) )  /* NVIC priority level */
 
-    #define configUSE_STATS_FORMATTING_FUNCTIONS      0
+        #ifndef __IASMARM__
+            #define configASSERT( x ) if( ( x ) == 0 ) while(1);
+        #endif
 
-    #define configKERNEL_INTERRUPT_PRIORITY           ( 255 )  /* Lowest priority for kernel interrupt */
-    #define configMAX_SYSCALL_INTERRUPT_PRIORITY      ( 5 << (8 - __NVIC_PRIO_BITS) )  /* NVIC priority level */
+        #define configUSE_PORT_OPTIMISED_TASK_SELECTION   1
+        #define configRUN_ADDITIONAL_TESTS                1
+        #define configSTREAM_BUFFER_TRIGGER_LEVEL_TEST_MARGIN    4
 
-    #ifndef __IASMARM__
-        #define configASSERT( x ) if( ( x ) == 0 ) while(1);
-    #endif
+        #define configENABLE_BACKWARD_COMPATIBILITY 0
 
-    #define configUSE_PORT_OPTIMISED_TASK_SELECTION   1
-    #define configRUN_ADDITIONAL_TESTS                1
-    #define configSTREAM_BUFFER_TRIGGER_LEVEL_TEST_MARGIN    4
+        #endif /* FREERTOS_CONFIG_H */
+        ```
 
-    #define configENABLE_BACKWARD_COMPATIBILITY 0
+    - `Makefile`: This file contains the build configuration and rules.
 
-    #endif /* FREERTOS_CONFIG_H */
-    ```
-    <details>
+        ```Makefile
+        # The directory that contains FreeRTOS source code
+        FREERTOS_ROOT := ../../group2/FreeRTOS/FreeRTOS/
 
-    <details closed>
-    <summary><b>Makefile</b></summary>
-    ```Makefile
-    # The directory that contains FreeRTOS source code
-    FREERTOS_ROOT := ../../group2/FreeRTOS/FreeRTOS/
+        # Demo code
+        DEMO_PROJECT := .
 
-    # Demo code
-    DEMO_PROJECT := .
+        # FreeRTOS kernel
+        KERNEL_DIR := $(FREERTOS_ROOT)Source
+        KERNEL_PORT_DIR := $(KERNEL_DIR)/portable/GCC/ARM_CM7/r0p1
 
-    # FreeRTOS kernel
-    KERNEL_DIR := $(FREERTOS_ROOT)Source
-    KERNEL_PORT_DIR := $(KERNEL_DIR)/portable/GCC/ARM_CM7/r0p1
+        # Where to store all the generated files (objects, elf and map)
+        OUTPUT_DIR := ./Output
 
-    # Where to store all the generated files (objects, elf and map)
-    OUTPUT_DIR := ./Output
+        # Demo project name and output files
+        DEMO_NAME := Test
+        ELF := $(OUTPUT_DIR)/$(DEMO_NAME).elf
+        MAP := $(OUTPUT_DIR)/$(DEMO_NAME).map
 
-    # Demo project name and output files
-    DEMO_NAME := Test
-    ELF := $(OUTPUT_DIR)/$(DEMO_NAME).elf
-    MAP := $(OUTPUT_DIR)/$(DEMO_NAME).map
+        # Compiler toolchain
+        CC := arm-none-eabi-gcc
+        LD := arm-none-eabi-gcc
+        SIZE := arm-none-eabi-size
 
-    # Compiler toolchain
-    CC := arm-none-eabi-gcc
-    LD := arm-none-eabi-gcc
-    SIZE := arm-none-eabi-size
+        # Emulator used for ARM systems
+        QEMU := ../qemu/build/qemu-system-arm
 
-    # Emulator used for ARM systems
-    QEMU := ../qemu/build/qemu-system-arm
+        # Target embedded board and CPU
+        MACHINE := s32k3x8evb 
+        CPU := cortex-m7
 
-    # Target embedded board and CPU
-    MACHINE := s32k3x8evb 
-    CPU := cortex-m7
+        # QEMU flags for debugging
+        QEMU_FLAGS_DBG = -s -S 
 
-    # QEMU flags for debugging
-    QEMU_FLAGS_DBG = -s -S 
+        # Include directories
+        INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
+        INCLUDE_DIRS += -I$(DEMO_PROJECT)
+        INCLUDE_DIRS += -I$(DEMO_PROJECT)/Peripherals 
 
-    # Include directories
-    INCLUDE_DIRS = -I$(KERNEL_DIR)/include -I$(KERNEL_PORT_DIR)
-    INCLUDE_DIRS += -I$(DEMO_PROJECT)
-    INCLUDE_DIRS += -I$(DEMO_PROJECT)/Peripherals 
+        # Source file search paths
+        VPATH += $(KERNEL_DIR)
+        VPATH += $(KERNEL_PORT_DIR)
+        VPATH += $(KERNEL_DIR)/portable/MemMang
+        VPATH += $(DEMO_PROJECT)
+        VPATH += $(DEMO_PROJECT)/Peripherals
 
-    # Source file search paths
-    VPATH += $(KERNEL_DIR)
-    VPATH += $(KERNEL_PORT_DIR)
-    VPATH += $(KERNEL_DIR)/portable/MemMang
-    VPATH += $(DEMO_PROJECT)
-    VPATH += $(DEMO_PROJECT)/Peripherals
+        # Compiler flags
+        CFLAGS = $(INCLUDE_DIRS)
+        CFLAGS += -ffreestanding
+        CFLAGS += -mcpu=$(CPU)
+        CFLAGS += -mthumb
+        CFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
+        CFLAGS += -Wall
+        CFLAGS += -Wextra
+        CFLAGS += -Wshadow
+        CFLAGS += -g3
+        CFLAGS += -Os
+        CFLAGS += -ffunction-sections
+        CFLAGS += -fdata-sections
+        CFLAGS += -DCMSDK_CM7
 
-    # Compiler flags
-    CFLAGS = $(INCLUDE_DIRS)
-    CFLAGS += -ffreestanding
-    CFLAGS += -mcpu=$(CPU)
-    CFLAGS += -mthumb
-    CFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
-    CFLAGS += -Wall
-    CFLAGS += -Wextra
-    CFLAGS += -Wshadow
-    CFLAGS += -g3
-    CFLAGS += -Os
-    CFLAGS += -ffunction-sections
-    CFLAGS += -fdata-sections
-    CFLAGS += -DCMSDK_CM7
+        # Linker flags
+        LDFLAGS = -T ./s32_linker.ld
+        LDFLAGS += -nostartfiles
+        LDFLAGS += -specs=nano.specs
+        LDFLAGS += -specs=nosys.specs
+        LDFLAGS += -Xlinker -Map=$(MAP)
+        LDFLAGS += -Xlinker --gc-sections
+        LDFLAGS += -mcpu=$(CPU)
+        LDFLAGS += -mthumb
+        LDFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
 
-    # Linker flags
-    LDFLAGS = -T ./s32_linker.ld
-    LDFLAGS += -nostartfiles
-    LDFLAGS += -specs=nano.specs
-    LDFLAGS += -specs=nosys.specs
-    LDFLAGS += -Xlinker -Map=$(MAP)
-    LDFLAGS += -Xlinker --gc-sections
-    LDFLAGS += -mcpu=$(CPU)
-    LDFLAGS += -mthumb
-    LDFLAGS += -mfpu=fpv5-d16 -mfloat-abi=hard
+        # Kernel source files
+        SOURCE_FILES += $(KERNEL_DIR)/list.c
+        SOURCE_FILES += $(KERNEL_DIR)/tasks.c
+        SOURCE_FILES += $(KERNEL_DIR)/queue.c
+        SOURCE_FILES += $(KERNEL_DIR)/event_groups.c
+        SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
+        SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
+        SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
 
-    # Kernel source files
-    SOURCE_FILES += $(KERNEL_DIR)/list.c
-    SOURCE_FILES += $(KERNEL_DIR)/tasks.c
-    SOURCE_FILES += $(KERNEL_DIR)/queue.c
-    SOURCE_FILES += $(KERNEL_DIR)/event_groups.c
-    SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
-    SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
-    SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
+        # Demo source files
+        SOURCE_FILES += $(DEMO_PROJECT)/main.c
+        SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
+        SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/printf-stdarg.c
 
-    # Demo source files
-    SOURCE_FILES += $(DEMO_PROJECT)/main.c
-    SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
-    SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/printf-stdarg.c
+        # Start-up code
+        SOURCE_FILES += ./s32_startup.c
 
-    # Start-up code
-    SOURCE_FILES += ./s32_startup.c
+        # Create list of object files with the same names of the sources
+        OBJS = $(SOURCE_FILES:%.c=%.o)
 
-    # Create list of object files with the same names of the sources
-    OBJS = $(SOURCE_FILES:%.c=%.o)
+        # Remove path from object filename
+        OBJS_NOPATH = $(notdir $(OBJS))
 
-    # Remove path from object filename
-    OBJS_NOPATH = $(notdir $(OBJS))
+        # Prepend output dir to object filenames
+        OBJS_OUTPUT = $(patsubst %.o, $(OUTPUT_DIR)/%.o, $(OBJS_NOPATH))
 
-    # Prepend output dir to object filenames
-    OBJS_OUTPUT = $(patsubst %.o, $(OUTPUT_DIR)/%.o, $(OBJS_NOPATH))
+        #----------------------------------------------------------------------#
+        #-------------- Section Dedicated to Application ----------------------#
 
-    #----------------------------------------------------------------------#
-    #-------------- Section Dedicated to Application ----------------------#
+        # Link the final executable
+        $(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
+            echo "\n\n--- Final linking ---\n"
+            $(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
+            $(SIZE) $(ELF)
 
-    # Link the final executable
-    $(ELF): $(OBJS_OUTPUT) ./s32_linker.ld Makefile
-        echo "\n\n--- Final linking ---\n"
-        $(LD) $(LDFLAGS) $(OBJS_OUTPUT) -o $(ELF)
-        $(SIZE) $(ELF)
+        # Compile source files to object files
+        $(OUTPUT_DIR)/%.o : %.c Makefile $(OUTPUT_DIR)
+            $(CC) $(CFLAGS) -c $< -o $@
 
-    # Compile source files to object files
-    $(OUTPUT_DIR)/%.o : %.c Makefile $(OUTPUT_DIR)
-        $(CC) $(CFLAGS) -c $< -o $@
+        # Create output directory if it doesn't exist
+        $(OUTPUT_DIR):
+            mkdir -p $(OUTPUT_DIR)
 
-    # Create output directory if it doesn't exist
-    $(OUTPUT_DIR):
-        mkdir -p $(OUTPUT_DIR)
+        # Clean all generated files
+        clean:
+            rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
 
-    # Clean all generated files
-    clean:
-        rm -rf $(ELF) $(MAP) $(OUTPUT_DIR)/*.o $(OUTPUT_DIR)
+        # Default target
+        all: $(ELF)
 
-    # Default target
-    all: $(ELF)
+        # Run QEMU emulator
+        qemu_start:
+            $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio
 
-    # Run QEMU emulator
-    qemu_start:
-        $(QEMU) -machine $(MACHINE) -cpu $(CPU) -kernel $(ELF) -monitor none -nographic -serial stdio
-
-    # New run command: clean, build, and start QEMU
-    run: clean all qemu_start
-    ```
-    <details>
+        # New run command: clean, build, and start QEMU
+        run: clean all qemu_start
+        ```
 
 3. Implement the `main.c` file:
     ```c
