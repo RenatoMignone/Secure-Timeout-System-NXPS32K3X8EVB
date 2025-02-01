@@ -38,8 +38,8 @@ This project implements a very simple secure timeout system application on the N
 
 This project has been assigned for the [Computer Architectures and Operating Systems](#acknowledgments) course. The work has been carried out by group 2. For more information about the authors, please refer to the [Authors](#authors) section.
 
-Original Project Repository: [neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB](https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB)  
-Original Beamer Repository: [neo-CAOS/latex-beamer](https://github.com/neo-CAOS/latex-beamer)
+- Original Project Repository: [neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB](https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB)  
+- Original Beamer Repository: [neo-CAOS/latex-beamer](https://github.com/neo-CAOS/latex-beamer)
 
 ## Features
 
@@ -276,11 +276,8 @@ This project is licensed under the [Creative Commons Attribution-NonCommercial 4
 - **Attribution**: You are free to share (copy, redistribute) and adapt (remix, transform, build upon) the material as long as proper credit is given to the original author(s). 
 - **Non-Commercial**: You may not use the material for commercial purposes.
 
-#### Marking Your Work:
-
-All documents and files within this repository are explicitly marked with the CC BY-NC 4.0 license, as outlined in the [Creative Commons marking guidelines](https://wiki.creativecommons.org/wiki/Marking_your_work_with_a_CC_license#Example:_Presentation).
-
 For more details and templates, refer to:
+- [CC BY-NC 4.0 license](resources/LICENSE-CC-BY-NC-4.0.md)
 - [GitHub License Templates](https://github.com/Gibberlings3/GitHub-Templates/tree/master/License-Templates)
 
 By using this project, you agree to the terms of the [CC BY-NC 4.0 license](https://creativecommons.org/licenses/by-nc/4.0/).
