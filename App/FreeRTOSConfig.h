@@ -108,7 +108,22 @@
 #define bktSECONDARY_PRIORITY    ( configMAX_PRIORITIES - 4 ) /* Secondary background tasks */
 
 #define configENABLE_BACKWARD_COMPATIBILITY 0
-#define configUSE_MPU 1
+
+#define configUSE_MPU                        1
+#define configTOTAL_MPU_REGIONS              16  // Match your MPU hardware
+#define configUSE_MPU_WRAPPERS               1
+#define configUSE_MPU_WRAPPERS_V1            0
+
+
+#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE 10
+#define configSYSTEM_CALL_STACK_SIZE 128  // Adjust the size as needed
+#define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY 1
+
+#define configSUPPORT_DYNAMIC_ALLOCATION 1
+
+#define configALLOW_UNPRIVILEGED_CRITICAL_SECTIONS 0
+
+
 
 
 #endif /* FREERTOS_CONFIG_H */

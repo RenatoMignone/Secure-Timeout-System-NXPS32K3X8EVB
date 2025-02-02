@@ -39,6 +39,8 @@ static void HardFault_Handler( void ) __attribute__( ( naked ) );
 static void Default_Handler( void ) __attribute__( ( naked ) );
 void Reset_Handler( void ) __attribute__( ( naked ) );
 
+extern void vPortSetupMPU( void );
+
 extern int main( void );
 
 /* External declarations for script linker symbols */
@@ -50,21 +52,6 @@ extern uint32_t _sbss;      /* Start of .bss in RAM */
 extern uint32_t _ebss;      /* End of .bss in RAM */
 
 void Reset_Handler(void) {
-    /* 1. Copia la sezione .data dalla FLASH alla RAM */
-    uint32_t *src = &_sidata;  // Indirizzo FLASH di .data
-    uint32_t *dst = &_sdata;   // Indirizzo RAM di .data
-
-    while (dst < &_edata) {
-        *dst++ = *src++;
-    }
-
-    /* 2. Azzera la sezione .bss */
-    dst = &_sbss;
-    while (dst < &_ebss) {
-        *dst++ = 0;
-    }
-
-    /* 3. Chiama main() */
     main();
 }
 
@@ -117,10 +104,8 @@ __attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStack
     sprintf(buffer,"PSR  = 0x%08lX\n", psr);
     UART_printf(buffer);
     
+    UART_printf("*** MPU FAULT DETECTED ***\n"); // Add this line
 
-    ////////////////////////////////////////////////////////////////////////////
-
-    /* Infinite loop to halt the system */
     for (;;);
 
 }
@@ -141,6 +126,15 @@ void Default_Handler( void ) {
 
 }
 
+// void HardFault_Handler(void) {
+//     uint32_t cfsr = (uint32_t)0xE000ED28;
+//     if (cfsr & (1 << 7)) {  // Bit MMARVALID
+//         uint32_t fault_address =(uint32_t *)0xE000ED34;
+//         // UART_printf("MPU Fault at address: 0x%08lX\n", fault_address);
+//     }
+//     while(1);
+// }
+
 void HardFault_Handler( void ) {
 
     __asm volatile
@@ -157,7 +151,6 @@ void HardFault_Handler( void ) {
     );
 
 }
-
 
 /* Vector table. */
 const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
