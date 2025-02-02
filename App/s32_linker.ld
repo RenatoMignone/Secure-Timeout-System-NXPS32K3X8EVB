@@ -22,7 +22,7 @@ MEMORY
 
     /* SRAM: Generic data */
     SRAM_STDBY (RW)  : ORIGIN = 0x20400000, LENGTH = 64k  /* SRAM Standby */
-    SRAM0      (RW)  : ORIGIN = 0x20410000, LENGTH = 192k /* Restante SRAM0 */
+    SRAM0      (RW)  : ORIGIN = 0x20410000, LENGTH = 192k /* Remaining SRAM0 */
     SRAM1      (RW)  : ORIGIN = 0x20440000, LENGTH = 256k
     SRAM2      (RW)  : ORIGIN = 0x20480000, LENGTH = 256k
 
@@ -35,7 +35,7 @@ MEMORY
 
 /* Minimum size for heap and stack */
 _Min_Heap_Size = 0x1000;
-_Min_Stack_Size = 0x400;    /* Required amount of stack.  Used by main(), then re-used as the interrupt stack after the kernel starts. */
+_Min_Stack_Size = 0x400;    /* Required amount of stack. Used by main(), then re-used as the interrupt stack after the kernel starts. */
 
 /* Initial stack */
 _estack = ORIGIN(DTCM2) + LENGTH(DTCM2);
@@ -148,9 +148,6 @@ SECTIONS
     ASSERT(__stack_end__ <= ORIGIN(DTCM2) + LENGTH(DTCM2), "Stack overflow in DTCM2!")
 
 }
-
-
-
 
 /* Entry point */
 ENTRY(Reset_Handler)

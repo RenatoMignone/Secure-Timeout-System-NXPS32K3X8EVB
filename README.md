@@ -243,7 +243,7 @@ Before using the script, ensure it is executable:
 chmod +x sync.sh
 ```
 
-For detailed instructions, refer to the [GUIDE-GIT.md](resources/GUIDE-GIT.md).
+For detailed instructions, refer to the [`GUIDE-GIT.md`](resources/GUIDE-GIT.md).
 
 ## Contributing
 
@@ -251,11 +251,11 @@ We welcome contributions to this project! Whether you are a member of the organi
 
 #### For Organization Members
 
-If you're a member of the organization, you can commit directly to the repository for simple development tasks. For more complex contributions or when in doubt, please refer to the [CONTRIBUTING.md](resources/CONTRIBUTING.md) file for detailed guidelines.
+If you're a member of the organization, you can commit directly to the repository for simple development tasks. For more complex contributions or when in doubt, please refer to the [`CONTRIBUTING.md`](resources/CONTRIBUTING.md) file for detailed guidelines.
 
 #### For External Contributors
 
-If you're an external contributor, please refer directly to the [CONTRIBUTING.md](resources/CONTRIBUTING.md) file for detailed instructions on how to get involved.
+If you're an external contributor, please refer directly to the [`CONTRIBUTING.md`](resources/CONTRIBUTING.md) file for detailed instructions on how to get involved.
 
 ## Authors
 
@@ -277,7 +277,7 @@ This project is licensed under the [Creative Commons Attribution-NonCommercial 4
 - **Non-Commercial**: You may not use the material for commercial purposes.
 
 For more details and templates, refer to:
-- [CC BY-NC 4.0 license](resources/LICENSE-CC-BY-NC-4.0.md)
+- [`LICENSE-CC-BY-NC-4.0.md`](resources/LICENSE-CC-BY-NC-4.0.md)
 - [GitHub License Templates](https://github.com/Gibberlings3/GitHub-Templates/tree/master/License-Templates)
 
 By using this project, you agree to the terms of the [CC BY-NC 4.0 license](https://creativecommons.org/licenses/by-nc/4.0/).

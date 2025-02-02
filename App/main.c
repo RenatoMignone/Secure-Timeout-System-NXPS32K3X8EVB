@@ -15,7 +15,7 @@
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
 
 /* Extra functions */
-extern void vStartSecureTimeoutSystem(void);
+extern void vStartSecureTimeoutSystem( my_bool verbose );
 
 /*--------------------------------------------------------------------------------*/
 
@@ -30,7 +30,8 @@ int main(int argc, char **argv)
     printf("\n=========================== Starting the Main ============================\n\n");
 
     /* Start the secure timeout system */
-    vStartSecureTimeoutSystem();
+    my_bool verbose = true;
+    vStartSecureTimeoutSystem( verbose);
 
     printf("Ready to run the scheduler...\n");
     vTaskStartScheduler();
@@ -42,7 +43,7 @@ int main(int argc, char **argv)
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) 
 {
-    // This function will get called if a task overflows its stack.
+    /* This function will get called if a task overflows its stack. */
 
     (void)xTask;
     (void)pcTaskName;

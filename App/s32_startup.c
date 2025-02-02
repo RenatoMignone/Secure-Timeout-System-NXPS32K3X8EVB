@@ -51,7 +51,8 @@ extern uint32_t _edata;     /* End of .data in RAM */
 extern uint32_t _sbss;      /* Start of .bss in RAM */
 extern uint32_t _ebss;      /* End of .bss in RAM */
 
-void Reset_Handler(void) {
+void Reset_Handler(void) 
+{
     main();
 }
 
@@ -70,16 +71,16 @@ volatile uint32_t psr;  /* Program status register. */
 /* Called from the hardfault handler to provide information on the processor
  * state at the time of the fault.
  */
-__attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress ) {
-
-    r0 = pulFaultStackAddress[ 0 ];
-    r1 = pulFaultStackAddress[ 1 ];
-    r2 = pulFaultStackAddress[ 2 ];
-    r3 = pulFaultStackAddress[ 3 ];
+__attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress ) 
+{
+    r0  = pulFaultStackAddress[ 0 ];
+    r1  = pulFaultStackAddress[ 1 ];
+    r2  = pulFaultStackAddress[ 2 ];
+    r3  = pulFaultStackAddress[ 3 ];
 
     r12 = pulFaultStackAddress[ 4 ];
-    lr = pulFaultStackAddress[ 5 ];
-    pc = pulFaultStackAddress[ 6 ];
+    lr  = pulFaultStackAddress[ 5 ];
+    pc  = pulFaultStackAddress[ 6 ];
     psr = pulFaultStackAddress[ 7 ];
 
     ////////////////////////////////////////////////////////////////////////////
@@ -107,12 +108,10 @@ __attribute__( ( used ) ) void prvGetRegistersFromStack( uint32_t *pulFaultStack
     UART_printf("*** MPU FAULT DETECTED ***\n"); // Add this line
 
     for (;;);
-
 }
 
-
-void Default_Handler( void ) {
-
+void Default_Handler( void ) 
+{
     __asm volatile
     (
         ".align 8                                \n"
@@ -123,7 +122,6 @@ void Default_Handler( void ) {
         " b  Infinite_Loop                       \n"
         " .ltorg                                 \n"
     );
-
 }
 
 // void HardFault_Handler(void) {
@@ -135,8 +133,8 @@ void Default_Handler( void ) {
 //     while(1);
 // }
 
-void HardFault_Handler( void ) {
-
+void HardFault_Handler( void ) 
+{
     __asm volatile
     (
         ".align 8                                                   \n"
@@ -149,31 +147,30 @@ void HardFault_Handler( void ) {
         " bx r2                                                     \n"
         " .ltorg                                                    \n"
     );
-
 }
 
 /* Vector table. */
 const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
 
-    //For every interrupt we have got the name of the interrupt. When you power one the microprocessor, you need to know that the table is in a given location in the memory.
-    //Every element in this table, corresponds to a given interrupt, this is based on the data sheet of the board, in particular all the zeros means that i do not have any routine associated to that given interrupt. You will jump to a null pointer in that case. If you look at the routines, there are a lot of routines that handle the low level stuffs, hardfaults etc.
+    /* For every interrupt we have got the name of the interrupt. When you power one the microprocessor, you need to know that the table is in a given location in the memory. */
+    /* Every element in this table, corresponds to a given interrupt, this is based on the data sheet of the board, in particular all the zeros means that i do not have any routine associated to that given interrupt. You will jump to a null pointer in that case. If you look at the routines, there are a lot of routines that handle the low level stuffs, hardfaults etc. */
     
     ( uint32_t * ) &_estack,
-    ( uint32_t * ) &Reset_Handler,     // Reset                -15
-    ( uint32_t * ) &Default_Handler,   // NMI_Handler          -14
-    ( uint32_t * ) &HardFault_Handler, // HardFault_Handler    -13
-    ( uint32_t * ) &Default_Handler,   // MemManage_Handler    -12
-    ( uint32_t * ) &Default_Handler,   // BusFault_Handler     -11
-    ( uint32_t * ) &Default_Handler,   // UsageFault_Handler   -10
+    ( uint32_t * ) &Reset_Handler,       // Reset                -15
+    ( uint32_t * ) &Default_Handler,     // NMI_Handler          -14
+    ( uint32_t * ) &HardFault_Handler,   // HardFault_Handler    -13
+    ( uint32_t * ) &Default_Handler,     // MemManage_Handler    -12
+    ( uint32_t * ) &Default_Handler,     // BusFault_Handler     -11
+    ( uint32_t * ) &Default_Handler,     // UsageFault_Handler   -10
     0, // reserved   -9
     0, // reserved   -8
     0, // reserved   -7
     0, // reserved   -6
-    ( uint32_t * ) &vPortSVCHandler,    // SVC_Handler          -5
-    ( uint32_t * ) &Default_Handler,    // DebugMon_Handler     -4
+    ( uint32_t * ) &vPortSVCHandler,     // SVC_Handler          -5
+    ( uint32_t * ) &Default_Handler,     // DebugMon_Handler     -4
     0, // reserved   -3
-    ( uint32_t * ) &xPortPendSVHandler, // PendSV handler       -2
-    ( uint32_t * ) &xPortSysTickHandler,// SysTick_Handler      -1
+    ( uint32_t * ) &xPortPendSVHandler,  // PendSV handler       -2
+    ( uint32_t * ) &xPortSysTickHandler, // SysTick_Handler      -1
     0,
     0,
     0,
@@ -182,10 +179,10 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"), used)) = {
     0,
     0,
     0,
-    // we set 2 handlers for the 2 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined.
-    ( uint32_t * ) TIMER0_IRQHandler,     // Timer 0
-    ( uint32_t * ) TIMER1_IRQHandler,     // Timer 1
-    ( uint32_t * ) TIMER2_IRQHandler,     // Timer 2
+    /* We set 3 handlers for the 3 available timers, if that timer generates an interrupt, the program will handle the interrupt with the handler that we have defined. */
+    ( uint32_t * ) TIMER0_IRQHandler,    // Timer 0               8  
+    ( uint32_t * ) TIMER1_IRQHandler,    // Timer 1               9
+    ( uint32_t * ) TIMER2_IRQHandler,    // Timer 2               10
     0,
     0,
     0,

@@ -25,8 +25,8 @@
 
 This guide provides a comprehensive walkthrough of our project, which involves:
 
-1. Emulating the NXP S32K3X8EVB board using QEMU.
-2. Porting FreeRTOS to run on the emulated board.
+1. Emulating the **NXP S32K3X8EVB** board using **QEMU**.
+2. Porting **FreeRTOS** to run on the emulated board.
 3. Creating a simple application to demonstrate the setup.
 
 #### Prerequisites
@@ -168,51 +168,35 @@ The `s32k3x8evb_board.c` file is the core of the QEMU board emulation. It includ
 1. **File Header and Includes**:
     - The file starts with a header that includes the authors and a brief description of the functionalities provided.
     - It includes necessary QEMU headers and other system headers required for memory management, hardware components, and system emulation.
-  
-    <!-- TODO: write -->
 
 2. **Memory Regions**:
     - Defines constants for memory regions such as flash and SRAM.
     - Functions to initialize these memory regions, including `s32k3x8_initialize_memory_regions()`, which sets up the flash and SRAM memory blocks.
 
-    <!-- TODO: write -->
-
 3. **LPUART Initialization**:
     - The `initialize_lpuarts()` function sets up the LPUART devices.
     - It configures each LPUART, assigns base addresses, and connects interrupts to the NVIC.
-
-    <!-- TODO: write -->
 
 4. **Interrupts and NVIC**:
     - The Nested Vectored Interrupt Controller (NVIC) is initialized in the `s32k3x8_init()` function.
     - Configures the NVIC with the number of IRQs and priority bits, and connects it to the system clock.
 
-    <!-- TODO: write -->
-
 5. **Timers**:
     - Initializes PIT timers in the `s32k3x8_init()` function.
     - Each timer is configured with a base address and connected to the NVIC.
 
-    <!-- TODO: write -->
-
 6. **Firmware Loading**:
     - The `s32k3x8_load_firmware()` function loads the firmware into the emulated flash memory.
     - Uses the `armv7m_load_kernel()` function to load the kernel into the flash memory.
-
-    <!-- TODO: write -->
 
 7. **Machine Initialization**:
     - The `s32k3x8_init()` function is the main initialization function for the board.
     - It sets up the system memory, SoC container, system controller, clocks, NVIC, LPUARTs, and timers.
     - Logs the initialization process if verbose mode is enabled.
 
-    <!-- TODO: write -->
-
 8. **Class Initialization**:
     - The `s32k3x8_class_init()` function sets up the machine class, including the default CPU type and number of CPUs.
     - Registers the machine type with QEMU.
-
-    <!-- TODO: write -->
 
 For the full content of the `s32k3x8evb_board.c` file, refer to the file located at: [qemu/hw/arm/s32k3x8evb_board.c](qemu/hw/arm/s32k3x8evb_board.c).
 
