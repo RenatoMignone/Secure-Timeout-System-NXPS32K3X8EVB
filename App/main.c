@@ -15,7 +15,7 @@
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 2)
 
 /* Extra functions */
-extern void vStartSecureTimeoutSystem( my_bool verbose );
+extern void vStartSecureTimeoutSystem(my_bool verbose);
 
 /*--------------------------------------------------------------------------------*/
 
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
     /* Start the secure timeout system */
     my_bool verbose = true;
-    vStartSecureTimeoutSystem( verbose);
+    vStartSecureTimeoutSystem(verbose);
 
     printf("Ready to run the scheduler...\n");
     vTaskStartScheduler();

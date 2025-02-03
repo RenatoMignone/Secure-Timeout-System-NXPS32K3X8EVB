@@ -17,6 +17,7 @@
 &nbsp;• [Part 3 - Simple Application](#part-3---simple-application) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Creating all the files](#creating-all-the-files) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Compiling and Running the Application](#compiling-and-running-the-application) <br>
+&nbsp;• [Memory Protection Unit (MPU) Implementation](#memory-protection-unit-mpu-implementation) <br>
 &nbsp;• [Conclusion](#conclusion) <br>
 
 </details>
@@ -54,7 +55,7 @@ git --version
 qemu-system-arm --version
 
 # Check for ARM GCC toolchain
-arm-none-eabi-gcc --version
+gcc-arm-none-eabi --version
 
 # Check for Ninja build system
 ninja --version
@@ -165,6 +166,8 @@ Once these dependencies are installed, re-run the verification commands listed a
 
 The `s32k3x8evb_board.c` file is the core of the QEMU board emulation. It includes several key sections:
 
+<!-- TODO: check -->
+
 1. **File Header and Includes**:
     - The file starts with a header that includes the authors and a brief description of the functionalities provided.
     - It includes necessary QEMU headers and other system headers required for memory management, hardware components, and system emulation.
@@ -198,7 +201,7 @@ The `s32k3x8evb_board.c` file is the core of the QEMU board emulation. It includ
     - The `s32k3x8_class_init()` function sets up the machine class, including the default CPU type and number of CPUs.
     - Registers the machine type with QEMU.
 
-For the full content of the `s32k3x8evb_board.c` file, refer to the file located at: [qemu/hw/arm/s32k3x8evb_board.c](qemu/hw/arm/s32k3x8evb_board.c).
+For the full content of the `s32k3x8evb_board.c` file, refer to the file located at: [`qemu/hw/arm/s32k3x8evb_board.c`](qemu/hw/arm/s32k3x8evb_board.c).
 
 ### Adding the S32K3X8EVB Board
 
@@ -245,6 +248,78 @@ For the full content of the `s32k3x8evb_board.c` file, refer to the file located
     ```
 
     This command should list the `s32k3x8evb` machine if the build was successful.
+
+> This is the output of the **board build logging**.
+> It can be seen during the application run.
+> 
+> <details closed>
+> <summary>Output</summary>
+> 
+> ```plaintext
+> ======================== Initializing the System =========================
+> 
+> ------------------ Initialization of the memory regions ------------------
+> 
+> Initializing flash memory...
+> 
+> Initializing SRAM memory...
+> 
+> Initializing ITCM memory...
+> 
+> Initializing DTCM memory...
+> 
+> Memory regions initialized successfully.
+> 
+> --------------------- Initialization of the Clocks -----------------------
+> 
+> Clock initialized.
+> 
+> ------------------- Initialization of the system NVIC --------------------
+> 
+> NVIC realized.
+> 
+> ---------------------- Initializing LPUART Devices -----------------------
+> 
+> Initialized LPUART  0 at base address 0x4006a000
+> Initialized LPUART  1 at base address 0x4006b000
+> Initialized LPUART  2 at base address 0x4006c000
+> Initialized LPUART  3 at base address 0x4006d000
+> Initialized LPUART  4 at base address 0x4006e000
+> Initialized LPUART  5 at base address 0x4006f000
+> Initialized LPUART  6 at base address 0x40070000
+> Initialized LPUART  7 at base address 0x40071000
+> Initialized LPUART  8 at base address 0x40072000
+> Initialized LPUART  9 at base address 0x40073000
+> Initialized LPUART 10 at base address 0x40074000
+> Initialized LPUART 11 at base address 0x40075000
+> Initialized LPUART 12 at base address 0x40076000
+> Initialized LPUART 13 at base address 0x40077000
+> Initialized LPUART 14 at base address 0x40078000
+> Initialized LPUART 15 at base address 0x40079000
+> 
+> All LPUART devices initialized and connected to NVIC.
+> 
+> ---------------------- Initialization of the Timers ----------------------
+> 
+> First Timer Initialized Correctly
+> 
+> Second Timer Initialized Correctly
+> 
+> Third Timer Initialized Correctly
+> 
+> ---------------- Loading the Kernel into the flash memory ----------------
+> 
+> Kernel loaded into flash memory.
+> 
+> System initialized.
+> 
+> Starting to run...
+> 
+> ==========================================================================
+> ```
+> 
+> </details>
+
 
 ## Part 2 - FreeRTOS Porting
 
@@ -297,7 +372,7 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
 
 ### Running FreeRTOS on QEMU
 
-1. The `Peripherals` files (`uart.c/.h` and `printf-stdarg.c/.h`) can be copied from the files in [App/Peripherals](App/Peripherals).
+1. The `Peripherals` files (`uart.c/.h` and `printf-stdarg.c/.h`) can be copied from the files in [`App/Peripherals`](App/Peripherals).
 
 2. Implement the following files:
 
@@ -317,7 +392,7 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
         <details closed>
         <summary>Code snippet</summary>
 
-        ```
+        ```c
         /* TODO: insert code */
         ```
 
@@ -670,11 +745,11 @@ Most of the files have already been implemented to test the FreeRTOS porting. No
 
 2. **Linker Script (`s32_linker.ld`)**: This file defines the memory layout for the application.
 
-    The linker file doesn't need to be updated. The one used for the FreeRTOS porting phase is correct. However, it is possible to check the [App/s32_linker.ld](App/s32_linker.ld) file.
+    The linker file doesn't need to be updated. The one used for the FreeRTOS porting phase is correct. However, it is possible to check the [`App/s32_linker.ld`](App/s32_linker.ld) file.
 
 3. **FreeRTOS Configuration (`FreeRTOSConfig.h`)**: This file contains the FreeRTOS configuration settings.
 
-    Even the FreeRTOS config is already well-implemented. However, it's possible to define some task priorities that can be useful in the app. You can still check the [App/FreeRTOSConfig.h](App/FreeRTOSConfig.h) file.
+    Even the FreeRTOS config is already well-implemented. However, it's possible to define some task priorities that can be useful in the app. You can still check the [`App/FreeRTOSConfig.h`](App/FreeRTOSConfig.h) file.
 
     ```c
     // filepath: /project_name/App/FreeRTOSConfig.h
@@ -688,17 +763,17 @@ Most of the files have already been implemented to test the FreeRTOS porting. No
 
 4. **Makefile**: This file contains the build configuration and rules.
 
-    Now it's possible to refer to the [App/Makefile](App/Makefile) file in order to have the full list of commands to build, compile, make, and run.
+    Now it's possible to refer to the [`App/Makefile`](App/Makefile) file in order to have the full list of commands to build, compile, make, and run.
 
 5. **Timer Interrupt Handlers (`IntTimer.c` and `IntTimer.h`)**: These files contain the implementation and declarations for the timer interrupt handlers.
 
-    The `IntTimer.c` and `IntTimer.h` files can be copied from [App/Peripherals/IntTimer.c](App/Peripherals/IntTimer.c) and [App/Peripherals/IntTimer.h](App/Peripherals/IntTimer.h).
+    The `IntTimer.c` and `IntTimer.h` files can be copied from [`App/Peripherals/IntTimer.c`](App/Peripherals/IntTimer.c) and [`App/Peripherals/IntTimer.h`](App/Peripherals/IntTimer.h).
 
     These files represent the initialization and handling of hardware timers. The timers are used to generate periodic interrupts, which can be used to perform regular tasks such as checking for user activities or suspicious activities.
 
 6. **Main Application Code**: These files contain the main application code.
 
-    The app we've implemented includes these files. They can all be copied and checked from the existing files in the [App](App) directory. Here is a very short description of what they do:
+    The app we've implemented includes these files. They can all be copied and checked from the existing files in the [`App/`](App) directory. Here is a very short description of what they do:
 
     - `main.c`: Contains the main application entry point and initializes the secure timeout system.
     - `secure_timeout_system.c/.h`: Implements the secure timeout system with tasks for monitoring user activity, handling alerts, and simulating events.
@@ -726,6 +801,78 @@ Most of the files have already been implemented to test the FreeRTOS porting. No
 >   make run
 >   ```
 
+## Memory Protection Unit (MPU) Implementation
+
+<!-- TODO: update the MPU section -->
+
+In this section, we detail the process of enabling and configuring the **Memory Protection Unit (MPU)** for the **ARM Cortex-M7 core** in our project. This encompasses our research findings, necessary file modifications, and the steps taken to integrate MPU support within FreeRTOS.
+
+### 1. Research and Information Gathering
+
+Our initial research revealed that while FreeRTOS provides MPU support for **ARM Cortex-M4 cores**, direct support for Cortex-M7 was not explicitly documented. Key insights from our investigation include:
+
+- **MPU Region Support**: The Cortex-M7 processor supports up to 16 MPU regions.
+
+- **FreeRTOS MPU Port**: The existing FreeRTOS port for `ARM_CM4_MPU` can be adapted for Cortex-M7, as the scheduler operations remain consistent between these cores.
+
+- **Errata `837070`**: For Cortex-M7 revisions `r0p0` and `r0p1`, Errata `837070` necessitates specific workarounds to ensure correct MPU functionality. 
+
+### 2. Identifying Relevant Files
+
+To implement MPU support, we focused on the following files within the FreeRTOS source code:
+
+- **`FreeRTOSConfig.h`**: Configuration file for FreeRTOS settings.
+
+- **`port.c`**: Located in `FreeRTOS/Source/portable/GCC/ARM_CM4_MPU/`, this file contains MPU setup and context switch handling code.
+
+### 3. Required Modifications
+
+Based on our research, the following modifications were identified:
+
+- **Define MPU Region Count**: Set `configTOTAL_MPU_REGIONS` to 16 in `FreeRTOSConfig.h` to match the Cortex-M7's capabilities.
+
+- **Errata Workaround**: Implement the Errata `837070` workaround in `port.c` for applicable Cortex-M7 revisions.
+
+### 4. Implementation Steps
+
+The implementation involved the following steps:
+
+#### 4.1. Updating `FreeRTOSConfig.h`
+
+- **Define MPU Regions**: Add the following line to specify the number of MPU regions:
+
+  ```c
+  #define configTOTAL_MPU_REGIONS 16
+  ```
+
+- **Enable Errata Workaround**: For Cortex-M7 `r0p0` or `r0p1` revisions, define the target to apply the necessary workaround:
+
+  ```c
+  #define configTARGET_ARM_CM7_r0p1 1
+  ```
+
+> Note: Adjust the definition based on your specific Cortex-M7 revision.
+
+#### 4.2. Modifying `port.c`
+
+- **Errata Workaround Implementation**: Integrate the workaround as outlined in the FreeRTOS pull request [#513](https://github.com/FreeRTOS/FreeRTOS-Kernel/pull/513). This involves adding specific instructions to handle the errata during context switches.
+
+### 5. Testing and Validation
+
+After implementing the above changes, we conducted thorough testing to ensure:
+
+- **MPU Configuration**: Verified that all 16 MPU regions were configurable and behaved as expected.
+- **Context Switching**: Ensured that context switches occurred seamlessly without MPU-related faults.
+- **Errata Mitigation**: Confirmed that the workaround effectively addressed the issues associated with Errata 837070.
+
+### 6. Summary
+
+By adapting the existing FreeRTOS `ARM_CM4_MPU/port.c` and applying necessary modifications, we successfully enabled **MPU** support for the **ARM Cortex-M7 core** in our project.
+
+> For detailed code implementations and specific changes, please refer to the respective sections in this documentation and the following resources:
+> - [FreeRTOS forum discussion on MPU support in Cortex-M7](https://forums.freertos.org/t/freertos-mpu-support-in-arm-cortex-m7/15306)
+> - [FreeRTOS Kernel pull request #513](https://github.com/FreeRTOS/FreeRTOS-Kernel/pull/513)
+ 
 ## Conclusion
 
 This guide provides a detailed walkthrough of our project, from setting up QEMU to running a FreeRTOS application on the emulated NXP S32K3X8EVB board. By following these steps, you should be able to recreate our project and understand the process of emulating hardware and running an RTOS on it.

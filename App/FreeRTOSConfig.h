@@ -65,7 +65,6 @@
 /* Stack and memory allocation configuration */
 #define configCHECK_FOR_STACK_OVERFLOW           2
 #define configUSE_MALLOC_FAILED_HOOK             0
-#define configSUPPORT_STATIC_ALLOCATION          0
 
 /* Task and queue configuration */
 #define configMAX_PRIORITIES                     ( 9UL )
@@ -126,20 +125,26 @@
 #define configENABLE_BACKWARD_COMPATIBILITY             0
 
 /* Memory Protection Unit (MPU) configuration */
+#define configENABLE_MPU                                1
 #define configUSE_MPU                                   1
-#define configTOTAL_MPU_REGIONS                         16   // Match your MPU hardware
+#define configTOTAL_MPU_REGIONS                         8   /* Match your MPU hardware */
 #define configUSE_MPU_WRAPPERS                          1
 #define configUSE_MPU_WRAPPERS_V1                       0
+// #define portUSING_MPU_WRAPPERS                          1
 
 /* Kernel object pool configuration */
 #define configPROTECTED_KERNEL_OBJECT_POOL_SIZE         10
 
 /* System call stack configuration */
-#define configSYSTEM_CALL_STACK_SIZE                    128  // Adjust the size as needed
+#define configSYSTEM_CALL_STACK_SIZE                    128  /* Adjust the size as needed */
 #define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY     1
 
 /* Dynamic memory allocation configuration */
 #define configSUPPORT_DYNAMIC_ALLOCATION                1
+
+/* Static memory allocation configuration */
+#define configSUPPORT_STATIC_ALLOCATION                 0
+// #define portHAS_STACK_OVERFLOW_CHECKING                 1
 
 /* Privilege level configuration */
 #define configALLOW_UNPRIVILEGED_CRITICAL_SECTIONS      0

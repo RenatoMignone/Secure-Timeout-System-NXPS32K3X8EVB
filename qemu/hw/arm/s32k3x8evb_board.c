@@ -206,6 +206,7 @@ DECLARE_INSTANCE_CHECKER(S32K3X8MachineState, S32K3X8_MACHINE, TYPE_S32K3X8_MACH
 /*------------------------------------------------------------------------------*/
 
 /* Implementation of the function to initialize the memory regions */
+
 void s32k3x8_initialize_memory_regions(MemoryRegion *system_memory) {
 
     fprintf_v(stdout, "\n------------------ Initialization of the memory regions ------------------\n");
@@ -306,10 +307,13 @@ static void initialize_lpuarts(S32K3X8MachineState *m_state, DeviceState *nvic, 
 
         DeviceState *lpuart = qdev_new(TYPE_STM32L4X5_LPUART);
         qdev_prop_set_chr(lpuart, "chardev", serial_hd(i));
-	if(i==0 || i==1 || i==8)
-		qdev_connect_clock_in(lpuart, "clk", m_state->sys.aips_plat_clk);
-	else
-		qdev_connect_clock_in(lpuart, "clk", m_state->sys.aips_slow_clk);
+
+	    if(i==0 || i==1 || i==8) {
+            qdev_connect_clock_in(lpuart, "clk", m_state->sys.aips_plat_clk);
+        } else {
+            qdev_connect_clock_in(lpuart, "clk", m_state->sys.aips_slow_clk);
+        }
+
         sysbus_realize_and_unref(SYS_BUS_DEVICE(lpuart), &error_fatal);
 
         /* Calculate base address for each LPUART */

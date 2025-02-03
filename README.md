@@ -20,6 +20,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Peripherals](#peripherals) <br>
 &nbsp;• [FreeRTOS Application](#freertos-application) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Available Configuration Options](#available-configuration-options) <br>
+&nbsp;• [MPU](#mpu) <br>
 &nbsp;• [Team Collaboration](#team-collaboration) <br>
 &nbsp;• [Contributing](#contributing) <br>
 &nbsp;• [Authors](#authors) <br>
@@ -34,9 +35,9 @@
 
 ## Project Overview
 
-This project implements a very simple secure timeout system application on the NXP S32K3X8EVB board using FreeRTOS, emulated with QEMU.
+This project implements a very simple Secure Timeout System application on the **NXP S32K3X8EVB** board using **FreeRTOS**, emulated with **QEMU**.
 
-This project has been assigned for the [Computer Architectures and Operating Systems](#acknowledgments) course. The work has been carried out by group 2. For more information about the authors, please refer to the [Authors](#authors) section.
+This project has been assigned for the [Computer Architectures and Operating Systems](#acknowledgments) course. The work has been carried out by **group 2**. For more information about the authors, please refer to the [Authors](#authors) section.
 
 - Original Project Repository: [neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB](https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB)  
 - Original Beamer Repository: [neo-CAOS/latex-beamer](https://github.com/neo-CAOS/latex-beamer)
@@ -127,7 +128,7 @@ For a detailed guide on setting up, running, and recreating the project, refer t
 - `scripts/`: Collection of scripts used in the project.
 - `README.md`: Project documentation.
 - `GUIDE.md`: Detailed guide for setting up, running, and recreating the project, explaining all the steps and details.
-- `LICENSE-CC-BY-NC-4.0.md`: License file.
+- `LICENSE`: License file.
 
 ## Board Specifications
 
@@ -178,8 +179,6 @@ The layout is shown in the image below for reference. Refer to the last column f
 
 - **UART Base Address**: 0x4006A000
 
-<!-- TODO: UART-->
-
 - **PIT Timer Base Addresses**:
 
   - **Timer 1**: 0x40037000
@@ -204,12 +203,17 @@ The FreeRTOS application includes tasks for monitoring user activity, handling a
 
 ### Available Configuration Options
 
-- `mainTASK_PRIORITY`: Priority for the main tasks.
-- `MONITOR_TASK_PRIORITY`: Priority for the monitor task.
-- `ALERT_TASK_PRIORITY`: Priority for the alert task.
-- `EVENT_TASK_PRIORITY`: Priority for the event task.
+- `mainTASK_PRIORITY`: Priority for the main tasks. Default value: `tskIDLE_PRIORITY + 2`
+- `MONITOR_TASK_PRIORITY`: Priority for the monitor task. Default value: `tskIDLE_PRIORITY + 2`
+- `ALERT_TASK_PRIORITY`: Priority for the alert task. Default value: `tskIDLE_PRIORITY + 3`
+- `EVENT_TASK_PRIORITY`: Priority for the event task. Default value: `tskIDLE_PRIORITY + 4`
+- `tmrTIMER_0_FREQUENCY`: Frequency for Timer 0. Default value: `2UL`
+- `tmrTIMER_1_FREQUENCY`: Frequency for Timer 1. Default value: `2UL`
+- `tmrTIMER_2_FREQUENCY`: Frequency for Timer 2. Default value: `2UL`
 
-<!-- TODO: expand (?) -->
+## MPU
+
+<!-- TODO: implement -->
 
 ## Team Collaboration
 

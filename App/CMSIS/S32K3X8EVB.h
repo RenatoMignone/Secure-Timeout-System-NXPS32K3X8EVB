@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2023 Your Company
+* Copyright (c) 2023 Andrea Botticella, Fabrizio Emanuel, Elia Innocenti, Renato Mignone, and Simone Romano
 * SPDX-License-Identifier: BSD-3-Clause
 * All rights reserved.
 *
@@ -36,11 +36,11 @@
 #ifndef __S32K3X8EVB_H
 #define __S32K3X8EVB_H
 
-#include "CMSDK_CM7.h"                         /* Device specific header file    */
-#include "core_cm7.h"                          /* Core specific header file      */
+#include "CMSDK_CM7.h"  /* Device specific header file    */
+#include "core_cm7.h"   /* Core specific header file      */
 
 #if defined ( __CC_ARM   )
-#pragma anon_unions
+  #pragma anon_unions
 #endif
 
 /******************************************************************************/
@@ -59,21 +59,21 @@ typedef struct
 } S32K3X8_TIMER_TypeDef;
 
 /******************************************************************************/
-/*                          Peripheral memory map                             */
+/*                           Peripheral memory map                            */
 /******************************************************************************/
 #define S32K3X8_TIMER0_BASE       (0x40037000UL)  // Timer 0 base address
 #define S32K3X8_TIMER1_BASE       (0x40038000UL)  // Timer 1 base address
 #define S32K3X8_TIMER2_BASE       (0x40039000UL)  // Timer 2 base address 
 
 /******************************************************************************/
-/*                          Peripheral declaration                            */
+/*                           Peripheral declaration                           */
 /******************************************************************************/
 #define S32K3X8_TIMER0            ((S32K3X8_TIMER_TypeDef *) S32K3X8_TIMER0_BASE)
 #define S32K3X8_TIMER1            ((S32K3X8_TIMER_TypeDef *) S32K3X8_TIMER1_BASE)
 #define S32K3X8_TIMER2            ((S32K3X8_TIMER_TypeDef *) S32K3X8_TIMER2_BASE)
 
 /******************************************************************************/
-/*                          Timer Control Register Definitions                */
+/*                     Timer Control Register Definitions                     */
 /******************************************************************************/
 #define TIMER_CTRL_ENABLE_Pos     0
 #define TIMER_CTRL_ENABLE_Msk     (1UL << TIMER_CTRL_ENABLE_Pos)
@@ -85,19 +85,19 @@ typedef struct
 #define TIMER_CTRL_INTEN_Msk      (1UL << TIMER_CTRL_INTEN_Pos)
 
 /******************************************************************************/
-/*                          Timer Interrupt Clear Register Definitions        */
+/*                 Timer Interrupt Clear Register Definitions                 */
 /******************************************************************************/
 #define TIMER_INTCLR_Pos          0
 #define TIMER_INTCLR_Msk          (1UL << TIMER_INTCLR_Pos)
 
 /******************************************************************************/
-/*                          Timer Raw Interrupt Status Register Definitions   */
+/*               Timer Raw Interrupt Status Register Definitions              */
 /******************************************************************************/
 #define TIMER_RIS_Pos             0
 #define TIMER_RIS_Msk             (1UL << TIMER_RIS_Pos)
 
 /******************************************************************************/
-/*                          Timer Masked Interrupt Status Register Definitions*/
+/*             Timer Masked Interrupt Status Register Definitions             */
 /******************************************************************************/
 #define TIMER_MIS_Pos             0
 #define TIMER_MIS_Msk             (1UL << TIMER_MIS_Pos)

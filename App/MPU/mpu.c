@@ -6,7 +6,6 @@
 #include "task.h"
 #include <stdint.h>
 
-
 /* Cortex-M7 MPU Register Addresses (CMSIS standard) */
 #define MPU_TYPE         (*(volatile uint32_t*)0xE000ED90)
 #define MPU_CTRL         (*(volatile uint32_t*)0xE000ED94)
@@ -20,9 +19,8 @@
 #define PERIPHERALS_REGION   2
 
 /* MPU Settings */
-#define MPU_ENABLE           (1UL << 0)
-#define MPU_PRIVILEGED_DEFAULT (1UL << 2)
-
+#define MPU_ENABLE              (1UL << 0)
+#define MPU_PRIVILEGED_DEFAULT  (1UL << 2)
 
 /*---------------------------------------------------------------------------*/
 

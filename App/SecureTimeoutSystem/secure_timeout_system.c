@@ -12,8 +12,7 @@
 #include "printf-stdarg.h"
 
 /* MPU includes */
-// #include "mpu_wrappers.h"
-// #include "mpu_prototypes.h"
+// #include "mpu_wrappers.h" /* Uncomment this line to include MPU wrappers */
 
 /* Task priorities */
 #define MONITOR_TASK_PRIORITY (tskIDLE_PRIORITY + 2)
@@ -105,7 +104,7 @@ static void vAlertTask(void *pvParameters)
             suspiciousActivityDetection = 0;
             printf("[SECURITY ALERT] Suspicious activity detected | Status: ALARM\n");
             printf("[SECURITY ALERT] Initiating security protocols...\n");
-            // Possible extra implementation
+            /* Possible extra implementation */
         } 
         else 
         {
