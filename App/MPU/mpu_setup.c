@@ -1,6 +1,6 @@
-/*---------------------------------------------------------
- * port_mpu.c - Cortex-M7 MPU Port Layer for FreeRTOS
- *--------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------*/
+/* mpu_setup.c - Cortex-M7 MPU Port Layer for FreeRTOS                                     */
+/*-----------------------------------------------------------------------------------------*/
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -22,13 +22,14 @@
 #define MPU_ENABLE              (1UL << 0)
 #define MPU_PRIVILEGED_DEFAULT  (1UL << 2)
 
-/*---------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------*/
 
-void vPortSetupMPU(void) {
+void vPortSetupMPU(void) 
+{
     /* Disable MPU during configuration */
     MPU_CTRL = 0;
 
-    /*---------------------------------------------------------
+    /*--------------------------------------------------------
      * Region 0: Flash Memory (Execute + Read-Only)
      * Base: 0x00400000 (PFLASH), Size: 8MB
      *--------------------------------------------------------*/
@@ -67,10 +68,11 @@ void vPortSetupMPU(void) {
 }
 
 
-/*---------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------*/
 
 /* Enable MPU in privileged mode before starting scheduler */
-void vPortEnterPrivileged(void) {
+void vPortEnterPrivileged(void) 
+{
     __asm volatile("mrs r0, control  \n"
                    "bic r0, #1       \n"
                    "msr control, r0  \n"

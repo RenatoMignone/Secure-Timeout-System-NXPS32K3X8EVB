@@ -1,50 +1,22 @@
-/*
- * FreeRTOS V202212.00
- * Copyright (C) 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * https://www.FreeRTOS.org
- * https://github.com/FreeRTOS
- *
- */
+/* startup.c */
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
 /* Peripheral includes */
 #include "uart.h"
 #include "IntTimer.h"
 #include <stdio.h>
-
 
 /* FreeRTOS interrupt handlers */
 extern void vPortSVCHandler( void );
 extern void xPortPendSVHandler( void );
 extern void xPortSysTickHandler( void );
 
-
 /* Memory section markers from linker script */
-extern uint32_t _estack;     // Stack top
-extern uint32_t _sidata;     // .data LMA (Flash)
-extern uint32_t _sdata;      // .data VMA (RAM)
-extern uint32_t _edata;      // End of .data
-extern uint32_t _sbss;       // Start of .bss
-extern uint32_t _ebss;       // End of .bss
-
+extern uint32_t _estack;     /* Stack top          */
+extern uint32_t _sidata;     /* .data LMA (Flash)  */
+extern uint32_t _sdata;      /* .data VMA (RAM)    */
+extern uint32_t _edata;      /* End of .data       */
+extern uint32_t _sbss;       /* Start of .bss      */
+extern uint32_t _ebss;       /* End of .bss        */
 
 /* Exception handlers */
 void Reset_Handler(void) __attribute__((naked));
@@ -52,24 +24,20 @@ static void HardFault_Handler(void) __attribute__((naked));
 static void MemManage_Handler(void) __attribute__((naked));
 static void Default_Handler(void);
 
-
 /* MPU initialization */
 // extern void vPortSetupMPU(void);
 
-
 /* Main application entry */
 extern int main(void);
-
 
 /* Fault diagnostic functions */
 void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress) __attribute__((used));
 void print_fault_info(uint32_t cfsr, uint32_t mmfar, uint32_t bfar);
 
+/*-----------------------------------------------------------------------------------------*/
+/* Reset Handler - Core initialization sequence                                            */
+/*-----------------------------------------------------------------------------------------*/
 
-
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Reset Handler - Core initialization sequence
-//--------------------------------------------------------------
 void Reset_Handler(void) 
 {
     /* 1. Initialize main stack pointer */
@@ -102,10 +70,10 @@ void Reset_Handler(void)
     while(1);
 }
 
+/*-----------------------------------------------------------------------------------------*/
+/* Memory Management Fault Handler (MPU violations)                                        */
+/*-----------------------------------------------------------------------------------------*/
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Memory Management Fault Handler (MPU violations)
-//--------------------------------------------------------------
 void MemManage_Handler(void)
 {
     __asm volatile (
@@ -120,10 +88,10 @@ void MemManage_Handler(void)
     );
 }
 
+/*-----------------------------------------------------------------------------------------*/
+/* Hard Fault Handler - Generic fault catcher                                              */
+/*-----------------------------------------------------------------------------------------*/
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Hard Fault Handler - Generic fault catcher
-//--------------------------------------------------------------
 void HardFault_Handler(void)
 {
     __asm volatile (
@@ -138,9 +106,10 @@ void HardFault_Handler(void)
     );
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Fault Register Analysis
-//--------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------*/
+/* Fault Register Analysis                                                                 */
+/*-----------------------------------------------------------------------------------------*/
+
 void print_fault_info(uint32_t cfsr, uint32_t mmfar, uint32_t bfar)
 {
     char buf[64];
@@ -164,9 +133,10 @@ void print_fault_info(uint32_t cfsr, uint32_t mmfar, uint32_t bfar)
     }
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Register Dump from Fault Context
-//--------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------*/
+/* Register Dump from Fault Context                                                        */
+/*-----------------------------------------------------------------------------------------*/
+
 void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
 {
     volatile uint32_t r0  = pulFaultStackAddress[0];
@@ -187,13 +157,13 @@ void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
     UART_printf("\n*** Hardware Fault Detected ***\n");
     
     /* Print general registers */
-    snprintf(buffer, sizeof(buffer), "R0   = 0x%08lX\n", r0); UART_printf(buffer);
-    snprintf(buffer, sizeof(buffer), "R1   = 0x%08lX\n", r1); UART_printf(buffer);
-    snprintf(buffer, sizeof(buffer), "R2   = 0x%08lX\n", r2); UART_printf(buffer);
-    snprintf(buffer, sizeof(buffer), "R3   = 0x%08lX\n", r3); UART_printf(buffer);
+    snprintf(buffer, sizeof(buffer), "R0   = 0x%08lX\n", r0);  UART_printf(buffer);
+    snprintf(buffer, sizeof(buffer), "R1   = 0x%08lX\n", r1);  UART_printf(buffer);
+    snprintf(buffer, sizeof(buffer), "R2   = 0x%08lX\n", r2);  UART_printf(buffer);
+    snprintf(buffer, sizeof(buffer), "R3   = 0x%08lX\n", r3);  UART_printf(buffer);
     snprintf(buffer, sizeof(buffer), "R12  = 0x%08lX\n", r12); UART_printf(buffer);
-    snprintf(buffer, sizeof(buffer), "LR   = 0x%08lX\n", lr); UART_printf(buffer);
-    snprintf(buffer, sizeof(buffer), "PC   = 0x%08lX\n", pc); UART_printf(buffer);
+    snprintf(buffer, sizeof(buffer), "LR   = 0x%08lX\n", lr);  UART_printf(buffer);
+    snprintf(buffer, sizeof(buffer), "PC   = 0x%08lX\n", pc);  UART_printf(buffer);
     snprintf(buffer, sizeof(buffer), "PSR  = 0x%08lX\n", psr); UART_printf(buffer);
 
     /* Detailed fault analysis */
@@ -202,9 +172,10 @@ void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
     while(1);
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Default Exception Handler
-//--------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------*/
+/* Default Exception Handler                                                               */
+/*-----------------------------------------------------------------------------------------*/
+
 void Default_Handler(void)
 {
     __asm volatile(
@@ -213,10 +184,12 @@ void Default_Handler(void)
     );
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
-// Interrupt Vector Table
-//--------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------*/
+/* Interrupt Vector Table                                                                  */
+/*-----------------------------------------------------------------------------------------*/
+
 const uint32_t* isr_vector[] __attribute__((section(".isr_vector"))) = {
+
     /* Core Exceptions */
     (uint32_t*)&_estack,                       /* Initial Stack Pointer */
     (uint32_t*)Reset_Handler,                  /* Reset Handler */
@@ -238,7 +211,7 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"))) = {
     (uint32_t*)TIMER1_IRQHandler,              /* Timer 1 */
     (uint32_t*)TIMER2_IRQHandler,              /* Timer 2 */
     
-    /*Other interrupts not initialized in the Board*/
+    /* Other interrupts not initialized in the Board */
     0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,
@@ -269,4 +242,5 @@ const uint32_t* isr_vector[] __attribute__((section(".isr_vector"))) = {
     0,0,0,0,0,0,0,0,
     0,0,0,0,0
 };
-//------------------------------------------------------------------------------------------------------------------------------------------------
+
+/*-----------------------------------------------------------------------------------------*/

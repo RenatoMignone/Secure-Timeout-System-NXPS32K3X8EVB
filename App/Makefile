@@ -84,12 +84,14 @@ SOURCE_FILES += $(KERNEL_DIR)/queue.c
 SOURCE_FILES += $(KERNEL_DIR)/event_groups.c
 SOURCE_FILES += $(KERNEL_DIR)/stream_buffer.c
 SOURCE_FILES += $(KERNEL_DIR)/portable/MemMang/heap_4.c
+# SOURCE_FILES += $(KERNEL_DIR)/portable/Common/mpu_wrappers_v2.c
 SOURCE_FILES += $(KERNEL_PORT_DIR)/port.c
+# SOURCE_FILES += $(KERNEL_PORT_DIR)/mpu_wrappers_v2_asm.c
 
 # Demo source files
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/CMSIS/system_CMSDK_CM7.c
-# SOURCE_FILES += $(DEMO_PROJECT)/MPU/mpu.c
+# SOURCE_FILES += $(DEMO_PROJECT)/MPU/mpu_setup.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/Peripherals/IntTimer.c
 SOURCE_FILES += $(DEMO_PROJECT)/SecureTimeoutSystem/secure_timeout_system.c

@@ -47,7 +47,7 @@
 #define configCPU_CLOCK_HZ                       ( ( unsigned long ) 240000000 )
 #define configTICK_RATE_HZ                       ( ( TickType_t ) 1000 )
 #define configMINIMAL_STACK_SIZE                 ( ( unsigned short ) 160 )
-#define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 4 * 1024 ) )
+#define configTOTAL_HEAP_SIZE                    ( ( size_t ) ( 16 * 1024 ) )
 #define configMAX_TASK_NAME_LEN                  ( 12 )
 #define configUSE_16_BIT_TICKS                   0
 #define configIDLE_SHOULD_YIELD                  0
@@ -127,16 +127,16 @@
 /* Memory Protection Unit (MPU) configuration */
 #define configENABLE_MPU                                1
 #define configUSE_MPU                                   1
-#define configTOTAL_MPU_REGIONS                         8   /* Match your MPU hardware */
+#define configTOTAL_MPU_REGIONS                         8     /* Match your MPU hardware */
 #define configUSE_MPU_WRAPPERS                          1
 #define configUSE_MPU_WRAPPERS_V1                       0
 // #define portUSING_MPU_WRAPPERS                          1
 
 /* Kernel object pool configuration */
-#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE         10
+#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE         150
 
 /* System call stack configuration */
-#define configSYSTEM_CALL_STACK_SIZE                    128  /* Adjust the size as needed */
+#define configSYSTEM_CALL_STACK_SIZE                    128   /* Adjust the size as needed */
 #define configENFORCE_SYSTEM_CALLS_FROM_KERNEL_ONLY     1
 
 /* Dynamic memory allocation configuration */
@@ -144,9 +144,13 @@
 
 /* Static memory allocation configuration */
 #define configSUPPORT_STATIC_ALLOCATION                 0
+#define configUSE_STATIC_ALLOCATION                     0
 // #define portHAS_STACK_OVERFLOW_CHECKING                 1
 
 /* Privilege level configuration */
 #define configALLOW_UNPRIVILEGED_CRITICAL_SECTIONS      0
+
+/* Access Control List Configuration */
+#define configENABLE_ACCESS_CONTROL_LIST                1
 
 #endif /* FREERTOS_CONFIG_H */
