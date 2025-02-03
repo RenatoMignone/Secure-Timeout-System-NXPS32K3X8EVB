@@ -213,7 +213,7 @@ The FreeRTOS application includes tasks for monitoring user activity, handling a
 
 ## Memory Protection Unit (MPU) Implementation
 
-In this section, we outline the process of enabling and configuring the **Memory Protection Unit (MPU)** for the **ARM Cortex-M7 core** in our project. The full implementation details are available in the [`GUIDE.md`](resources/GUIDE.md) file. Here, we summarize our findings and the theoretical steps required for implementation.
+In this section, we outline the process of enabling and configuring the **Memory Protection Unit (MPU)** for the **ARM Cortex-M7 core** in our project. The full implementation details are available in the [`GUIDE.md`](GUIDE.md) file. Here, we summarize our findings and the theoretical steps required for implementation.
 
 ### Research and Findings
 
@@ -233,7 +233,7 @@ Our research revealed that while FreeRTOS provides MPU support for **ARM Cortex-
 
 By adapting the existing FreeRTOS `ARM_CM4_MPU/port.c` and applying necessary modifications, we aim to enable **MPU** support for the **ARM Cortex-M7 core** in our project. However, due to the complexity of the problem, the full implementation is still in progress.
 
-For detailed code implementations and specific changes, please refer to the [`GUIDE.md`](resources/GUIDE.md) file.
+For detailed code implementations and specific changes, please refer to the [`GUIDE.md`](GUIDE.md) file.
 
 ## Team Collaboration
 
