@@ -120,6 +120,7 @@ For a detailed guide on setting up, running, and recreating the project, refer t
     - `FreeRTOSConfig.h`: FreeRTOS configuration file.
     - `main.c`: Main application entry point.
     - `Makefile`: Build configuration and rules.
+    - `MPU`: MPU files
     - `s32_linker.ld`: Linker script for the project.
     - `s32_startup.c`: Startup code for the S32K3X8EVB board.
 - `FreeRTOS/`: FreeRTOS kernel and related files.
@@ -173,6 +174,7 @@ The layout is shown in the image below for reference. Refer to the last column f
 
 ![sram layout](./resources/images/sram.png)
 
+The **MPU** is configured with **16 memory regions**, split across **2 blocks
 ### Peripherals
 
 ###### **Peripherals and Memory Mapping**
