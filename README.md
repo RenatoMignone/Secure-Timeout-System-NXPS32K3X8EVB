@@ -162,12 +162,12 @@ The board features several blocks of SRAM and additional DTCM and ITCM block, ea
 ###### **DTCM Memory Blocks**:
 
   - **DTCM0**: 128 KB at 0x20000000
-  - **DTCM2**: 128 KB at 0x20000000
+  - **DTCM2**: 128 KB at 0x21800000
   
 ###### **ITCM Memory Blocks**:
  
   - **ITCM0**: 64 KB at 0x00000000
-  - **ITCM2**: 64 KB at 0x00000000
+  - **ITCM2**: 64 KB at 0x00010000
   
 The layout is shown in the image below for reference. Refer to the last column for the implementation that was used for the project.
 
