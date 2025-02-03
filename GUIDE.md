@@ -382,7 +382,222 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
         <summary>Code snippet</summary>
 
         ```c
-        /* TODO: insert code */
+        /* startup.c */
+
+        /* Peripheral includes */
+        #include "uart.h"
+        #include <stdio.h>
+
+        /* FreeRTOS interrupt handlers */
+        extern void vPortSVCHandler( void );
+        extern void xPortPendSVHandler( void );
+        extern void xPortSysTickHandler( void );
+
+        /* Memory section markers from linker script */
+        extern uint32_t _estack;     /* Stack top          */
+        extern uint32_t _sidata;     /* .data LMA (Flash)  */
+        extern uint32_t _sdata;      /* .data VMA (RAM)    */
+        extern uint32_t _edata;      /* End of .data       */
+        extern uint32_t _sbss;       /* Start of .bss      */
+        extern uint32_t _ebss;       /* End of .bss        */
+
+        /* Exception handlers */
+        void Reset_Handler(void) __attribute__((naked));
+        static void HardFault_Handler(void) __attribute__((naked));
+        static void MemManage_Handler(void) __attribute__((naked));
+        static void Default_Handler(void);
+
+        /* Main application entry */
+        extern int main(void);
+
+        /* Fault diagnostic functions */
+        void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress) __attribute__((used));
+        void print_fault_info(uint32_t cfsr, uint32_t mmfar, uint32_t bfar);
+
+        /*-----------------------------------------------------------------------------------------*/
+        /* Reset Handler - Core initialization sequence                                            */
+        /*-----------------------------------------------------------------------------------------*/
+
+        void Reset_Handler(void) 
+        {
+            /* 1. Initialize main stack pointer */
+            __asm volatile (
+                "ldr r0, =_estack\n\t"
+                "msr msp, r0"
+            );
+
+            /* 2. Copy data segment from flash to RAM */
+            uint32_t *data_load = &_sidata;
+            uint32_t *data_vma = &_sdata;
+            while(data_vma < &_edata) *data_vma++ = *data_load++;
+
+            /* 3. Zero-initialize BSS segment */
+            uint32_t *bss_start = &_sbss;
+            uint32_t *bss_end = &_ebss;
+            while(bss_start < bss_end) *bss_start++ = 0;
+
+            /* 4. Call platform initialization */
+            extern void SystemInit(void);
+            SystemInit();
+
+            /* 5. Jump to main application */
+            main();
+
+            /* 6. Fallback if main returns */
+            while(1);
+        }
+
+        /*-----------------------------------------------------------------------------------------*/
+        /* Hard Fault Handler - Generic fault catcher                                              */
+        /*-----------------------------------------------------------------------------------------*/
+
+        void HardFault_Handler(void)
+        {
+            __asm volatile (
+                " tst lr, #4              \n"
+                " ite eq                  \n"
+                " mrseq r0, msp           \n"
+                " mrsne r0, psp           \n"
+                " ldr r1, [r0, #24]       \n"
+                " ldr r2, =prvGetRegistersFromStack \n"
+                " bx r2                   \n"
+                " .ltorg                  \n"
+            );
+        }
+
+        /*-----------------------------------------------------------------------------------------*/
+        /* Fault Register Analysis                                                                 */
+        /*-----------------------------------------------------------------------------------------*/
+
+        void print_fault_info(uint32_t cfsr, uint32_t mmfar, uint32_t bfar)
+        {
+            char buf[64];
+            
+            /* CFSR Decoding */
+            UART_printf("\nConfigurable Fault Status Register:\n");
+            snprintf(buf, sizeof(buf), "  CFSR: 0x%08lX\n", cfsr);
+            UART_printf(buf);
+            
+            /* Memory Management Faults */
+            if(cfsr & 0xFF) {
+                UART_printf("  Memory Management Fault:\n");
+                if(cfsr & (1 << 0)) UART_printf("    IACCVIOL: Instruction access violation\n");
+                if(cfsr & (1 << 1)) UART_printf("    DACCVIOL: Data access violation\n");
+                if(cfsr & (1 << 3)) UART_printf("    MUNSTKERR: MemManage on exception return\n");
+                if(cfsr & (1 << 4)) UART_printf("    MSTKERR: MemManage on exception entry\n");
+                if(cfsr & (1 << 7)) {
+                    snprintf(buf, sizeof(buf), "    MMFAR: 0x%08lX\n", mmfar);
+                    UART_printf(buf);
+                }
+            }
+        }
+
+        /*-----------------------------------------------------------------------------------------*/
+        /* Register Dump from Fault Context                                                        */
+        /*-----------------------------------------------------------------------------------------*/
+
+        void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
+        {
+            volatile uint32_t r0  = pulFaultStackAddress[0];
+            volatile uint32_t r1  = pulFaultStackAddress[1];
+            volatile uint32_t r2  = pulFaultStackAddress[2];
+            volatile uint32_t r3  = pulFaultStackAddress[3];
+            volatile uint32_t r12 = pulFaultStackAddress[4];
+            volatile uint32_t lr  = pulFaultStackAddress[5];
+            volatile uint32_t pc  = pulFaultStackAddress[6];
+            volatile uint32_t psr = pulFaultStackAddress[7];
+
+            /* Get fault status registers */
+            uint32_t cfsr  = *(volatile uint32_t*)0xE000ED28;
+            uint32_t mmfar = *(volatile uint32_t*)0xE000ED34;
+            uint32_t bfar  = *(volatile uint32_t*)0xE000ED38;
+
+            char buffer[100];
+            UART_printf("\n*** Hardware Fault Detected ***\n");
+            
+            /* Print general registers */
+            snprintf(buffer, sizeof(buffer), "R0   = 0x%08lX\n", r0);  UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "R1   = 0x%08lX\n", r1);  UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "R2   = 0x%08lX\n", r2);  UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "R3   = 0x%08lX\n", r3);  UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "R12  = 0x%08lX\n", r12); UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "LR   = 0x%08lX\n", lr);  UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "PC   = 0x%08lX\n", pc);  UART_printf(buffer);
+            snprintf(buffer, sizeof(buffer), "PSR  = 0x%08lX\n", psr); UART_printf(buffer);
+
+            /* Detailed fault analysis */
+            print_fault_info(cfsr, mmfar, bfar);
+            
+            while(1);
+        }
+
+        /*-----------------------------------------------------------------------------------------*/
+        /* Default Exception Handler                                                               */
+        /*-----------------------------------------------------------------------------------------*/
+
+        void Default_Handler(void)
+        {
+            __asm volatile(
+                "Infinite_Loop:\n"
+                "    b Infinite_Loop\n"
+            );
+        }
+
+        /*-----------------------------------------------------------------------------------------*/
+        /* Interrupt Vector Table                                                                  */
+        /*-----------------------------------------------------------------------------------------*/
+
+        const uint32_t* isr_vector[] __attribute__((section(".isr_vector"))) = {
+
+            /* Core Exceptions */
+            (uint32_t*)&_estack,                       /* Initial Stack Pointer */
+            (uint32_t*)Reset_Handler,                  /* Reset Handler */
+            (uint32_t*)Default_Handler,                /* NMI */
+            (uint32_t*)HardFault_Handler,              /* Hard Fault */
+            0,                                         /* Reserved */
+            (uint32_t*)Default_Handler,                /* Bus Fault */
+            (uint32_t*)Default_Handler,                /* Usage Fault */
+            0, 0, 0, 0,                                /* Reserved */
+            (uint32_t*)vPortSVCHandler,                /* FreeRTOS SVC */
+            (uint32_t*)Default_Handler,                /* Debug Monitor */
+            0,                                         /* Reserved */
+            (uint32_t*)xPortPendSVHandler,             /* FreeRTOS PendSV */
+            (uint32_t*)xPortSysTickHandler,            /* FreeRTOS SysTick */
+            
+            /* Other interrupts not initialized in the Board */
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0
+        };
+
+        /*-----------------------------------------------------------------------------------------*/
         ```
 
         </details>
@@ -393,7 +608,145 @@ To test the FreeRTOS porting on QEMU, we're going to run FreeRTOS with a very si
         <summary>Code snippet</summary>
 
         ```c
-        /* TODO: insert code */
+        /*
+        * Linker script for S32K358 with FreeRTOS
+        * Configured to use ITCM, DTCM, SRAM, and Flash memory regions.
+        */
+
+        /* Defining memory regions */
+        MEMORY
+        {
+            /* ITCM: Queues and performance-critical data */
+            ITCM0      (RWX) : ORIGIN = 0x00000000, LENGTH = 64K
+            ITCM2      (RWX) : ORIGIN = 0x00010000, LENGTH = 64K
+
+            /* PFLASH: Main program */
+            PFLASH     (RX)  : ORIGIN = 0x00400000, LENGTH = 8M
+
+            /* DFLASH: Non-volatile data */
+            DFLASH     (RW)  : ORIGIN = 0x10000000, LENGTH = 128K
+
+            /* DTCM: Stack, heap, and critical data */
+            DTCM0      (RW)  : ORIGIN = 0x20000000, LENGTH = 128K
+            DTCM2      (RW)  : ORIGIN = 0x21800000, LENGTH = 128K
+
+            /* SRAM: Generic data */
+            SRAM_STDBY (RW)  : ORIGIN = 0x20400000, LENGTH = 64K  /* SRAM Standby */
+            SRAM0      (RW)  : ORIGIN = 0x20410000, LENGTH = 192K /* Remaining SRAM0 */
+            SRAM1      (RW)  : ORIGIN = 0x20440000, LENGTH = 256K
+            SRAM2      (RW)  : ORIGIN = 0x20480000, LENGTH = 256K
+
+            /* Combined SRAM region */
+            SRAM       (RW)  : ORIGIN = 0x20400000, LENGTH = 704K /* Total SRAM */
+
+            /* Flash UTEST */
+            UTEST      (RX)  : ORIGIN = 0x1B000000, LENGTH = 8K
+        }
+
+        /* Minimum size for heap and stack */
+        _Min_Heap_Size = 0x2000;   /* Increased to 8 KB for more dynamic memory */
+        _Min_Stack_Size = 0x800;   /* Increased to 2 KB for better task handling */
+
+        /* Initial stack pointer */
+        _estack = ORIGIN(DTCM2) + LENGTH(DTCM2);
+
+        /* Linker Sections */
+        SECTIONS
+        {
+            /* ISR Vector Table */
+            .isr_vector :
+            {
+                __vector_table = .;
+                KEEP(*(.isr_vector))
+                . = ALIGN(4);
+            } > ITCM0
+
+            /* Readonly code and data section */
+            .text :
+            {
+                __coderom_start__ = .;
+                *(.text*)         /* Code */
+                *(.rodata*)       /* Read-only data */
+                *(.constdata*)    /* Constant data */
+                _etext = .;       /* End of text section */
+                KEEP(*(.init))    /* Initialization code */
+            } > PFLASH
+
+            /* Initialized data (RAM) */
+            .data :
+            {
+                . = ALIGN(8);
+                _sdata = .;       /* Start of initialized data in RAM */
+                *(.data)          /* Initialized global/static variables */
+                *(.data.*)        /* Section-specific initialized data */
+                *(vtable)         /* Vector table */
+                _edata = .;       /* End of initialized data in RAM */
+            } > DTCM0 AT > PFLASH
+
+            /* Symbols for copying from FLASH to RAM */
+            _sidata = LOADADDR(.data); /* Load address (FLASH) of .data */
+
+            /* Uninitialized data (RAM) */
+            .bss :
+            {
+                . = ALIGN(8);
+                _sbss = .;        /* Start of uninitialized data */
+                *(.bss)           /* Uninitialized global/static variables */
+                *(.bss.*)         /* Section-specific uninitialized data */
+                _ebss = .;        /* End of uninitialized data */
+            } > DTCM0
+
+            /* Standby RAM */
+            .standby_ram :
+            {
+                . = ALIGN(8);
+                *(.standby_ram)   /* Data specific to standby mode */
+            } > SRAM_STDBY
+
+            /* Test data */
+            .utest :
+            {
+                KEEP(*(.utest))   /* Test-related data */
+            } > UTEST
+
+            /* Heap */
+            .heap :
+            {
+                . = ALIGN(8);
+                PROVIDE(end = .); /* End of all sections */
+                PROVIDE(_end = .);
+                _heap_bottom = .; /* Start of heap */
+                . = . + _Min_Heap_Size; /* Allocate minimum heap size */
+                _heap_top = .;    /* End of heap */
+            } > DTCM0
+
+            /* Stack */
+            .stack :
+            {
+                . = ALIGN(8);
+                __stack_start__ = .; /* Start of stack */
+                . = . + _Min_Stack_Size; /* Allocate minimum stack size */
+                __stack_end__ = .;   /* End of stack */
+            } > DTCM2
+
+            /* System call handlers */
+            .syscalls :
+            {
+                __syscalls_flash_start__ = .;
+                *(.syscalls) /* System call handlers */
+                __syscalls_flash_end__ = .;
+            } > PFLASH
+
+            /* Assertions for safety */
+            ASSERT(__stack_end__ <= ORIGIN(DTCM2) + LENGTH(DTCM2), "Stack overflow in DTCM2!")
+            ASSERT(_heap_top <= ORIGIN(DTCM0) + LENGTH(DTCM0), "Heap overflow in DTCM0!")
+        }
+
+        /* Entry point */
+        ENTRY(Reset_Handler)
+
+        /* Initial stack pointer */
+        PROVIDE(_stack = _estack);
         ```
 
         </details>
@@ -846,7 +1199,7 @@ The implementation involved the following steps:
 - **Enable Errata Workaround**: For Cortex-M7 `r0p0` or `r0p1` revisions, define the target to apply the necessary workaround:
 
   ```c
-  #define configTARGET_ARM_CM7_r0p1 1
+  #define configENABLE_ERRATA_837070_WORKAROUD 1
   ```
 
 > Note: Adjust the definition based on your specific Cortex-M7 revision.
