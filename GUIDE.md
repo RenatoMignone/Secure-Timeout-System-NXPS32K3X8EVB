@@ -803,8 +803,6 @@ Most of the files have already been implemented to test the FreeRTOS porting. No
 
 ## Memory Protection Unit (MPU) Implementation
 
-<!-- TODO: update the MPU section -->
-
 In this section, we detail the process of enabling and configuring the **Memory Protection Unit (MPU)** for the **ARM Cortex-M7 core** in our project. This encompasses our research findings, necessary file modifications, and the steps taken to integrate MPU support within FreeRTOS.
 
 ### 1. Research and Information Gathering
@@ -859,15 +857,17 @@ The implementation involved the following steps:
 
 ### 5. Testing and Validation
 
-After implementing the above changes, we conducted thorough testing to ensure:
+We plan to conduct thorough testing to ensure:
 
-- **MPU Configuration**: Verified that all 16 MPU regions were configurable and behaved as expected.
-- **Context Switching**: Ensured that context switches occurred seamlessly without MPU-related faults.
-- **Errata Mitigation**: Confirmed that the workaround effectively addressed the issues associated with Errata 837070.
+- **MPU Configuration**: Verify that all 16 MPU regions are configurable and behave as expected.
+- **Context Switching**: Ensure that context switches occur seamlessly without MPU-related faults.
+- **Errata Mitigation**: Confirm that the workaround effectively addresses the issues associated with Errata 837070.
+
+However, we have not completed this testing yet, as the implementation is not working yet.
 
 ### 6. Summary
 
-By adapting the existing FreeRTOS `ARM_CM4_MPU/port.c` and applying necessary modifications, we successfully enabled **MPU** support for the **ARM Cortex-M7 core** in our project.
+By adapting the existing FreeRTOS `ARM_CM4_MPU/port.c` and applying necessary modifications, we aim to enable **MPU** support for the **ARM Cortex-M7 core** in our project. However, these are things that we hope might work. At the moment, we're still trying to make them work.
 
 > For detailed code implementations and specific changes, please refer to the respective sections in this documentation and the following resources:
 > - [FreeRTOS forum discussion on MPU support in Cortex-M7](https://forums.freertos.org/t/freertos-mpu-support-in-arm-cortex-m7/15306)

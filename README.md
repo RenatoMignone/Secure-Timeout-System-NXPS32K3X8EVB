@@ -20,7 +20,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Peripherals](#peripherals) <br>
 &nbsp;• [FreeRTOS Application](#freertos-application) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [Available Configuration Options](#available-configuration-options) <br>
-&nbsp;• [MPU](#mpu) <br>
+&nbsp;• [Memory Protection Unit (MPU) Implementation](#memory-protection-unit-mpu-implementation) <br>
 &nbsp;• [Team Collaboration](#team-collaboration) <br>
 &nbsp;• [Contributing](#contributing) <br>
 &nbsp;• [Authors](#authors) <br>
@@ -211,9 +211,29 @@ The FreeRTOS application includes tasks for monitoring user activity, handling a
 - `tmrTIMER_1_FREQUENCY`: Frequency for Timer 1. Default value: `2UL`
 - `tmrTIMER_2_FREQUENCY`: Frequency for Timer 2. Default value: `2UL`
 
-## MPU
+## Memory Protection Unit (MPU) Implementation
 
-<!-- TODO: implement -->
+In this section, we outline the process of enabling and configuring the **Memory Protection Unit (MPU)** for the **ARM Cortex-M7 core** in our project. The full implementation details are available in the [`GUIDE.md`](resources/GUIDE.md) file. Here, we summarize our findings and the theoretical steps required for implementation.
+
+### Research and Findings
+
+Our research revealed that while FreeRTOS provides MPU support for **ARM Cortex-M4 cores**, direct support for Cortex-M7 was not explicitly documented. Key insights include:
+
+- **MPU Region Support**: The Cortex-M7 processor supports up to 16 MPU regions.
+- **FreeRTOS MPU Port**: The existing FreeRTOS port for `ARM_CM4_MPU` can be adapted for Cortex-M7.
+- **Errata `837070`**: For Cortex-M7 revisions `r0p0` and `r0p1`, Errata `837070` necessitates specific workarounds to ensure correct MPU functionality.
+
+### Theoretical Steps for Implementation
+
+1. **Define MPU Region Count**: Set `configTOTAL_MPU_REGIONS` to 16 in `FreeRTOSConfig.h` to match the Cortex-M7's capabilities.
+2. **Enable Errata Workaround**: For Cortex-M7 `r0p0` or `r0p1` revisions, define the target to apply the necessary workaround.
+3. **Modify `port.c`**: Integrate the workaround as outlined in the FreeRTOS pull request [#513](https://github.com/FreeRTOS/FreeRTOS-Kernel/pull/513).
+
+### Summary
+
+By adapting the existing FreeRTOS `ARM_CM4_MPU/port.c` and applying necessary modifications, we aim to enable **MPU** support for the **ARM Cortex-M7 core** in our project. However, due to the complexity of the problem, the full implementation is still in progress.
+
+For detailed code implementations and specific changes, please refer to the [`GUIDE.md`](resources/GUIDE.md) file.
 
 ## Team Collaboration
 
