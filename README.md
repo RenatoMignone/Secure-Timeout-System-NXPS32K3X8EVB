@@ -135,26 +135,6 @@ For a detailed guide on setting up, running, and recreating the project, refer t
 
 The specific board that we are implementing and should refer to is the **`S32K358EVB`**.
 
-<!-- ![Recap](./resources/images/memory_and_cores.png) -->
-
-### Cores
-
-The `S32K358EVB` board has **two cores**: 1 x `Cortex-M7` (`CM7_0`) and 1 x `Cortex-M7 LS` (`CM7_2`).
-
-<!-- ![Cores](./resources/images/cores.png) -->
-<img src="./resources/images/cores.png" alt="Cores" width="70%"> [^1]
-
-[^1]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page 52.
-
-### Clocks
-
-- **Primary System Clock**: `240MHz` frequency, 4.16ns period.
-- **AIPS Platform Clock**: `80MHz`
-- **AIPS Slow Clock**: `40MHz`
-- **Reference Clock**: `1MHz`
-
-<!-- ![Clocks](./resources/images/clock_frequency.png) -->
-
 ### Memory
 
 ###### **Flash Memory Layout**
@@ -170,9 +150,9 @@ The board is equipped with multiple blocks of flash memory, each with specific s
 
 The following picture provides a detailed overview of the **FLASH** memory layout. Refer to the last column for the implementation that was used for the project.
 
-![Flash Layout](./resources/images/flash.png) [^2]
+![Flash Layout](./resources/images/flash.png) [^1]
 
-[^2]: Image taken from the manual [`AN13388.pdf`](resources/datasheets/AN13388.pdf), page 3.
+[^1]: Image taken from the manual [`AN13388.pdf`](resources/datasheets/AN13388.pdf), page 3.
 
 ###### **SRAM,DTCM,ITCM Memory Layout**
 
@@ -196,9 +176,9 @@ The board features several blocks of SRAM and additional DTCM and ITCM block, ea
   
 The layout is shown in the image below for reference. Refer to the last column for the implementation that was used for the project.
 
-![SRAM Layout](./resources/images/sram.png) [^3]
+![SRAM Layout](./resources/images/sram.png) [^2]
 
-[^3]: Image taken from the manual [`AN13388.pdf`](resources/datasheets/AN13388.pdf), page 13.
+[^2]: Image taken from the manual [`AN13388.pdf`](resources/datasheets/AN13388.pdf), page 13.
 
 ### **MPU**
 
@@ -213,9 +193,9 @@ NVIC (Nested Vectored Interrupt Controller):
   - `240` External Interrupts
 
 <!-- ![MPU and NVIC](./resources/images/MPU_and_NVIC.png) -->
-<img src="./resources/images/MPU_and_NVIC.png" alt="MPU and NVIC" width="70%"> [^4]
+<img src="./resources/images/MPU_and_NVIC.png" alt="MPU and NVIC" width="70%"> [^3]
 
-[^4]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page 53.
+[^3]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page 53.
 
 ### Peripherals
 
@@ -235,16 +215,25 @@ NVIC (Nested Vectored Interrupt Controller):
 
 A detailed overview of the LPUART setup is provided in the following diagram:
 
-![LPUART](./resources/images/lpuart.png) [^5]
+![LPUART](./resources/images/lpuart.png) [^4]
 
-[^5]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page X. <!-- TODO: update -->
+[^4]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page 4588.
+
+### Clocks
+
+- **Primary System Clock**: `240MHz` frequency, 4.16ns period.
+- **AIPS Platform Clock**: `80MHz`
+- **AIPS Slow Clock**: `40MHz`
+- **Reference Clock**: `1MHz`
+
+<!-- ![Clocks](./resources/images/clock_frequency.png) -->
 
 > <details closed>
 > <summary><b>Board Diagram</b></summary>
 > 
-> ![Board Diagram](./resources/images/diagram.png) [^6]
+> ![Board Diagram](./resources/images/diagram.png) [^5]
 > 
-> [^6]: Image taken from the manual [`S32K3xx-datasheet.pdf`](resources/datasheets/S32K3xx-datasheet.pdf), page 11.
+> [^5]: Image taken from the manual [`S32K3xx-datasheet.pdf`](resources/datasheets/S32K3xx-datasheet.pdf), page 11.
 > 
 > </details>
 
