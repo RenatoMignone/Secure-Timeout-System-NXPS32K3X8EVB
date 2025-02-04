@@ -44,23 +44,23 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 
 ## Features
 
-- Integration with FreeRTOS
-- UART communication
-- Hardware timer initialization and handling
-- Secure timeout system with multiple tasks
-- QEMU emulation support
+- **Integration with FreeRTOS**: Seamlessly integrates with the FreeRTOS real-time operating system.
+- **UART Communication**: Supports UART communication for serial data transmission.
+- **Hardware Timer Initialization and Handling**: Initializes and handles hardware timers efficiently.
+- **Secure Timeout System with Multiple Tasks**: Implements a secure timeout system capable of managing multiple tasks.
+- **QEMU Emulation Support**: Provides support for QEMU emulation to facilitate testing and development.
 
 ## Getting Started
 
 ### Prerequisites
 
-- A Linux-based operating system (e.g., Ubuntu)
-- Git for version control
-- QEMU for hardware emulation
-- FreeRTOS for the real-time operating system
-- ARM GCC Toolchain (`arm-none-eabi-gcc`) for compiling the code
-- Make for building the project
-- Ninja build system for building QEMU
+- A **Linux-based** operating system (e.g., Ubuntu)
+- **Git** for version control
+- **QEMU** for hardware emulation
+- **FreeRTOS** for the real-time operating system
+- **ARM GCC Toolchain** (`gcc-arm-none-eabi`) for compiling the code
+- **Make** for building the project
+- **Ninja build** system for building QEMU
 
 ### Installation
 
@@ -72,24 +72,24 @@ cd group2
 
 ### Running the Emulator and the Application
 
-1. To configure and build QEMU, just do:
+1. To configure and build **QEMU**, just do:
    ```bash
    cd App
    make qemu_build
    ```
    This implicitly does `make qemu_configure qemu_ninja`.
 
-2. To run the App:
+2. To run the **App**:
     ```sh
     make run
     ```
     This implicitly does `make clean all qemu_start`.
 
-3. To run the App in debug mode:
+3. To run the App in **debug** mode:
     ```sh
     make qemu_debug
     ```
-    This starts QEMU in debug mode, allowing you to connect a debugger like GDB.
+    This starts QEMU in debug mode, allowing you to connect a debugger like **GDB**.
 
 > There is also a command to build and run:
 >   ```sh
@@ -135,22 +135,44 @@ For a detailed guide on setting up, running, and recreating the project, refer t
 
 The specific board that we are implementing and should refer to is the **`S32K358EVB`**.
 
+<!-- ![Recap](./resources/images/memory_and_cores.png) -->
+
+### Cores
+
+The `S32K358EVB` board has **two cores**: 1 x `Cortex-M7` (`CM7_0`) and 1 x `Cortex-M7 LS` (`CM7_2`).
+
+<!-- ![Cores](./resources/images/cores.png) -->
+<img src="./resources/images/cores.png" alt="Cores" width="70%"> [^1]
+
+[^1]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page 52.
+
+### Clocks
+
+- **Primary System Clock**: `240MHz` frequency, 4.16ns period.
+- **AIPS Platform Clock**: `80MHz`
+- **AIPS Slow Clock**: `40MHz`
+- **Reference Clock**: `1MHz`
+
+<!-- ![Clocks](./resources/images/clock_frequency.png) -->
+
 ### Memory
 
 ###### **Flash Memory Layout**
 
 The board is equipped with multiple blocks of flash memory, each with specific starting addresses and sizes. Here is an overview of the memory blocks:
 
-  - **Block 0**: 2 MB at 0x00400000
-  - **Block 1**: 2 MB at 0x00600000
-  - **Block 2**: 2 MB at 0x00800000
-  - **Block 3**: 2 MB at 0x00A00000
-  - **Block 4**: 128 KB at 0x10000000
-  - **Utest**: 8 KB at 0x1B000000
+  - **Block 0**: 2 MB at `0x00400000`
+  - **Block 1**: 2 MB at `0x00600000`
+  - **Block 2**: 2 MB at `0x00800000`
+  - **Block 3**: 2 MB at `0x00A00000`
+  - **Block 4**: 128 KB at `0x10000000`
+  - **Utest**: 8 KB at `0x1B000000`
 
 The following picture provides a detailed overview of the **FLASH** memory layout. Refer to the last column for the implementation that was used for the project.
 
-![flash layout](./resources/images/flash.png)
+![Flash Layout](./resources/images/flash.png) [^2]
+
+[^2]: Image taken from the manual [`AN13388.pdf`](resources/datasheets/AN13388.pdf), page 3.
 
 ###### **SRAM,DTCM,ITCM Memory Layout**
 
@@ -158,39 +180,54 @@ The board features several blocks of SRAM and additional DTCM and ITCM block, ea
 
 ###### **SRAM Layout**:
 
-  - **Block 0**: 256 KB at 0x20400000
-  - **Block 1**: 256 KB at 0x20440000
-  - **Block 2**: 256 KB at 0x20480000
+  - **Block 0**: 256 KB at `0x20400000`
+  - **Block 1**: 256 KB at `0x20440000`
+  - **Block 2**: 256 KB at `0x20480000`
   
 ###### **DTCM Memory Blocks**:
 
-  - **DTCM0**: 128 KB at 0x20000000
-  - **DTCM2**: 128 KB at 0x21800000
+  - **DTCM0**: 128 KB at `0x20000000`
+  - **DTCM2**: 128 KB at `0x21800000`
   
 ###### **ITCM Memory Blocks**:
  
-  - **ITCM0**: 64 KB at 0x00000000
-  - **ITCM2**: 64 KB at 0x00010000
+  - **ITCM0**: 64 KB at `0x00000000`
+  - **ITCM2**: 64 KB at `0x00010000`
   
 The layout is shown in the image below for reference. Refer to the last column for the implementation that was used for the project.
 
-![sram layout](./resources/images/sram.png)
+![SRAM Layout](./resources/images/sram.png) [^3]
 
-###### **MPU**
+[^3]: Image taken from the manual [`AN13388.pdf`](resources/datasheets/AN13388.pdf), page 13.
+
+### **MPU**
 
 The **MPU** is configured with **16 memory regions**, split across **2 blocks**.
+
+### **NVIC**
+
+NVIC (Nested Vectored Interrupt Controller):
+- Configured with **4 priority bits** and **256 IRQs**:
+  - `1` Initial Stack Pointer value (-16)
+  - `15` System Exceptions
+  - `240` External Interrupts
+
+<!-- ![MPU and NVIC](./resources/images/MPU_and_NVIC.png) -->
+<img src="./resources/images/MPU_and_NVIC.png" alt="MPU and NVIC" width="70%"> [^4]
+
+[^4]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page 53.
 
 ### Peripherals
 
 ###### **Peripherals and Memory Mapping**
 
-- **UART Base Address**: 0x4006A000
+- **UART Base Address**: `0x4006A000`
 
 - **PIT Timer Base Addresses**:
 
-  - **Timer 1**: 0x40037000
-  - **Timer 2**: 0x40038000
-  - **Timer 3**: 0x40039000
+  - **Timer 1**: `0x40037000`
+  - **Timer 2**: `0x40038000`
+  - **Timer 3**: `0x40039000`
 
 - **LPUART Configuration**: The board has **16 LPUART** peripherals, and they are mapped starting from the **UART** base address.
 - **LPUART 0, 1** , and **8**  are clocked by **AIPS_PLAT_CLK**
@@ -198,7 +235,18 @@ The **MPU** is configured with **16 memory regions**, split across **2 blocks**.
 
 A detailed overview of the LPUART setup is provided in the following diagram:
 
-![lpuart](./resources/images/lpuart.png)
+![LPUART](./resources/images/lpuart.png) [^5]
+
+[^5]: Image taken from the manual [`S32K3XXRM.pdf`](resources/datasheets/S32K3XXRM.pdf), page X. <!-- TODO: update -->
+
+> <details closed>
+> <summary><b>Board Diagram</b></summary>
+> 
+> ![Board Diagram](./resources/images/diagram.png) [^6]
+> 
+> [^6]: Image taken from the manual [`S32K3xx-datasheet.pdf`](resources/datasheets/S32K3xx-datasheet.pdf), page 11.
+> 
+> </details>
 
 > #### Note
 > 
