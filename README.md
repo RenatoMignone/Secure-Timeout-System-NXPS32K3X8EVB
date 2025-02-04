@@ -37,7 +37,7 @@
 
 This project implements a very simple Secure Timeout System application on the **NXP S32K3X8EVB** board using **FreeRTOS**, emulated with **QEMU**.
 
-This project has been assigned for the [Computer Architectures and Operating Systems](#acknowledgments) course. The work has been carried out by **group 2**. For more information about the authors, please refer to the [Authors](#authors) section.
+This project has been assigned for the [Computer Architectures and Operating Systems](https://didattica.polito.it/pls/portal30/gap.pkg_guide.viewGap?p_cod_ins=01GYKUV&p_a_acc=2025&p_header=S&p_lang=IT&multi=N) course at **Politecnico di Torino**. The work has been carried out by **group 2**. For more information about the authors, please refer to the [Authors](#authors) section.
 
 - Original Project Repository: [neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB](https://github.com/neo-CAOS/Secure-Timeout-System-NXPS32K3X8EVB)  
 - Original Beamer Repository: [neo-CAOS/latex-beamer](https://github.com/neo-CAOS/latex-beamer)
@@ -316,6 +316,9 @@ By using this project, you agree to the terms of the [CC BY-NC 4.0 license](http
 ## Acknowledgments
 
 - **Stefano Di Carlo** ([stefano.dicarlo@polito.it](mailto:stefano.dicarlo@polito.it)): the professor who assigned us the project and is teaching the course **CAOS**.
+- **Team Members**: Andrea Botticella, Fabrizio Emanuel, Elia Innocenti, Renato Mignone, and Simone Romano.
+
+Please cite us if this project is copied, used for inspiration, or if any material is taken from it.
 
 <div align="right">
 <a href="#top">Back to top</a>
