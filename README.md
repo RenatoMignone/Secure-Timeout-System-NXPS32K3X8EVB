@@ -133,6 +133,8 @@ For a detailed guide on setting up, running, and recreating the project, refer t
 
 ## Board Specifications
 
+The specific board that we are implementing and should refer to is the **`S32K358EVB`**.
+
 ### Memory
 
 ###### **Flash Memory Layout**

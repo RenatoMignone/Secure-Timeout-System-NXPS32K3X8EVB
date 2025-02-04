@@ -164,6 +164,8 @@ Once these dependencies are installed, re-run the verification commands listed a
 
 ### Creating the Board
 
+The specific board that we are implementing and should refer to is the **`S32K358EVB`**.
+
 The `s32k3x8evb_board.c` file is the core of the QEMU board emulation. It includes several key sections:
 
 <!-- TODO: check -->
