@@ -67,7 +67,7 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 Clone the repository:
 ```sh
 git clone --recurse-submodules https://github.com/RenatoMignone/Secure-Timeout-System-NXPS32K3X8EVB
-cd group2
+cd Secure-Timeout-System-NXPS32K3X8EVB
 ```
 
 ### Running the Emulator and the Application
