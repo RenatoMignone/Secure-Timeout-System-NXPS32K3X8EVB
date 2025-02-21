@@ -66,7 +66,6 @@ This project has been assigned for the [Computer Architectures and Operating Sys
 
 Clone the repository:
 ```sh
-git clone --recurse-submodules https://baltig.polito.it/caos2024/group2.git 
 cd group2
 ```
 
